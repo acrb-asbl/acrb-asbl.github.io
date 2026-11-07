@@ -161,7 +161,17 @@ details .grid,details .days{margin-top:12px}
         <label><input type="checkbox" name="interets" value="Stationnement et mobilité"><span data-i18n="i4"></span></label>
         <label><input type="checkbox" name="interets" value="Relations avec la commune"><span data-i18n="i5"></span></label>
         <label><input type="checkbox" name="interets" value="Achats groupés"><span data-i18n="i6"></span></label>
+        <label><input type="checkbox" name="interets" value="Marketplace du quartier Nord"><span data-i18n="i7"></span></label>
       </div>
+    </div>
+    <div class="full"><label for="preoccupation" data-i18n="preoc"></label><textarea id="preoccupation" rows="2"></textarea></div>
+    <div class="full"><label data-i18n="mk_q"></label><p class="hint latin" style="margin:0 0 6px" data-i18n="mk_h"></p>
+      <div class="chips">
+        <label><input type="radio" name="marketplace" value="oui"><span data-i18n="mk_oui"></span></label>
+        <label><input type="radio" name="marketplace" value="peut_etre"><span data-i18n="mk_pe"></span></label>
+        <label><input type="radio" name="marketplace" value="non"><span data-i18n="mk_non"></span></label>
+      </div>
+      <input type="text" id="mk_com" style="margin-top:8px" data-i18n-ph="mk_com">
     </div>
     <div class="full"><label for="remarques" data-i18n="remarques"></label><textarea id="remarques"></textarea></div>
   </div>
@@ -387,7 +397,7 @@ priere:"Le vendredi, le magasin ferme-t-il pour la prière ?",pr_oui:"Oui",pr_no
 fermetures:"Jours de fermeture pour les fêtes",aid_fitr:"Fermé le jour de l'Aïd al-Fitr",aid_adha:"Fermé le jour de l'Aïd al-Adha (fête du mouton)",autres_ferm:"Autres fermetures (congés annuels, jours fériés…)",
 logo:"Logo (image)",photo:"Photo de la façade",online:"Présence en ligne (facultatif)",site:"Site web",maps:"Fiche Google Maps (lien)",
 resp_sum:"Responsable du magasin",resp:"Nom et prénom du responsable sur place",murs:"Propriétaire des murs / de l'immeuble (si vous le connaissez)",murs_ph:"Nom ou société",
-s4:"4. L'association et vous",membre:"Êtes-vous membre de l'ACRB ?",m_oui:"Oui",m_int:"Non, mais ça m'intéresse",m_non:"Non",m_nsp:"Je ne sais pas",interets:"Sujets qui vous intéressent",i1:"Propreté et sécurité",i2:"Animations et fêtes",i3:"Visibilité en ligne",i4:"Stationnement et mobilité",i5:"Relations avec la commune",i6:"Achats groupés",remarques:"Remarques, demandes, idées",
+s4:"4. L'association et vous",membre:"Êtes-vous membre de l'ACRB ?",m_oui:"Oui",m_int:"Non, mais ça m'intéresse",m_non:"Non",m_nsp:"Je ne sais pas",interets:"Sujets qui vous intéressent",i1:"Propreté et sécurité",i2:"Animations et fêtes",i3:"Visibilité en ligne",i4:"Stationnement et mobilité",i5:"Relations avec la commune",i6:"Achats groupés",i7:"Marketplace en ligne du quartier Nord",preoc:"Votre préoccupation principale aujourd'hui (une phrase)",mk_q:"Une marketplace en ligne regroupant tous les commerçants du quartier Nord vous intéresserait-elle ?",mk_h:"Une seule boutique en ligne pour tout le quartier : vos produits, livraison ou retrait en magasin.",mk_oui:"Oui, je suis intéressé",mk_pe:"Peut-être, j'aimerais en savoir plus",mk_non:"Non",mk_com:"Ce que vous attendriez d'une telle marketplace (facultatif)",remarques:"Remarques, demandes, idées",
 consent_site:"J'accepte que les informations des magasins (enseigne, adresse, téléphone du magasin, horaires, articles, description, liens, logo, photo) soient publiées sur le site de l'ACRB.",consent_rgpd:"Je consens à ce que l'ACRB conserve ces données pour la gestion de l'association et pour me contacter. Les coordonnées personnelles et les données de société ne sont jamais publiées. Modification ou suppression possible à tout moment sur simple demande.",
 submit:"Envoyer ma fiche",sending:"Envoi en cours…",done_h:"Merci, votre fiche est enregistrée.",done_p:"L'ACRB reprendra contact avec vous si une précision est nécessaire.",
 err_req:"Il manque un champ obligatoire (marqué *).",err_photo:"Une photo dépasse 8 Mo.",err_save:"Enregistrement refusé. Réessayez dans un instant.",err_generic:"Une erreur est survenue. Réessayez dans un instant."},
@@ -405,7 +415,7 @@ priere:"Sluit de winkel op vrijdag voor het gebed?",pr_oui:"Ja",pr_non:"Nee, doo
 fermetures:"Sluitingsdagen voor feesten",aid_fitr:"Gesloten op Eid al-Fitr",aid_adha:"Gesloten op Eid al-Adha (Offerfeest)",autres_ferm:"Andere sluitingen (jaarlijks verlof, feestdagen…)",
 logo:"Logo (afbeelding)",photo:"Foto van de gevel",online:"Online aanwezigheid (optioneel)",site:"Website",maps:"Google Maps-fiche (link)",
 resp_sum:"Verantwoordelijke van de winkel",resp:"Naam en voornaam van de verantwoordelijke ter plaatse",murs:"Eigenaar van het pand / gebouw (indien bekend)",murs_ph:"Naam of vennootschap",
-s4:"4. De vereniging en u",membre:"Bent u lid van de ACRB?",m_oui:"Ja",m_int:"Nee, maar het interesseert mij",m_non:"Nee",m_nsp:"Ik weet het niet",interets:"Onderwerpen die u interesseren",i1:"Netheid en veiligheid",i2:"Animatie en feesten",i3:"Online zichtbaarheid",i4:"Parkeren en mobiliteit",i5:"Relaties met de gemeente",i6:"Groepsaankopen",remarques:"Opmerkingen, vragen, ideeën",
+s4:"4. De vereniging en u",membre:"Bent u lid van de ACRB?",m_oui:"Ja",m_int:"Nee, maar het interesseert mij",m_non:"Nee",m_nsp:"Ik weet het niet",interets:"Onderwerpen die u interesseren",i1:"Netheid en veiligheid",i2:"Animatie en feesten",i3:"Online zichtbaarheid",i4:"Parkeren en mobiliteit",i5:"Relaties met de gemeente",i6:"Groepsaankopen",i7:"Online marketplace van de Noordwijk",preoc:"Uw grootste zorg vandaag (één zin)",mk_q:"Zou een online marketplace met alle handelaars van de Noordwijk u interesseren?",mk_h:"Eén webwinkel voor de hele wijk: uw producten, levering of afhaling in de winkel.",mk_oui:"Ja, ik ben geïnteresseerd",mk_pe:"Misschien, ik wil er meer over weten",mk_non:"Nee",mk_com:"Wat u van zo'n marketplace verwacht (optioneel)",remarques:"Opmerkingen, vragen, ideeën",
 consent_site:"Ik ga akkoord dat de winkelgegevens (naam, adres, telefoon van de winkel, uren, artikelen, voorstelling, links, logo, foto) op de website van de ACRB worden gepubliceerd.",consent_rgpd:"Ik stem ermee in dat de ACRB deze gegevens bewaart voor het beheer van de vereniging en om mij te contacteren. Persoonlijke gegevens en vennootschapsgegevens worden nooit gepubliceerd. Wijziging of verwijdering is op eenvoudig verzoek altijd mogelijk.",
 submit:"Mijn fiche verzenden",sending:"Bezig met verzenden…",done_h:"Bedankt, uw fiche is geregistreerd.",done_p:"De ACRB neemt contact met u op als er iets moet worden verduidelijkt.",
 err_req:"Er ontbreekt een verplicht veld (met *).",err_photo:"Een foto is groter dan 8 MB.",err_save:"Opslaan geweigerd. Probeer het zo meteen opnieuw.",err_generic:"Er is een fout opgetreden. Probeer het zo meteen opnieuw."},
@@ -423,7 +433,7 @@ priere:"On Fridays, does the shop close for prayer?",pr_oui:"Yes",pr_non:"No, op
 fermetures:"Closing days for religious holidays",aid_fitr:"Closed on Eid al-Fitr",aid_adha:"Closed on Eid al-Adha",autres_ferm:"Other closures (annual holidays, public holidays…)",
 logo:"Logo (image)",photo:"Photo of the shopfront",online:"Online presence (optional)",site:"Website",maps:"Google Maps listing (link)",
 resp_sum:"Shop manager",resp:"Full name of the on-site manager",murs:"Owner of the premises / building (if known)",murs_ph:"Name or company",
-s4:"4. The association and you",membre:"Are you a member of the ACRB?",m_oui:"Yes",m_int:"No, but I'm interested",m_non:"No",m_nsp:"I don't know",interets:"Topics that interest you",i1:"Cleanliness and safety",i2:"Events and festivities",i3:"Online visibility",i4:"Parking and mobility",i5:"Relations with the municipality",i6:"Group purchasing",remarques:"Remarks, requests, ideas",
+s4:"4. The association and you",membre:"Are you a member of the ACRB?",m_oui:"Yes",m_int:"No, but I'm interested",m_non:"No",m_nsp:"I don't know",interets:"Topics that interest you",i1:"Cleanliness and safety",i2:"Events and festivities",i3:"Online visibility",i4:"Parking and mobility",i5:"Relations with the municipality",i6:"Group purchasing",i7:"Online marketplace for the North district",preoc:"Your main concern today (one sentence)",mk_q:"Would an online marketplace bringing together all the shops of the North district interest you?",mk_h:"One online shop for the whole district: your products, delivery or in-store pickup.",mk_oui:"Yes, I am interested",mk_pe:"Maybe, I would like to know more",mk_non:"No",mk_com:"What you would expect from such a marketplace (optional)",remarques:"Remarks, requests, ideas",
 consent_site:"I agree that the shop details (name, address, shop phone, hours, items, presentation, links, logo, photo) may be published on the ACRB website.",consent_rgpd:"I consent to the ACRB keeping this data to run the association and to contact me. Personal contact details and company data are never published. You can ask for a change or deletion at any time.",
 submit:"Send my listing",sending:"Sending…",done_h:"Thank you, your listing has been saved.",done_p:"The ACRB will get back to you if anything needs clarifying.",
 err_req:"A required field (marked *) is missing.",err_photo:"A photo exceeds 8 MB.",err_save:"Saving was refused. Please try again in a moment.",err_generic:"Something went wrong. Please try again in a moment."},
@@ -441,7 +451,7 @@ priere:"Cuma günü mağaza namaz için kapanıyor mu?",pr_oui:"Evet",pr_non:"Ha
 fermetures:"Bayramlarda kapalı günler",aid_fitr:"Ramazan Bayramı'nda kapalı",aid_adha:"Kurban Bayramı'nda kapalı",autres_ferm:"Diğer kapalı günler (yıllık izin, resmi tatiller…)",
 logo:"Logo (görsel)",photo:"Vitrin fotoğrafı",online:"Çevrimiçi varlık (isteğe bağlı)",site:"Web sitesi",maps:"Google Haritalar kaydı (bağlantı)",
 resp_sum:"Mağaza sorumlusu",resp:"Mağaza sorumlusunun adı ve soyadı",murs:"Dükkân / bina sahibi (biliyorsanız)",murs_ph:"Ad veya şirket",
-s4:"4. Dernek ve siz",membre:"ACRB üyesi misiniz?",m_oui:"Evet",m_int:"Hayır, ama ilgileniyorum",m_non:"Hayır",m_nsp:"Bilmiyorum",interets:"İlgilendiğiniz konular",i1:"Temizlik ve güvenlik",i2:"Etkinlikler ve şenlikler",i3:"Çevrimiçi görünürlük",i4:"Park ve ulaşım",i5:"Belediye ile ilişkiler",i6:"Toplu alımlar",remarques:"Görüşler, talepler, fikirler",
+s4:"4. Dernek ve siz",membre:"ACRB üyesi misiniz?",m_oui:"Evet",m_int:"Hayır, ama ilgileniyorum",m_non:"Hayır",m_nsp:"Bilmiyorum",interets:"İlgilendiğiniz konular",i1:"Temizlik ve güvenlik",i2:"Etkinlikler ve şenlikler",i3:"Çevrimiçi görünürlük",i4:"Park ve ulaşım",i5:"Belediye ile ilişkiler",i6:"Toplu alımlar",i7:"Kuzey mahallesi online pazar yeri",preoc:"Bugün sizi en çok kaygılandıran konu (tek cümle)",mk_q:"Kuzey mahallesinin tüm esnafını bir araya getiren bir online pazar yeri ilginizi çeker mi?",mk_h:"Tüm mahalle için tek bir online mağaza: ürünleriniz, teslimat veya mağazadan teslim.",mk_oui:"Evet, ilgileniyorum",mk_pe:"Belki, daha fazla bilgi isterim",mk_non:"Hayır",mk_com:"Böyle bir pazar yerinden beklentiniz (isteğe bağlı)",remarques:"Görüşler, talepler, fikirler",
 consent_site:"Mağaza bilgilerinin (ad, adres, mağaza telefonu, saatler, ürünler, tanıtım, bağlantılar, logo, fotoğraf) ACRB web sitesinde yayımlanmasını kabul ediyorum.",consent_rgpd:"ACRB'nin bu verileri derneğin yönetimi ve benimle iletişim için saklamasına izin veriyorum. Kişisel iletişim bilgileri ve şirket verileri asla yayımlanmaz. İstediğiniz zaman değişiklik veya silme talep edebilirsiniz.",
 submit:"Formumu gönder",sending:"Gönderiliyor…",done_h:"Teşekkürler, formunuz kaydedildi.",done_p:"Bir açıklama gerekirse ACRB sizinle iletişime geçecektir.",
 err_req:"Zorunlu bir alan (* işaretli) eksik.",err_photo:"Bir fotoğraf 8 MB'ı aşıyor.",err_save:"Kayıt reddedildi. Lütfen biraz sonra tekrar deneyin.",err_generic:"Bir hata oluştu. Lütfen biraz sonra tekrar deneyin."},
@@ -459,7 +469,7 @@ priere:"يوم الجمعة، هل يُغلق المتجر للصلاة؟",pr_ou
 fermetures:"أيام الإغلاق في الأعياد",aid_fitr:"مغلق يوم عيد الفطر",aid_adha:"مغلق يوم عيد الأضحى",autres_ferm:"إغلاقات أخرى (العطلة السنوية، الأعياد الرسمية…)",
 logo:"الشعار (صورة)",photo:"صورة الواجهة",online:"الحضور على الإنترنت (اختياري)",site:"الموقع الإلكتروني",maps:"صفحة خرائط Google (رابط)",
 resp_sum:"مسؤول المتجر",resp:"اسم ولقب المسؤول في المتجر",murs:"مالك المحل / العقار (إن كنتم تعرفونه)",murs_ph:"اسم أو شركة",
-s4:"4. الجمعية وأنتم",membre:"هل أنتم أعضاء في الجمعية؟",m_oui:"نعم",m_int:"لا، لكن الأمر يهمني",m_non:"لا",m_nsp:"لا أعرف",interets:"المواضيع التي تهمكم",i1:"النظافة والأمن",i2:"الأنشطة والاحتفالات",i3:"الظهور على الإنترنت",i4:"ركن السيارات والتنقل",i5:"العلاقات مع البلدية",i6:"الشراء الجماعي",remarques:"ملاحظات، طلبات، أفكار",
+s4:"4. الجمعية وأنتم",membre:"هل أنتم أعضاء في الجمعية؟",m_oui:"نعم",m_int:"لا، لكن الأمر يهمني",m_non:"لا",m_nsp:"لا أعرف",interets:"المواضيع التي تهمكم",i1:"النظافة والأمن",i2:"الأنشطة والاحتفالات",i3:"الظهور على الإنترنت",i4:"ركن السيارات والتنقل",i5:"العلاقات مع البلدية",i6:"الشراء الجماعي",i7:"سوق إلكتروني لحي الشمال",preoc:"انشغالكم الرئيسي اليوم (جملة واحدة، بأحرف لاتينية)",mk_q:"هل يهمكم سوق إلكتروني يجمع كل تجار حي الشمال؟",mk_h:"متجر إلكتروني واحد للحي كله: منتجاتكم، توصيل أو استلام من المحل.",mk_oui:"نعم، أنا مهتم",mk_pe:"ربما، أود معرفة المزيد",mk_non:"لا",mk_com:"ما تنتظرونه من هذا السوق (اختياري)",remarques:"ملاحظات، طلبات، أفكار",
 consent_site:"أوافق على نشر معلومات المتاجر (الاسم، العنوان، هاتف المتجر، الأوقات، المنتجات، التقديم، الروابط، الشعار، الصورة) على موقع الجمعية.",consent_rgpd:"أوافق على احتفاظ الجمعية بهذه البيانات لتسيير الجمعية وللاتصال بي. بيانات الاتصال الشخصية وبيانات الشركة لا تُنشر أبدًا. يمكن طلب تعديلها أو حذفها في أي وقت.",
 submit:"إرسال بطاقتي",sending:"جارٍ الإرسال…",done_h:"شكرًا، تم تسجيل بطاقتكم.",done_p:"ستتصل بكم الجمعية إن احتاج الأمر إلى توضيح.",
 err_req:"حقل إلزامي (معلّم بـ *) ناقص.",err_photo:"إحدى الصور تتجاوز 8 ميغابايت.",err_save:"رُفض التسجيل. حاولوا مجددًا بعد قليل.",err_generic:"حدث خطأ. حاولوا مجددًا بعد قليل."},
@@ -477,7 +487,7 @@ priere:"کیا جمعہ کو نماز کے لیے دکان بند ہوتی ہے�
 fermetures:"تہواروں پر بندش کے دن",aid_fitr:"عید الفطر کے دن بند",aid_adha:"عید الاضحیٰ کے دن بند",autres_ferm:"دیگر بندش (سالانہ چھٹیاں، عام تعطیلات…)",
 logo:"لوگو (تصویر)",photo:"دکان کے سامنے کی تصویر",online:"آن لائن موجودگی (اختیاری)",site:"ویب سائٹ",maps:"Google Maps صفحہ (لنک)",
 resp_sum:"دکان کا ذمہ دار",resp:"دکان پر ذمہ دار شخص کا پورا نام",murs:"دکان / عمارت کا مالک (اگر معلوم ہو)",murs_ph:"نام یا کمپنی",
-s4:"4. انجمن اور آپ",membre:"کیا آپ ACRB کے رکن ہیں؟",m_oui:"ہاں",m_int:"نہیں، لیکن دلچسپی ہے",m_non:"نہیں",m_nsp:"معلوم نہیں",interets:"وہ موضوعات جن میں آپ کو دلچسپی ہے",i1:"صفائی اور سلامتی",i2:"تقریبات اور میلے",i3:"آن لائن نمائش",i4:"پارکنگ اور آمد و رفت",i5:"میونسپلٹی سے تعلقات",i6:"اجتماعی خریداری",remarques:"تبصرے، درخواستیں، تجاویز",
+s4:"4. انجمن اور آپ",membre:"کیا آپ ACRB کے رکن ہیں؟",m_oui:"ہاں",m_int:"نہیں، لیکن دلچسپی ہے",m_non:"نہیں",m_nsp:"معلوم نہیں",interets:"وہ موضوعات جن میں آپ کو دلچسپی ہے",i1:"صفائی اور سلامتی",i2:"تقریبات اور میلے",i3:"آن لائن نمائش",i4:"پارکنگ اور آمد و رفت",i5:"میونسپلٹی سے تعلقات",i6:"اجتماعی خریداری",i7:"شمالی محلے کی آن لائن مارکیٹ پلیس",preoc:"آج آپ کی سب سے بڑی فکر (ایک جملہ، لاطینی حروف میں)",mk_q:"کیا شمالی محلے کے تمام تاجروں کو جمع کرنے والی آن لائن مارکیٹ پلیس آپ کے لیے دلچسپ ہوگی؟",mk_h:"پورے محلے کے لیے ایک آن لائن دکان: آپ کی مصنوعات، ڈیلیوری یا دکان سے وصولی۔",mk_oui:"ہاں، مجھے دلچسپی ہے",mk_pe:"شاید، مزید جاننا چاہوں گا",mk_non:"نہیں",mk_com:"ایسی مارکیٹ پلیس سے آپ کی توقعات (اختیاری)",remarques:"تبصرے، درخواستیں، تجاویز",
 consent_site:"میں متفق ہوں کہ دکان کی معلومات (نام، پتہ، دکان کا فون، اوقات، اشیا، تعارف، لنکس، لوگو، تصویر) ACRB کی ویب سائٹ پر شائع کی جائیں۔",consent_rgpd:"میں رضامند ہوں کہ ACRB یہ معلومات انجمن کے انتظام اور مجھ سے رابطے کے لیے محفوظ رکھے۔ ذاتی رابطہ تفصیلات اور کمپنی کی معلومات کبھی شائع نہیں کی جاتیں۔ آپ کسی بھی وقت تبدیلی یا حذف کی درخواست کر سکتے ہیں۔",
 submit:"میرا فارم بھیجیں",sending:"بھیجا جا رہا ہے…",done_h:"شکریہ، آپ کا فارم محفوظ ہو گیا۔",done_p:"اگر کسی وضاحت کی ضرورت ہوئی تو ACRB آپ سے رابطہ کرے گی۔",
 err_req:"ایک لازمی خانہ (* والا) خالی ہے۔",err_photo:"ایک تصویر 8 MB سے بڑی ہے۔",err_save:"محفوظ کرنے سے انکار ہوا۔ تھوڑی دیر بعد دوبارہ کوشش کریں۔",err_generic:"کوئی خرابی ہوئی۔ تھوڑی دیر بعد دوبارہ کوشش کریں۔"}
@@ -493,7 +503,7 @@ err_req:"ایک لازمی خانہ (* والا) خالی ہے۔",err_photo:"ا�
   var lang="fr", T=I18N.fr;
 
   function translate(root){
-    Array.prototype.forEach.call(root.querySelectorAll("[data-i18n]"),function(el){var s=T[el.dataset.i18n];if(s!=null)el.textContent=s;});
+    Array.prototype.forEach.call(root.querySelectorAll("[data-i18n]"),function(el){var s=T[el.dataset.i18n];if(s!=null)el.textContent=s;});Array.prototype.forEach.call(root.querySelectorAll("[data-i18n-ph]"),function(el){var s=T[el.dataset.i18nPh];if(s!=null)el.placeholder=s;});
     Array.prototype.forEach.call(root.querySelectorAll("[data-i18n-ph]"),function(el){var s=T[el.dataset.i18nPh];if(s!=null)el.placeholder=s;});
     Array.prototype.forEach.call(root.querySelectorAll("[data-i18n-label]"),function(el){var s=T[el.dataset.i18nLabel];if(s!=null)el.label=s;});
   }
@@ -662,6 +672,8 @@ err_req:"ایک لازمی خانہ (* والا) خالی ہے۔",err_photo:"ا�
 
   var initial="fr";
   try{initial=new URLSearchParams(location.search).get("lang")||localStorage.getItem("acrb_lang")||"fr";}catch(e){}
+  // Compte Google déjà connecté (espace privé) : nom et adresse pré-remplis
+  try{var sk=Object.keys(localStorage).filter(function(k){return /^sb-.*-auth-token$/.test(k);})[0];if(sk){var ss=JSON.parse(localStorage.getItem(sk)||"{}"),su=ss&&ss.user;if(su){var pe=document.getElementById("p_email"),pn=document.getElementById("p_nom");if(pe&&!pe.value&&su.email)pe.value=su.email;if(pn&&!pn.value&&su.user_metadata&&su.user_metadata.full_name)pn.value=su.user_metadata.full_name;}}}catch(e){}
   setLang(initial);
   addItem(socBox,"t_soc"); addItem(magBox,"t_mag");
 
@@ -716,6 +728,7 @@ err_req:"ایک لازمی خانہ (* والا) خالی ہے۔",err_photo:"ا�
       membre_acrb:(f.querySelector('input[name="membre_acrb"]:checked')||{}).value||null,
       interets:Array.prototype.map.call(f.querySelectorAll('input[name="interets"]:checked'),function(e){return e.value;}),
       remarques:val(document.getElementById("remarques")),
+      preoccupation_principale:val(document.getElementById("preoccupation")), marketplace:(f.querySelector('input[name="marketplace"]:checked')||{}).value||null, marketplace_commentaire:val(document.getElementById("mk_com")),
       consent_site:document.getElementById("consent_site").checked, consent_rgpd:document.getElementById("consent_rgpd").checked,
       langue_formulaire:lang, user_agent:navigator.userAgent.slice(0,200)
     };

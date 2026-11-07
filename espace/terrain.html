@@ -56,10 +56,8 @@ textarea{width:100%;min-height:70px;border:1px solid var(--line);border-radius:1
 .empty{text-align:center;padding:40px 10px;color:var(--muted)}
 </style></head><body>
 <div id="gate" class="gate" hidden>
-  <h2 style="margin:0 0 4px">Mode terrain ACRB</h2><p style="color:var(--muted);margin:0 0 14px;font-size:14px">Réservé au conseil d'administration. <a href="./">Compte Google autorisé ? Connectez-vous dans l'espace privé</a>, ou entrez le code.</p>
-  <label>Votre prénom (apparaît dans l'historique)</label><input id="g_nom" autocomplete="given-name">
-  <label>Code d'accès</label><input id="g_code" autocomplete="off" autocapitalize="characters">
-  <button id="g_btn">Entrer</button><p id="g_msg" style="color:var(--red);font-size:14px"></p>
+  <h2 style="margin:0 0 4px">Mode terrain ACRB</h2><p style="color:var(--muted);margin:0 0 14px;font-size:14px">Réservé aux administrateurs et aux bénévoles terrain de l'association, avec un compte Google autorisé.</p>
+  <button id="g_btn">Se connecter avec Google</button><p id="g_msg" style="color:var(--muted);font-size:14px;margin-top:10px"></p>
 </div>
 <div id="app" hidden>
 <div class="top"><div class="row"><h1>Mode terrain <small id="who"></small></h1><button class="chip" id="viewbtn" style="padding:6px 12px;font-size:12px">Liste</button><button class="chip" id="setbtn" style="padding:6px 12px;font-size:12px" title="Réglages">⚙</button></div>
@@ -184,11 +182,10 @@ function start(){
 (function(){
   try{code=new URLSearchParams(location.search).get("code")||localStorage.getItem("acrb_code")||"";nom=localStorage.getItem("acrb_nom")||"";}catch(e){}
   function tryEnter(c,n){return fetch(SB+"/rest/v1/rpc/acrb_code_ok",{method:"POST",headers:H(),body:JSON.stringify({p_code:c})}).then(function(r){return r.json();}).then(function(ok){if(ok===true&&n){code=c.toUpperCase().trim();nom=n.trim();try{localStorage.setItem("acrb_code",code);localStorage.setItem("acrb_nom",nom);history.replaceState(null,"",location.pathname);}catch(e){}start();return true;}return false;});}
-  var g=document.getElementById("gate");g.hidden=false;document.getElementById("g_code").value=code;document.getElementById("g_nom").value=nom;
+  var g=document.getElementById("gate");g.hidden=false;code="";
   try{var raw=null;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(/^sb-.*-auth-token$/.test(k))raw=localStorage.getItem(k);}
     if(raw){var sess=JSON.parse(raw);if(sess&&sess.access_token&&sess.expires_at*1000>Date.now()){JWT=sess.access_token;var u=sess.user||{};
-      fetch(SB+"/rest/v1/rpc/acrb_mes_roles",{method:"POST",headers:H(),body:"{}"}).then(function(r){return r.json();}).then(function(roles){if(roles&&(roles.indexOf("ca")>=0||roles.indexOf("admin")>=0)){code="";nom=nom||(u.user_metadata&&u.user_metadata.full_name)||u.email||"";start();}});}}}catch(e){}
-  document.getElementById("g_btn").addEventListener("click",function(){var c=document.getElementById("g_code").value,n=document.getElementById("g_nom").value;if(!n.trim())return document.getElementById("g_msg").textContent="Indiquez votre prénom.";tryEnter(c,n).then(function(ok){if(!ok)document.getElementById("g_msg").textContent="Code incorrect.";}).catch(function(e){document.getElementById("g_msg").textContent="Erreur : "+e.message;});});
-  if(code&&nom)tryEnter(code,nom).catch(function(){});
+      fetch(SB+"/rest/v1/rpc/acrb_mes_roles",{method:"POST",headers:H(),body:"{}"}).then(function(r){return r.json();}).then(function(roles){if(roles&&(roles.indexOf("ca")>=0||roles.indexOf("admin")>=0||roles.indexOf("benevole_terrain")>=0)){nom=(u.user_metadata&&u.user_metadata.full_name)||u.email||"";start();}else{document.getElementById("g_msg").textContent="Compte "+(u.email||"")+" reconnu, mais sans accès au mode terrain. Demandez-le au conseil d'administration.";document.getElementById("g_btn").textContent="Changer de compte";}});}}}catch(e){}
+  document.getElementById("g_btn").addEventListener("click",function(){location.href="./?suite=terrain";});
 })();
 </script></body></html>
