@@ -1,0 +1,756 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shopping Brabant — Fiche commerçant</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@600;700;800&family=Source+Sans+3:wght@400;600;700&family=Noto+Naskh+Arabic:wght@400;600&display=swap">
+<style>
+:root{
+  --bg:#f6f4ef; --card:#ffffff; --fg:#1d1b17; --muted:#6a655c; --line:#dcd7cc;
+  --accent:#9b3a2a; --accent-fg:#ffffff; --err:#b42318; --field:#fbfaf7; --soft:#f7ebe8;
+  --display:"Libre Franklin","Helvetica Neue",Arial,sans-serif; --body:"Source Sans 3","Segoe UI",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font:16px/1.5 var(--body);font-family:var(--body);padding:0 max(16px,env(safe-area-inset-left,0px)) 64px max(16px,env(safe-area-inset-right,0px))}
+html[dir=rtl] body{font-family:"Noto Naskh Arabic","Source Sans 3",system-ui,sans-serif;font-size:17px}
+html[dir=rtl] h1,html[dir=rtl] .card h2,html[dir=rtl] .done h2{font-family:"Noto Naskh Arabic",serif;font-weight:600}
+/* arabe / ourdou : les champs se saisissent en caractères latins, de gauche à droite */
+html[dir=rtl] input:not([type=checkbox]):not([type=radio]),html[dir=rtl] textarea,html[dir=rtl] select{direction:ltr;text-align:left;font-family:"Source Sans 3","Segoe UI",Arial,sans-serif;unicode-bidi:plaintext}
+html[dir=rtl] input::placeholder,html[dir=rtl] textarea::placeholder{direction:rtl;text-align:right;font-family:"Noto Naskh Arabic",sans-serif}
+.latin{display:none;margin:-6px 0 14px;padding:10px 12px;background:var(--soft);border-left:4px solid var(--accent);font-size:15px}html[dir=rtl] .latin{display:block;border-left:0;border-right:4px solid var(--accent)}
+.wrap{max-width:720px;margin:0 auto}
+.langs{display:flex;flex-wrap:wrap;gap:6px;padding-top:16px}
+.langs button{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:600;color:var(--muted)}
+.langs button[aria-pressed=true]{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+header{padding:24px 0}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600}
+html[dir=rtl] .eyebrow{letter-spacing:0}
+h1{font:800 clamp(28px,5.5vw,38px)/1.12 var(--display);letter-spacing:-.02em;margin:8px 0 12px;text-wrap:balance}
+header p{margin:0;color:var(--muted);max-width:60ch}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:24px;margin-top:18px}
+.card h2{font:700 21px/1.2 var(--display);margin:0 0 4px}
+.card .hint{color:var(--muted);font-size:14px;margin:0 0 18px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px}
+.grid .full{grid-column:1/-1}
+@media(max-width:560px){.grid{grid-template-columns:1fr} }
+label{display:block;font-size:13px;font-weight:600;margin-bottom:5px}
+label small{font-weight:400;color:var(--muted)}
+.note{font-size:13px;color:var(--muted);margin:4px 0 0}
+input[type=text],input[type=tel],input[type=email],input[type=url],input[type=time],select,textarea{
+  width:100%;min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:7px;background:var(--field);color:var(--fg);font:inherit}
+input[type=time]{-webkit-appearance:none;appearance:none;min-height:44px}
+textarea{min-height:80px;resize:vertical}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.req::after{content:" *";color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips label{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-weight:500;cursor:pointer;background:var(--field);margin:0}
+.chips input{accent-color:var(--accent)}
+.chips label:has(input:checked){border-color:var(--accent);background:var(--soft)}
+.times{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.days{display:grid;grid-template-columns:auto 1fr 1fr;gap:6px 10px;align-items:center;font-size:14px}
+.days span{font-weight:600}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:14px;margin-top:10px}
+.consent input{margin-top:4px;accent-color:var(--accent);flex:none}
+.consent label{font-weight:400;margin:0}
+button{font:inherit;cursor:pointer}
+.item{border:1px solid var(--line);border-radius:9px;padding:18px;margin-top:14px;background:var(--field)}
+.item .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.item .top h3{margin:0;font-size:16px}
+.item .top .n{display:inline-block;background:var(--accent);color:var(--accent-fg);border-radius:999px;width:24px;height:24px;line-height:24px;text-align:center;font-size:13px;margin-inline-end:8px}
+.rm{background:none;border:1px solid var(--line);border-radius:6px;padding:4px 10px;font-size:13px;color:var(--muted)}
+.adds{display:grid;gap:8px;margin-top:14px}
+.add{width:100%;padding:12px;border:1px dashed var(--accent);border-radius:8px;background:var(--soft);color:var(--accent);font-weight:600}
+details{margin-top:12px;border-top:1px dashed var(--line);padding-top:10px}
+summary{cursor:pointer;font-size:14px;font-weight:600;color:var(--muted)}
+details .grid,details .days{margin-top:12px}
+.sub{display:grid;gap:12px;margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--card)}
+.submit{width:100%;padding:14px;border:0;border-radius:8px;background:var(--accent);color:var(--accent-fg);font-weight:600;font-size:17px;margin-top:22px}
+.submit[disabled]{opacity:.6;cursor:wait}
+.msg{margin-top:14px;padding:12px 14px;border-radius:8px;font-size:14px;display:none}
+.msg.err{display:block;background:#fdeceb;color:var(--err)}
+.done{text-align:center;padding:48px 24px}
+.done h2{font:800 26px/1.15 var(--display);margin:0 0 10px}
+.done p{color:var(--muted)}.done .ref{font-family:monospace;font-size:13px}
+.hp{position:absolute;left:-9999px}.chk{display:flex;gap:8px;align-items:center;font-size:15px}.chk small{color:var(--muted)}
+.lookup{display:flex;gap:8px;margin-top:10px}.lookup input{flex:1}.lookup button{padding:10px 14px;border:0;border-radius:8px;background:var(--accent);color:var(--accent-fg);font-weight:600;white-space:nowrap}
+.hits{display:grid;gap:6px;margin-top:10px}.hit{display:flex;justify-content:space-between;gap:10px;align-items:center;text-align:left;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);font:inherit}
+.hit b{display:block;font-size:15px}.hit small{color:var(--muted)}.hit .pick{color:var(--accent);font-weight:600;white-space:nowrap}
+.picked{display:grid;gap:6px;margin-top:10px}.picked div{padding:8px 12px;border-radius:8px;background:var(--soft);font-size:14px;display:flex;justify-content:space-between;gap:8px}.picked button{background:none;border:0;color:var(--err);font-weight:600}
+.lkmsg{font-size:13px;color:var(--muted);margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="langs" id="langs" role="group" aria-label="Langue / Taal / Language / Dil / اللغة / زبان">
+  <button type="button" data-lang="fr">Français</button>
+  <button type="button" data-lang="nl">Nederlands</button>
+  <button type="button" data-lang="en">English</button>
+  <button type="button" data-lang="tr">Türkçe</button>
+  <button type="button" data-lang="ar">العربية</button>
+  <button type="button" data-lang="ur">اردو</button>
+</div>
+<header>
+  <div class="eyebrow" data-i18n="eyebrow"></div>
+  <h1 data-i18n="h1"></h1>
+  <p data-i18n="intro"></p>
+  <p class="latin" data-i18n="latin_hint"></p>
+</header>
+
+<form id="f" novalidate>
+<input class="hp" type="text" name="website_url" id="website_url" tabindex="-1" autocomplete="off">
+
+<section class="card" id="step0">
+  <h2 data-i18n="s0"></h2>
+  <p class="hint" data-i18n="s0h"></p>
+  <div class="lookup"><input type="search" id="lk" data-i18n-ph="s0_ph" autocomplete="off"><button type="button" id="lkbtn" data-i18n="s0_btn"></button></div>
+  <div class="hits" id="hits"></div>
+  <div class="picked" id="picked"></div>
+  <div class="lkmsg" id="lkmsg"></div>
+  <div id="absents" hidden style="margin-top:14px;padding:12px;border:1px solid var(--line);border-radius:8px">
+    <b data-i18n="s0_abs_t"></b><p class="hint" data-i18n="s0_abs_h" style="margin:4px 0 8px"></p><div id="absents_list" style="display:grid;gap:6px"></div>
+  </div>
+</section>
+
+<section class="card">
+  <h2 data-i18n="s1"></h2>
+  <p class="hint" data-i18n="s1h"></p>
+  <div class="grid">
+    <div class="full"><label for="p_nom" class="req" data-i18n="nomprenom"></label><input type="text" id="p_nom" required autocomplete="name"></div>
+    <div><label for="p_tel" class="req" data-i18n="gsm"></label><input type="tel" id="p_tel" required autocomplete="tel"></div>
+    <div><label for="p_email" data-i18n="email"></label><input type="email" id="p_email" autocomplete="email"></div>
+  </div>
+</section>
+
+<section class="card">
+  <h2 data-i18n="s2"></h2>
+  <p class="hint" data-i18n="s2h"></p>
+  <div id="societes"></div>
+  <div class="adds"><button type="button" class="add" id="add_soc" data-i18n="add_soc"></button></div>
+</section>
+
+<section class="card">
+  <h2 data-i18n="s3"></h2>
+  <p class="hint" data-i18n="s3h"></p>
+  <div id="magasins"></div>
+  <div class="adds">
+    <button type="button" class="add" id="add_mag_copy" data-i18n="add_mag_copy"></button>
+    <button type="button" class="add" id="add_mag" data-i18n="add_mag"></button>
+    <button type="button" class="add" id="add_soc_same" data-i18n="add_soc_same"></button>
+    <p class="note" data-i18n="add_soc_same_h" style="margin:0"></p>
+  </div>
+</section>
+
+<section class="card">
+  <h2 data-i18n="s4"></h2>
+  <div class="grid">
+    <div class="full"><label data-i18n="membre"></label>
+      <div class="chips">
+        <label><input type="radio" name="membre_acrb" value="Oui"><span data-i18n="m_oui"></span></label>
+        <label><input type="radio" name="membre_acrb" value="Non, intéressé"><span data-i18n="m_int"></span></label>
+        <label><input type="radio" name="membre_acrb" value="Non"><span data-i18n="m_non"></span></label>
+        <label><input type="radio" name="membre_acrb" value="Je ne sais pas"><span data-i18n="m_nsp"></span></label>
+      </div>
+    </div>
+    <div class="full"><label data-i18n="interets"></label>
+      <div class="chips">
+        <label><input type="checkbox" name="interets" value="Propreté et sécurité"><span data-i18n="i1"></span></label>
+        <label><input type="checkbox" name="interets" value="Animations et fêtes"><span data-i18n="i2"></span></label>
+        <label><input type="checkbox" name="interets" value="Visibilité en ligne"><span data-i18n="i3"></span></label>
+        <label><input type="checkbox" name="interets" value="Stationnement et mobilité"><span data-i18n="i4"></span></label>
+        <label><input type="checkbox" name="interets" value="Relations avec la commune"><span data-i18n="i5"></span></label>
+        <label><input type="checkbox" name="interets" value="Achats groupés"><span data-i18n="i6"></span></label>
+      </div>
+    </div>
+    <div class="full"><label for="remarques" data-i18n="remarques"></label><textarea id="remarques"></textarea></div>
+  </div>
+  <div class="consent"><input type="checkbox" id="consent_site"><label for="consent_site" data-i18n="consent_site"></label></div>
+  <div class="consent"><input type="checkbox" id="consent_rgpd" required><label for="consent_rgpd" class="req" data-i18n="consent_rgpd"></label></div>
+</section>
+
+<button class="submit" id="btn" type="submit" data-i18n="submit"></button>
+<div class="msg" id="msg"></div>
+</form>
+
+<div class="card done" id="done" hidden>
+  <h2 data-i18n="done_h"></h2>
+  <p data-i18n="done_p"></p>
+</div>
+</div>
+
+<template id="t_soc">
+<div class="item soc">
+  <div class="top"><h3><span class="n"></span><span data-i18n="soc"></span></h3><button type="button" class="rm" data-i18n="rm"></button></div>
+  <div class="grid">
+    <div class="full"><label class="req" data-i18n="denomination"></label><input type="text" data-k="denomination" required></div>
+    <div><label data-i18n="bce"></label><input type="text" data-k="bce" inputmode="numeric"></div>
+    <div><label data-i18n="forme"></label><select data-k="forme_juridique"><option value="" data-i18n="choose"></option><option value="SRL">SRL</option><option value="SA">SA</option><option value="SNC">SNC</option><option value="SCS">SCS</option><option value="Indépendant (personne physique)" data-i18n="indep"></option><option value="ASBL">ASBL</option><option value="Autre" data-i18n="autre"></option></select></div>
+    <div class="full"><label data-i18n="siege"></label><input type="text" data-k="siege_social"></div>
+  </div>
+  <details>
+    <summary data-i18n="soc_details"></summary>
+    <div class="grid">
+      <div class="full"><label data-i18n="gerant"></label><input type="text" data-k="gerant_nom" data-i18n-ph="nomprenom"></div>
+      <div><input type="tel" data-k="gerant_tel" data-i18n-ph="tel"></div>
+      <div><input type="email" data-k="gerant_email" data-i18n-ph="email"></div>
+      <div class="full"><label data-i18n="gerant2"></label><input type="text" data-k="gerant2_nom" data-i18n-ph="nomprenom"></div>
+      <div><input type="tel" data-k="gerant2_tel" data-i18n-ph="tel"></div>
+      <div><input type="email" data-k="gerant2_email" data-i18n-ph="email"></div>
+      <div class="full"><label data-i18n="proprio_soc"></label><input type="text" data-k="proprietaire_nom" data-i18n-ph="nomprenom"></div>
+      <div><input type="tel" data-k="proprietaire_tel" data-i18n-ph="tel"></div>
+      <div><input type="email" data-k="proprietaire_email" data-i18n-ph="email"></div>
+    </div>
+  </details>
+</div>
+</template>
+
+<template id="t_mag">
+<div class="item mag">
+  <div class="top"><h3><span class="n"></span><span data-i18n="mag"></span></h3><button type="button" class="rm" data-i18n="rm"></button></div>
+  <div class="grid">
+    <div class="full"><label class="req" data-i18n="enseigne"></label><input type="text" data-k="enseigne" required autocomplete="organization"></div>
+    <div><label class="req" data-i18n="rue"></label><select data-k="rue" required class="rue_sel">
+      <option value="rue de Brabant">rue de Brabant</option>
+      <option value="place Liedts">place Liedts</option>
+      <option value="rue Quatrecht">rue Quatrecht</option>
+      <option value="rue Allard">rue Allard</option>
+      <option value="rue d'Hoogvorst">rue d'Hoogvorst</option>
+      <option value="rue Gallait">rue Gallait</option>
+      <option value="avenue de la Reine">avenue de la Reine</option>
+      <option value="rue des Palais">rue des Palais</option>
+      <option value="rue Rogier">rue Rogier</option>
+      <option value="Autre" data-i18n="autre_rue"></option>
+    </select><input type="text" data-k="rue_autre" class="rue_autre" data-i18n-ph="rue_autre_ph" hidden style="margin-top:8px"></div>
+    <div><label class="req" data-i18n="numero"></label><input type="text" data-k="numero" required inputmode="numeric"></div>
+    <div><label data-i18n="commune"></label><select data-k="commune"><option value="Schaerbeek (1030)">Schaerbeek (1030)</option><option value="Saint-Josse (1210)">Saint-Josse (1210)</option><option value="Bruxelles (1000)">Bruxelles (1000)</option></select></div>
+    <div><label class="req" data-i18n="societe_de"></label><select data-k="societe" required class="soc_sel"></select></div>
+    <div><label class="req" data-i18n="categorie"></label><select data-k="categorie" required>
+      <option value="" data-i18n="choose"></option>
+      <optgroup data-i18n-label="g_mode">
+        <option value="Vêtements traditionnels / caftans" data-i18n="c1"></option>
+        <option value="Robes de soirée / mariage" data-i18n="c2"></option>
+        <option value="Prêt-à-porter" data-i18n="c3"></option>
+        <option value="Vêtements enfants" data-i18n="c14"></option>
+        <option value="Lingerie" data-i18n="c15"></option>
+        <option value="Chaussures" data-i18n="c4"></option>
+        <option value="Bijoux / accessoires" data-i18n="c5"></option>
+        <option value="Sacs / bagagerie" data-i18n="c16"></option>
+        <option value="Tissus / mercerie" data-i18n="c6"></option>
+      </optgroup>
+      <optgroup data-i18n-label="g_bouche">
+        <option value="Boucherie" data-i18n="c17"></option>
+        <option value="Volaille / rôtisserie" data-i18n="c18"></option>
+        <option value="Poissonnerie" data-i18n="c19"></option>
+        <option value="Boulangerie" data-i18n="c20"></option>
+        <option value="Pâtisserie" data-i18n="c10"></option>
+        <option value="Épicerie / supermarché" data-i18n="c8"></option>
+        <option value="Fruits et légumes" data-i18n="c21"></option>
+        <option value="Traiteur / plats à emporter" data-i18n="c22"></option>
+        <option value="Restaurant / café / snack" data-i18n="c9"></option>
+        <option value="Thé, café, épices, fruits secs" data-i18n="c23"></option>
+      </optgroup>
+      <optgroup data-i18n-label="g_maison">
+        <option value="Maison / décoration" data-i18n="c12"></option>
+        <option value="Textile de maison" data-i18n="c24"></option>
+        <option value="Vaisselle / cadeaux" data-i18n="c25"></option>
+        <option value="Bazar / discount" data-i18n="c26"></option>
+      </optgroup>
+      <optgroup data-i18n-label="g_beaute">
+        <option value="Coiffure / barbier" data-i18n="c7"></option>
+        <option value="Salon de beauté / esthétique" data-i18n="c27"></option>
+        <option value="Parfumerie / cosmétiques" data-i18n="c28"></option>
+        <option value="Pharmacie / optique" data-i18n="c29"></option>
+      </optgroup>
+      <optgroup data-i18n-label="g_services">
+        <option value="Télécom / électronique" data-i18n="c11"></option>
+        <option value="Agence (voyages, assurance, immobilier)" data-i18n="c13"></option>
+        <option value="Banque / transfert d'argent" data-i18n="c30"></option>
+        <option value="Nettoyage à sec / retouches" data-i18n="c31"></option>
+      </optgroup>
+      <option value="Autre" data-i18n="autre"></option>
+    </select></div>
+    <div class="full"><label class="req" data-i18n="articles"></label><input type="text" data-k="articles" required data-i18n-ph="articles_ph"></div>
+    <div><label data-i18n="debut"></label><input type="text" data-k="debut_activite" inputmode="numeric" maxlength="4"></div>
+    <div><label data-i18n="tel_mag"></label><input type="tel" data-k="tel"></div>
+    <div class="full"><label data-i18n="email_mag"></label><input type="email" data-k="email"></div>
+    <div class="full"><label data-i18n="description"></label><textarea data-k="description" data-i18n-ph="desc_ph"></textarea></div>
+    <div class="full"><label data-i18n="langues"></label>
+      <div class="chips">
+        <label><input type="checkbox" data-l value="Français"><span data-i18n="L1"></span></label>
+        <label><input type="checkbox" data-l value="Néerlandais"><span data-i18n="L2"></span></label>
+        <label><input type="checkbox" data-l value="Anglais"><span data-i18n="L3"></span></label>
+        <label><input type="checkbox" data-l value="Arabe"><span data-i18n="L4"></span></label>
+        <label><input type="checkbox" data-l value="Turc"><span data-i18n="L5"></span></label>
+        <label><input type="checkbox" data-l value="Ourdou"><span data-i18n="L6"></span></label>
+        <label><input type="checkbox" data-l value="Espagnol"><span data-i18n="L7"></span></label>
+      </div>
+    </div>
+
+    <div class="full"><label data-i18n="jours_ouv"></label>
+      <div class="chips">
+        <label><input type="checkbox" data-d="Lundi" checked><span data-i18n="d1"></span></label>
+        <label><input type="checkbox" data-d="Mardi" checked><span data-i18n="d2"></span></label>
+        <label><input type="checkbox" data-d="Mercredi" checked><span data-i18n="d3"></span></label>
+        <label><input type="checkbox" data-d="Jeudi" checked><span data-i18n="d4"></span></label>
+        <label><input type="checkbox" data-d="Vendredi" checked><span data-i18n="d5"></span></label>
+        <label><input type="checkbox" data-d="Samedi" checked><span data-i18n="d6"></span></label>
+        <label><input type="checkbox" data-d="Dimanche"><span data-i18n="d7"></span></label>
+      </div>
+    </div>
+    <div class="full"><label data-i18n="horaires"></label>
+      <div class="times">
+        <div><label data-i18n="ouverture"></label><input type="time" data-g="open"></div>
+        <div><label data-i18n="fermeture"></label><input type="time" data-g="close"></div>
+      </div>
+      <p class="note" data-i18n="horaires_h"></p>
+      <details class="hdiff">
+        <summary data-i18n="horaires_diff"></summary>
+        <div class="days">
+          <span data-i18n="d1"></span><input type="time" data-do="Lundi"><input type="time" data-dc="Lundi">
+          <span data-i18n="d2"></span><input type="time" data-do="Mardi"><input type="time" data-dc="Mardi">
+          <span data-i18n="d3"></span><input type="time" data-do="Mercredi"><input type="time" data-dc="Mercredi">
+          <span data-i18n="d4"></span><input type="time" data-do="Jeudi"><input type="time" data-dc="Jeudi">
+          <span data-i18n="d5"></span><input type="time" data-do="Vendredi"><input type="time" data-dc="Vendredi">
+          <span data-i18n="d6"></span><input type="time" data-do="Samedi"><input type="time" data-dc="Samedi">
+          <span data-i18n="d7"></span><input type="time" data-do="Dimanche"><input type="time" data-dc="Dimanche">
+        </div>
+      </details>
+    </div>
+
+    <div class="full"><label data-i18n="priere"></label>
+      <div class="chips">
+        <label><input type="radio" data-p value="Oui"><span data-i18n="pr_oui"></span></label>
+        <label><input type="radio" data-p value="Non"><span data-i18n="pr_non"></span></label>
+        <label><input type="radio" data-p value="Variable"><span data-i18n="pr_var"></span></label>
+      </div>
+      <div class="sub pbox" hidden>
+        <div class="times">
+          <div><label data-i18n="priere_from"></label><input type="time" data-k="priere_fermeture"></div>
+          <div><label data-i18n="priere_to"></label><input type="time" data-k="priere_reouverture"></div>
+        </div>
+        <p class="note" data-i18n="priere_hint" style="margin:0"></p>
+        <div class="consent" style="margin:0"><input type="checkbox" data-k2="priere_ete_decalage" checked><label data-i18n="priere_ete"></label></div>
+      </div>
+    </div>
+
+    <div class="full"><label data-i18n="fermetures"></label>
+      <div class="chips">
+        <label><input type="checkbox" data-k2="ferme_aid_fitr"><span data-i18n="aid_fitr"></span></label>
+        <label><input type="checkbox" data-k2="ferme_aid_adha"><span data-i18n="aid_adha"></span></label>
+      </div>
+    </div>
+    <div class="full"><label data-i18n="autres_ferm"></label><input type="text" data-k="fermetures_autres"></div>
+    <div><label data-i18n="logo"></label><input type="file" data-f="logo" accept="image/*"></div>
+    <div><label data-i18n="photo"></label><input type="file" data-f="photo" accept="image/*"></div>
+  </div>
+  <details>
+    <summary data-i18n="online"></summary>
+    <div class="grid">
+      <div><label data-i18n="site"></label><input type="url" data-k="site_web" placeholder="https://"></div>
+      <div><label>Instagram</label><input type="text" data-k="instagram" placeholder="@…"></div>
+      <div><label>Facebook</label><input type="text" data-k="facebook"></div>
+      <div><label>TikTok</label><input type="text" data-k="tiktok" placeholder="@…"></div>
+      <div class="full"><label data-i18n="maps"></label><input type="url" data-k="google_maps" placeholder="https://maps.app.goo.gl/…"></div>
+    </div>
+  </details>
+  <details open>
+    <summary data-i18n="resp_sum"></summary>
+    <p class="note" data-i18n="resp_h"></p>
+    <div class="grid">
+      <div class="full"><label data-i18n="resp"></label><input type="text" data-k="responsable_nom" data-i18n-ph="nomprenom"></div>
+      <div><input type="tel" data-k="responsable_tel" data-i18n-ph="tel"></div>
+      <div><input type="email" data-k="responsable_email" data-i18n-ph="email"></div>
+    </div>
+  </details>
+  <details>
+    <summary data-i18n="murs_sum"></summary>
+    <div class="grid">
+      <div class="full"><label data-i18n="murs"></label><input type="text" data-k="proprietaire_murs" data-i18n-ph="murs_ph"></div>
+    </div>
+  </details>
+</div>
+</template>
+
+<script>
+var I18N={
+fr:{s0_abs_t:"Autres établissements enregistrés à votre adresse",s0_abs_h:"Cochez ceux qui ne sont plus à cette adresse : ils seront retirés du site. Ne cochez rien si un autre commerce occupe réellement le même numéro.",done_ref:"Référence de votre envoi",latin_hint:"",s0:"0. Déjà dans l'annuaire ?",s0h:"Cherchez votre commerce (enseigne, nom de société, numéro d'entreprise ou numéro de rue). Les données officielles sont reprises automatiquement ; vous ne complétez que ce qui manque. Plusieurs commerces ? Ajoutez-les un par un.",s0_ph:"Enseigne, société, n° BCE ou n° de rue…",s0_btn:"Chercher",s0_pick:"Reprendre",s0_none:"Aucun résultat : remplissez le formulaire ci-dessous.",s0_done:"Données reprises de l'annuaire. Vérifiez-les, puis complétez.",s0_err:"Recherche impossible pour le moment : remplissez le formulaire.",gerant2:"Deuxième gérant·e (s'il y en a un)",resp_h:"C'est la personne que l'ACRB et les clients contacteront en premier pour ce magasin. Laissez vide si c'est vous.",murs_sum:"Propriétaire des murs (facultatif)","add_soc_same":"+ Même activité sous une autre société","add_soc_same_h":"Nous ajoutons une société et un magasin identique au précédent : il ne vous reste que le nom de la société et le numéro du magasin.",eyebrow:"Association des Commerçants de la Rue de Brabant",h1:"Mettons à jour votre fiche commerçant",intro:"L'ACRB refait son annuaire et son site. Seuls les champs marqués * sont obligatoires. Si vous avez plusieurs sociétés ou plusieurs magasins, ajoutez-les un par un : chaque magasin est rattaché à sa société.",
+s1:"1. Vous",s1h:"La personne qui remplit cette fiche et que l'ACRB peut contacter.",nomprenom:"Nom et prénom",gsm:"GSM",tel:"Téléphone",email:"E-mail",
+s2:"2. Vos sociétés",s2h:"Une société par bloc. Les données administratives ne sont jamais publiées.",add_soc:"+ Ajouter une société",soc:"Société",rm:"Retirer",denomination:"Dénomination sociale",bce:"Numéro d'entreprise (BCE / TVA)",forme:"Forme juridique",choose:"Choisir…",indep:"Indépendant (personne physique)",autre:"Autre",siege:"Siège social (si différent du magasin)",soc_details:"Gérant et propriétaire de la société (facultatif, si ce n'est pas vous)",gerant:"Gérant·e",proprio_soc:"Propriétaire de la société",
+s3:"3. Vos magasins",s3h:"Un magasin par bloc, rattaché à l'une de vos sociétés. C'est ce qui apparaîtra sur le site de l'ACRB. Pour un second magasin qui vend la même chose, utilisez « Ajouter un magasin identique » : tout est recopié, il ne reste que l'adresse à changer.",add_mag:"+ Ajouter un magasin différent",add_mag_copy:"+ Ajouter un magasin identique (copie du précédent)",mag:"Magasin",enseigne:"Nom de l'enseigne",rue:"Rue",autre_rue:"Autre rue…",rue_autre_ph:"Nom de la rue",numero:"Numéro",commune:"Commune",societe_de:"Société de ce magasin",categorie:"Type de commerce",
+g_mode:"Mode et accessoires",g_bouche:"Alimentation et bouche",g_maison:"Maison",g_beaute:"Beauté et soins",g_services:"Services",
+c1:"Vêtements traditionnels / caftans",c2:"Robes de soirée / mariage",c3:"Prêt-à-porter",c4:"Chaussures",c5:"Bijoux / accessoires",c6:"Tissus / mercerie",c7:"Coiffure / barbier",c8:"Épicerie / supermarché",c9:"Restaurant / café / snack",c10:"Pâtisserie",c11:"Télécom / électronique",c12:"Maison / décoration",c13:"Agence (voyages, assurance, immobilier)",c14:"Vêtements enfants",c15:"Lingerie",c16:"Sacs / bagagerie",c17:"Boucherie",c18:"Volaille / rôtisserie",c19:"Poissonnerie",c20:"Boulangerie",c21:"Fruits et légumes",c22:"Traiteur / plats à emporter",c23:"Thé, café, épices, fruits secs",c24:"Textile de maison",c25:"Vaisselle / cadeaux",c26:"Bazar / discount",c27:"Salon de beauté / esthétique",c28:"Parfumerie / cosmétiques",c29:"Pharmacie / optique",c30:"Banque / transfert d'argent",c31:"Nettoyage à sec / retouches",
+articles:"Articles ou services proposés",articles_ph:"Décrivez en quelques mots ce que vous vendez",debut:"Début de l'activité dans la rue (année)",tel_mag:"Téléphone du magasin",email_mag:"E-mail du magasin",description:"Présentation pour le site (2 à 4 phrases)",desc_ph:"Ce que les clients doivent savoir de vous.",
+langues:"Langues parlées en magasin",L1:"Français",L2:"Néerlandais",L3:"Anglais",L4:"Arabe",L5:"Turc",L6:"Ourdou",L7:"Espagnol",
+jours_ouv:"Jours d'ouverture",horaires:"Horaires habituels",ouverture:"Ouverture",fermeture:"Fermeture",horaires_h:"Ces heures s'appliquent à tous les jours d'ouverture cochés.",horaires_diff:"Certains jours ont des horaires différents",d1:"Lundi",d2:"Mardi",d3:"Mercredi",d4:"Jeudi",d5:"Vendredi",d6:"Samedi",d7:"Dimanche",
+priere:"Le vendredi, le magasin ferme-t-il pour la prière ?",pr_oui:"Oui",pr_non:"Non, ouvert en continu",pr_var:"Variable",priere_from:"Fermeture",priere_to:"Réouverture",priere_hint:"Indiquez vos heures d'hiver. Beaucoup de magasins ferment vers 12 h 50 et rouvrent vers 13 h 30 ; adaptez à votre pratique.",priere_ete:"En heure d'été, c'est une heure plus tard",
+fermetures:"Jours de fermeture pour les fêtes",aid_fitr:"Fermé le jour de l'Aïd al-Fitr",aid_adha:"Fermé le jour de l'Aïd al-Adha (fête du mouton)",autres_ferm:"Autres fermetures (congés annuels, jours fériés…)",
+logo:"Logo (image)",photo:"Photo de la façade",online:"Présence en ligne (facultatif)",site:"Site web",maps:"Fiche Google Maps (lien)",
+resp_sum:"Responsable du magasin",resp:"Nom et prénom du responsable sur place",murs:"Propriétaire des murs / de l'immeuble (si vous le connaissez)",murs_ph:"Nom ou société",
+s4:"4. L'association et vous",membre:"Êtes-vous membre de l'ACRB ?",m_oui:"Oui",m_int:"Non, mais ça m'intéresse",m_non:"Non",m_nsp:"Je ne sais pas",interets:"Sujets qui vous intéressent",i1:"Propreté et sécurité",i2:"Animations et fêtes",i3:"Visibilité en ligne",i4:"Stationnement et mobilité",i5:"Relations avec la commune",i6:"Achats groupés",remarques:"Remarques, demandes, idées",
+consent_site:"J'accepte que les informations des magasins (enseigne, adresse, téléphone du magasin, horaires, articles, description, liens, logo, photo) soient publiées sur le site de l'ACRB.",consent_rgpd:"Je consens à ce que l'ACRB conserve ces données pour la gestion de l'association et pour me contacter. Les coordonnées personnelles et les données de société ne sont jamais publiées. Modification ou suppression possible à tout moment sur simple demande.",
+submit:"Envoyer ma fiche",sending:"Envoi en cours…",done_h:"Merci, votre fiche est enregistrée.",done_p:"L'ACRB reprendra contact avec vous si une précision est nécessaire.",
+err_req:"Il manque un champ obligatoire (marqué *).",err_photo:"Une photo dépasse 8 Mo.",err_save:"Enregistrement refusé. Réessayez dans un instant.",err_generic:"Une erreur est survenue. Réessayez dans un instant."},
+
+nl:{s0_abs_t:"Andere vestigingen geregistreerd op uw adres",s0_abs_h:"Vink aan welke niet meer op dit adres zijn: ze worden van de website verwijderd. Vink niets aan als een andere zaak werkelijk hetzelfde nummer deelt.",done_ref:"Referentie van uw inzending",latin_hint:"",s0:"0. Al in de gids?",s0h:"Zoek uw zaak (handelsnaam, vennootschap, ondernemingsnummer of huisnummer). De officiële gegevens worden automatisch overgenomen; u vult enkel aan wat ontbreekt. Meerdere zaken? Voeg ze één voor één toe.",s0_ph:"Handelsnaam, vennootschap, KBO-nr. of huisnummer…",s0_btn:"Zoeken",s0_pick:"Overnemen",s0_none:"Geen resultaat: vul het formulier hieronder in.",s0_done:"Gegevens overgenomen uit de gids. Controleer ze en vul aan.",s0_err:"Zoeken is nu niet mogelijk: vul het formulier in.",gerant2:"Tweede zaakvoerder (indien van toepassing)",resp_h:"De persoon die de ACRB en de klanten eerst contacteren voor deze winkel. Leeg laten als u het zelf bent.",murs_sum:"Eigenaar van het pand (optioneel)","add_soc_same":"+ Zelfde activiteit onder een andere vennootschap","add_soc_same_h":"We voegen een vennootschap en een winkel identiek aan de vorige toe: u vult alleen de naam van de vennootschap en het huisnummer in.",eyebrow:"Handelaarsvereniging Brabantstraat",h1:"Werk uw handelaarsfiche bij",intro:"De ACRB vernieuwt haar gids en website. Alleen de velden met * zijn verplicht. Hebt u meerdere vennootschappen of winkels? Voeg ze één voor één toe: elke winkel hoort bij een vennootschap.",
+s1:"1. U",s1h:"De persoon die deze fiche invult en die de ACRB mag contacteren.",nomprenom:"Naam en voornaam",gsm:"Gsm",tel:"Telefoon",email:"E-mail",
+s2:"2. Uw vennootschappen",s2h:"Eén vennootschap per blok. Administratieve gegevens worden nooit gepubliceerd.",add_soc:"+ Vennootschap toevoegen",soc:"Vennootschap",rm:"Verwijderen",denomination:"Maatschappelijke naam",bce:"Ondernemingsnummer (KBO / btw)",forme:"Rechtsvorm",choose:"Kies…",indep:"Zelfstandige (natuurlijke persoon)",autre:"Andere",siege:"Maatschappelijke zetel (indien anders dan de winkel)",soc_details:"Zaakvoerder en eigenaar van de vennootschap (optioneel, als u het niet zelf bent)",gerant:"Zaakvoerder",proprio_soc:"Eigenaar van de vennootschap",
+s3:"3. Uw winkels",s3h:"Eén winkel per blok, gekoppeld aan een van uw vennootschappen. Dit verschijnt op de website van de ACRB. Voor een tweede winkel met hetzelfde aanbod: gebruik « Identieke winkel toevoegen », alles wordt gekopieerd en u past alleen het adres aan.",add_mag:"+ Andere winkel toevoegen",add_mag_copy:"+ Identieke winkel toevoegen (kopie van de vorige)",mag:"Winkel",enseigne:"Naam van de winkel",rue:"Straat",autre_rue:"Andere straat…",rue_autre_ph:"Naam van de straat",numero:"Huisnummer",commune:"Gemeente",societe_de:"Vennootschap van deze winkel",categorie:"Soort handel",
+g_mode:"Mode en accessoires",g_bouche:"Voeding",g_maison:"Huis",g_beaute:"Schoonheid en verzorging",g_services:"Diensten",
+c1:"Traditionele kleding / kaftans",c2:"Avond- / bruidsjurken",c3:"Confectiekleding",c4:"Schoenen",c5:"Juwelen / accessoires",c6:"Stoffen / fournituren",c7:"Kapper / barbier",c8:"Kruidenier / supermarkt",c9:"Restaurant / café / snack",c10:"Patisserie",c11:"Telecom / elektronica",c12:"Huis / decoratie",c13:"Agentschap (reizen, verzekeringen, vastgoed)",c14:"Kinderkleding",c15:"Lingerie",c16:"Tassen / reisgoed",c17:"Slagerij",c18:"Gevogelte / rotisserie",c19:"Viswinkel",c20:"Bakkerij",c21:"Groenten en fruit",c22:"Traiteur / afhaalmaaltijden",c23:"Thee, koffie, kruiden, noten",c24:"Huishoudtextiel",c25:"Vaatwerk / geschenken",c26:"Bazaar / discount",c27:"Schoonheidssalon",c28:"Parfumerie / cosmetica",c29:"Apotheek / optiek",c30:"Bank / geldtransfer",c31:"Droogkuis / retouches",
+articles:"Aangeboden artikelen of diensten",articles_ph:"Beschrijf in enkele woorden wat u verkoopt",debut:"Start van de activiteit in de straat (jaar)",tel_mag:"Telefoon van de winkel",email_mag:"E-mail van de winkel",description:"Voorstelling voor de website (2 tot 4 zinnen)",desc_ph:"Wat klanten over u moeten weten.",
+langues:"Talen gesproken in de winkel",L1:"Frans",L2:"Nederlands",L3:"Engels",L4:"Arabisch",L5:"Turks",L6:"Urdu",L7:"Spaans",
+jours_ouv:"Openingsdagen",horaires:"Gewone openingsuren",ouverture:"Open",fermeture:"Sluit",horaires_h:"Deze uren gelden voor alle aangevinkte openingsdagen.",horaires_diff:"Sommige dagen hebben andere uren",d1:"Maandag",d2:"Dinsdag",d3:"Woensdag",d4:"Donderdag",d5:"Vrijdag",d6:"Zaterdag",d7:"Zondag",
+priere:"Sluit de winkel op vrijdag voor het gebed?",pr_oui:"Ja",pr_non:"Nee, doorlopend open",pr_var:"Wisselend",priere_from:"Sluit",priere_to:"Heropent",priere_hint:"Geef uw winteruren. Veel winkels sluiten rond 12.50 u en heropenen rond 13.30 u; pas aan naar uw gewoonte.",priere_ete:"In de zomertijd is het een uur later",
+fermetures:"Sluitingsdagen voor feesten",aid_fitr:"Gesloten op Eid al-Fitr",aid_adha:"Gesloten op Eid al-Adha (Offerfeest)",autres_ferm:"Andere sluitingen (jaarlijks verlof, feestdagen…)",
+logo:"Logo (afbeelding)",photo:"Foto van de gevel",online:"Online aanwezigheid (optioneel)",site:"Website",maps:"Google Maps-fiche (link)",
+resp_sum:"Verantwoordelijke van de winkel",resp:"Naam en voornaam van de verantwoordelijke ter plaatse",murs:"Eigenaar van het pand / gebouw (indien bekend)",murs_ph:"Naam of vennootschap",
+s4:"4. De vereniging en u",membre:"Bent u lid van de ACRB?",m_oui:"Ja",m_int:"Nee, maar het interesseert mij",m_non:"Nee",m_nsp:"Ik weet het niet",interets:"Onderwerpen die u interesseren",i1:"Netheid en veiligheid",i2:"Animatie en feesten",i3:"Online zichtbaarheid",i4:"Parkeren en mobiliteit",i5:"Relaties met de gemeente",i6:"Groepsaankopen",remarques:"Opmerkingen, vragen, ideeën",
+consent_site:"Ik ga akkoord dat de winkelgegevens (naam, adres, telefoon van de winkel, uren, artikelen, voorstelling, links, logo, foto) op de website van de ACRB worden gepubliceerd.",consent_rgpd:"Ik stem ermee in dat de ACRB deze gegevens bewaart voor het beheer van de vereniging en om mij te contacteren. Persoonlijke gegevens en vennootschapsgegevens worden nooit gepubliceerd. Wijziging of verwijdering is op eenvoudig verzoek altijd mogelijk.",
+submit:"Mijn fiche verzenden",sending:"Bezig met verzenden…",done_h:"Bedankt, uw fiche is geregistreerd.",done_p:"De ACRB neemt contact met u op als er iets moet worden verduidelijkt.",
+err_req:"Er ontbreekt een verplicht veld (met *).",err_photo:"Een foto is groter dan 8 MB.",err_save:"Opslaan geweigerd. Probeer het zo meteen opnieuw.",err_generic:"Er is een fout opgetreden. Probeer het zo meteen opnieuw."},
+
+en:{s0_abs_t:"Other establishments registered at your address",s0_abs_h:"Tick those no longer at this address: they will be removed from the site. Tick nothing if another business really shares the same number.",done_ref:"Reference of your submission",latin_hint:"",s0:"0. Already in the directory?",s0h:"Search for your business (trade name, company, company number or street number). Official data is filled in automatically; you only complete what is missing. Several shops? Add them one by one.",s0_ph:"Trade name, company, CBE no. or street no.…",s0_btn:"Search",s0_pick:"Use",s0_none:"No result: fill in the form below.",s0_done:"Data taken from the directory. Check it, then complete.",s0_err:"Search unavailable right now: fill in the form.",gerant2:"Second manager (if any)",resp_h:"The person the ACRB and customers will contact first for this shop. Leave empty if it is you.",murs_sum:"Owner of the premises (optional)","add_soc_same":"+ Same activity under another company","add_soc_same_h":"We add a company and a shop identical to the previous one: you only fill in the company name and the shop number.",eyebrow:"Rue de Brabant Merchants' Association",h1:"Let's update your shop listing",intro:"The ACRB is rebuilding its directory and website. Only fields marked * are required. If you have several companies or shops, add them one by one: each shop is linked to its company.",
+s1:"1. You",s1h:"The person filling in this form, whom the ACRB may contact.",nomprenom:"Full name",gsm:"Mobile",tel:"Phone",email:"E-mail",
+s2:"2. Your companies",s2h:"One company per block. Administrative data is never published.",add_soc:"+ Add a company",soc:"Company",rm:"Remove",denomination:"Company name",bce:"Company number (CBE / VAT)",forme:"Legal form",choose:"Choose…",indep:"Self-employed (natural person)",autre:"Other",siege:"Registered office (if different from the shop)",soc_details:"Manager and owner of the company (optional, if not you)",gerant:"Manager",proprio_soc:"Owner of the company",
+s3:"3. Your shops",s3h:"One shop per block, linked to one of your companies. This is what will appear on the ACRB website. For a second shop selling the same things, use \"Add an identical shop\": everything is copied, you only change the address.",add_mag:"+ Add a different shop",add_mag_copy:"+ Add an identical shop (copy of the previous one)",mag:"Shop",enseigne:"Shop name",rue:"Street",autre_rue:"Other street…",rue_autre_ph:"Street name",numero:"Number",commune:"Municipality",societe_de:"Company of this shop",categorie:"Type of business",
+g_mode:"Fashion and accessories",g_bouche:"Food",g_maison:"Home",g_beaute:"Beauty and care",g_services:"Services",
+c1:"Traditional clothing / caftans",c2:"Evening / wedding dresses",c3:"Ready-to-wear",c4:"Shoes",c5:"Jewellery / accessories",c6:"Fabrics / haberdashery",c7:"Hairdresser / barber",c8:"Grocery / supermarket",c9:"Restaurant / café / snack",c10:"Pastry",c11:"Telecom / electronics",c12:"Home / decoration",c13:"Agency (travel, insurance, real estate)",c14:"Children's clothing",c15:"Lingerie",c16:"Bags / luggage",c17:"Butcher",c18:"Poultry / rotisserie",c19:"Fishmonger",c20:"Bakery",c21:"Fruit and vegetables",c22:"Caterer / take-away",c23:"Tea, coffee, spices, dried fruit",c24:"Home textiles",c25:"Tableware / gifts",c26:"Bazaar / discount",c27:"Beauty salon",c28:"Perfumery / cosmetics",c29:"Pharmacy / optician",c30:"Bank / money transfer",c31:"Dry cleaning / alterations",
+articles:"Items or services offered",articles_ph:"Describe in a few words what you sell",debut:"Year you started trading on the street",tel_mag:"Shop phone",email_mag:"Shop e-mail",description:"Presentation for the website (2 to 4 sentences)",desc_ph:"What customers should know about you.",
+langues:"Languages spoken in the shop",L1:"French",L2:"Dutch",L3:"English",L4:"Arabic",L5:"Turkish",L6:"Urdu",L7:"Spanish",
+jours_ouv:"Opening days",horaires:"Usual hours",ouverture:"Opens",fermeture:"Closes",horaires_h:"These hours apply to every ticked opening day.",horaires_diff:"Some days have different hours",d1:"Monday",d2:"Tuesday",d3:"Wednesday",d4:"Thursday",d5:"Friday",d6:"Saturday",d7:"Sunday",
+priere:"On Fridays, does the shop close for prayer?",pr_oui:"Yes",pr_non:"No, open all day",pr_var:"It varies",priere_from:"Closes",priere_to:"Reopens",priere_hint:"Give your winter-time hours. Many shops close around 12:50 and reopen around 13:30; adjust to your own practice.",priere_ete:"In summer time it is one hour later",
+fermetures:"Closing days for religious holidays",aid_fitr:"Closed on Eid al-Fitr",aid_adha:"Closed on Eid al-Adha",autres_ferm:"Other closures (annual holidays, public holidays…)",
+logo:"Logo (image)",photo:"Photo of the shopfront",online:"Online presence (optional)",site:"Website",maps:"Google Maps listing (link)",
+resp_sum:"Shop manager",resp:"Full name of the on-site manager",murs:"Owner of the premises / building (if known)",murs_ph:"Name or company",
+s4:"4. The association and you",membre:"Are you a member of the ACRB?",m_oui:"Yes",m_int:"No, but I'm interested",m_non:"No",m_nsp:"I don't know",interets:"Topics that interest you",i1:"Cleanliness and safety",i2:"Events and festivities",i3:"Online visibility",i4:"Parking and mobility",i5:"Relations with the municipality",i6:"Group purchasing",remarques:"Remarks, requests, ideas",
+consent_site:"I agree that the shop details (name, address, shop phone, hours, items, presentation, links, logo, photo) may be published on the ACRB website.",consent_rgpd:"I consent to the ACRB keeping this data to run the association and to contact me. Personal contact details and company data are never published. You can ask for a change or deletion at any time.",
+submit:"Send my listing",sending:"Sending…",done_h:"Thank you, your listing has been saved.",done_p:"The ACRB will get back to you if anything needs clarifying.",
+err_req:"A required field (marked *) is missing.",err_photo:"A photo exceeds 8 MB.",err_save:"Saving was refused. Please try again in a moment.",err_generic:"Something went wrong. Please try again in a moment."},
+
+tr:{s0_abs_t:"Adresinizde kayıtlı diğer işletmeler",s0_abs_h:"Artık bu adreste olmayanları işaretleyin: siteden kaldırılacaklar. Aynı numarayı gerçekten paylaşan bir işletme varsa hiçbir şeyi işaretlemeyin.",done_ref:"Gönderi referansınız",latin_hint:"",s0:"0. Rehberde zaten var mısınız?",s0h:"İşletmenizi arayın (tabela adı, şirket, işletme numarası veya kapı numarası). Resmi veriler otomatik alınır; yalnızca eksikleri tamamlarsınız. Birden fazla mağaza? Tek tek ekleyin.",s0_ph:"Tabela adı, şirket, BCE no. veya kapı no.…",s0_btn:"Ara",s0_pick:"Al",s0_none:"Sonuç yok: aşağıdaki formu doldurun.",s0_done:"Veriler rehberden alındı. Kontrol edin, sonra tamamlayın.",s0_err:"Arama şu an yapılamıyor: formu doldurun.",gerant2:"İkinci yönetici (varsa)",resp_h:"ACRB ve müşterilerin bu mağaza için ilk arayacağı kişi. Siz iseniz boş bırakın.",murs_sum:"Dükkân sahibi (isteğe bağlı)","add_soc_same":"+ Aynı faaliyet, başka bir şirket altında","add_soc_same_h":"Bir şirket ve öncekiyle aynı bir mağaza ekliyoruz: yalnızca şirket adını ve kapı numarasını girersiniz.",eyebrow:"Rue de Brabant Esnaf Derneği",h1:"Esnaf bilgi formunuzu güncelleyelim",intro:"ACRB rehberini ve web sitesini yeniliyor. Yalnızca * işaretli alanlar zorunludur. Birden fazla şirketiniz veya mağazanız varsa tek tek ekleyin: her mağaza bir şirkete bağlıdır.",
+s1:"1. Siz",s1h:"Bu formu dolduran ve ACRB'nin iletişime geçebileceği kişi.",nomprenom:"Ad ve soyad",gsm:"Cep telefonu",tel:"Telefon",email:"E-posta",
+s2:"2. Şirketleriniz",s2h:"Her blokta bir şirket. İdari bilgiler asla yayımlanmaz.",add_soc:"+ Şirket ekle",soc:"Şirket",rm:"Kaldır",denomination:"Şirket unvanı",bce:"İşletme numarası (BCE / KDV)",forme:"Hukuki yapı",choose:"Seçin…",indep:"Serbest meslek (gerçek kişi)",autre:"Diğer",siege:"Şirket merkezi (mağazadan farklıysa)",soc_details:"Şirket yöneticisi ve sahibi (isteğe bağlı, siz değilseniz)",gerant:"Yönetici",proprio_soc:"Şirket sahibi",
+s3:"3. Mağazalarınız",s3h:"Her blokta bir mağaza, şirketlerinizden birine bağlı. ACRB web sitesinde görünecek bilgiler bunlardır. Aynı ürünleri satan ikinci bir mağaza için « Aynı mağazayı ekle » düğmesini kullanın: her şey kopyalanır, yalnızca adresi değiştirirsiniz.",add_mag:"+ Farklı bir mağaza ekle",add_mag_copy:"+ Aynı mağazayı ekle (öncekinin kopyası)",mag:"Mağaza",enseigne:"Mağaza adı",rue:"Sokak",autre_rue:"Başka sokak…",rue_autre_ph:"Sokak adı",numero:"Kapı numarası",commune:"Belediye",societe_de:"Bu mağazanın şirketi",categorie:"İşletme türü",
+g_mode:"Moda ve aksesuar",g_bouche:"Gıda",g_maison:"Ev",g_beaute:"Güzellik ve bakım",g_services:"Hizmetler",
+c1:"Geleneksel giyim / kaftan",c2:"Abiye / gelinlik",c3:"Hazır giyim",c4:"Ayakkabı",c5:"Takı / aksesuar",c6:"Kumaş / tuhafiye",c7:"Kuaför / berber",c8:"Bakkal / market",c9:"Restoran / kafe / büfe",c10:"Pastane",c11:"Telekom / elektronik",c12:"Ev / dekorasyon",c13:"Acente (seyahat, sigorta, emlak)",c14:"Çocuk giyim",c15:"İç giyim",c16:"Çanta / valiz",c17:"Kasap",c18:"Tavukçu / rotisserie",c19:"Balıkçı",c20:"Fırın",c21:"Manav",c22:"Yemek servisi / paket servis",c23:"Çay, kahve, baharat, kuruyemiş",c24:"Ev tekstili",c25:"Züccaciye / hediyelik",c26:"Pazar / indirim mağazası",c27:"Güzellik salonu",c28:"Parfümeri / kozmetik",c29:"Eczane / optik",c30:"Banka / para transferi",c31:"Kuru temizleme / terzi",
+articles:"Sunulan ürün veya hizmetler",articles_ph:"Ne sattığınızı birkaç kelimeyle anlatın",debut:"Sokakta faaliyete başlama yılı",tel_mag:"Mağaza telefonu",email_mag:"Mağaza e-postası",description:"Web sitesi için tanıtım (2-4 cümle)",desc_ph:"Müşterilerin sizin hakkınızda bilmesi gerekenler.",
+langues:"Mağazada konuşulan diller",L1:"Fransızca",L2:"Felemenkçe",L3:"İngilizce",L4:"Arapça",L5:"Türkçe",L6:"Urduca",L7:"İspanyolca",
+jours_ouv:"Açık günler",horaires:"Olağan saatler",ouverture:"Açılış",fermeture:"Kapanış",horaires_h:"Bu saatler işaretli tüm açık günler için geçerlidir.",horaires_diff:"Bazı günlerin saatleri farklı",d1:"Pazartesi",d2:"Salı",d3:"Çarşamba",d4:"Perşembe",d5:"Cuma",d6:"Cumartesi",d7:"Pazar",
+priere:"Cuma günü mağaza namaz için kapanıyor mu?",pr_oui:"Evet",pr_non:"Hayır, aralıksız açık",pr_var:"Değişken",priere_from:"Kapanış",priere_to:"Yeniden açılış",priere_hint:"Kış saatinizi yazın. Birçok mağaza yaklaşık 12.50'de kapanıp 13.30'da açılır; kendi uygulamanıza göre ayarlayın.",priere_ete:"Yaz saatinde bir saat daha geç",
+fermetures:"Bayramlarda kapalı günler",aid_fitr:"Ramazan Bayramı'nda kapalı",aid_adha:"Kurban Bayramı'nda kapalı",autres_ferm:"Diğer kapalı günler (yıllık izin, resmi tatiller…)",
+logo:"Logo (görsel)",photo:"Vitrin fotoğrafı",online:"Çevrimiçi varlık (isteğe bağlı)",site:"Web sitesi",maps:"Google Haritalar kaydı (bağlantı)",
+resp_sum:"Mağaza sorumlusu",resp:"Mağaza sorumlusunun adı ve soyadı",murs:"Dükkân / bina sahibi (biliyorsanız)",murs_ph:"Ad veya şirket",
+s4:"4. Dernek ve siz",membre:"ACRB üyesi misiniz?",m_oui:"Evet",m_int:"Hayır, ama ilgileniyorum",m_non:"Hayır",m_nsp:"Bilmiyorum",interets:"İlgilendiğiniz konular",i1:"Temizlik ve güvenlik",i2:"Etkinlikler ve şenlikler",i3:"Çevrimiçi görünürlük",i4:"Park ve ulaşım",i5:"Belediye ile ilişkiler",i6:"Toplu alımlar",remarques:"Görüşler, talepler, fikirler",
+consent_site:"Mağaza bilgilerinin (ad, adres, mağaza telefonu, saatler, ürünler, tanıtım, bağlantılar, logo, fotoğraf) ACRB web sitesinde yayımlanmasını kabul ediyorum.",consent_rgpd:"ACRB'nin bu verileri derneğin yönetimi ve benimle iletişim için saklamasına izin veriyorum. Kişisel iletişim bilgileri ve şirket verileri asla yayımlanmaz. İstediğiniz zaman değişiklik veya silme talep edebilirsiniz.",
+submit:"Formumu gönder",sending:"Gönderiliyor…",done_h:"Teşekkürler, formunuz kaydedildi.",done_p:"Bir açıklama gerekirse ACRB sizinle iletişime geçecektir.",
+err_req:"Zorunlu bir alan (* işaretli) eksik.",err_photo:"Bir fotoğraf 8 MB'ı aşıyor.",err_save:"Kayıt reddedildi. Lütfen biraz sonra tekrar deneyin.",err_generic:"Bir hata oluştu. Lütfen biraz sonra tekrar deneyin."},
+
+ar:{s0_abs_t:"مؤسسات أخرى مسجّلة في عنوانكم",s0_abs_h:"ضعوا علامة على التي لم تعد في هذا العنوان: ستُحذف من الموقع. لا تضعوا أي علامة إذا كان متجر آخر يشغل فعلاً الرقم نفسه.",done_ref:"مرجع إرسالكم",latin_hint:"يُرجى ملء جميع الخانات بالأحرف اللاتينية (مثلاً: Rue de Brabant 230, Mohamed Alami). العناوين فقط مكتوبة بالعربية؛ الإدخال يتم من اليسار إلى اليمين.",s0:"0. هل أنتم مسجّلون في الدليل؟",s0h:"ابحثوا عن متجركم (الاسم التجاري، الشركة، رقم المؤسسة أو رقم الشارع). تُسترجع البيانات الرسمية تلقائيًا؛ لا تكملون إلا ما ينقص. عدة متاجر؟ أضيفوها واحدًا تلو الآخر.",s0_ph:"الاسم التجاري، الشركة، رقم BCE أو رقم الشارع…",s0_btn:"بحث",s0_pick:"استرجاع",s0_none:"لا نتائج: املؤوا النموذج أدناه.",s0_done:"تم استرجاع البيانات من الدليل. تحققوا منها ثم أكملوا.",s0_err:"البحث غير متاح حاليًا: املؤوا النموذج.",gerant2:"المدير الثاني (إن وُجد)",resp_h:"الشخص الذي ستتصل به الجمعية والزبائن أولًا بخصوص هذا المتجر. اتركوه فارغًا إن كان هو أنتم.",murs_sum:"مالك العقار (اختياري)","add_soc_same":"+ النشاط نفسه تحت شركة أخرى","add_soc_same_h":"نضيف شركة ومتجرًا مطابقًا للسابق: لا يبقى لكم سوى اسم الشركة ورقم المتجر.",eyebrow:"جمعية تجار شارع برابانت",h1:"لنحدّث بطاقة متجركم",intro:"تجدّد جمعية ACRB دليلها وموقعها الإلكتروني. الحقول المعلّمة بـ * فقط إلزامية. إن كانت لديكم عدة شركات أو عدة متاجر، أضيفوها واحدًا تلو الآخر: كل متجر مرتبط بشركته.",
+s1:"1. أنتم",s1h:"الشخص الذي يملأ هذه البطاقة ويمكن للجمعية الاتصال به.",nomprenom:"الاسم واللقب",gsm:"الهاتف المحمول",tel:"الهاتف",email:"البريد الإلكتروني",
+s2:"2. شركاتكم",s2h:"شركة واحدة في كل خانة. البيانات الإدارية لا تُنشر أبدًا.",add_soc:"+ إضافة شركة",soc:"شركة",rm:"حذف",denomination:"الاسم القانوني للشركة",bce:"رقم المؤسسة (BCE / الضريبة على القيمة المضافة)",forme:"الشكل القانوني",choose:"اختر…",indep:"مستقل (شخص طبيعي)",autre:"أخرى",siege:"المقر الاجتماعي (إن اختلف عن المتجر)",soc_details:"مدير الشركة ومالكها (اختياري، إن لم تكونوا أنتم)",gerant:"المدير",proprio_soc:"مالك الشركة",
+s3:"3. متاجركم",s3h:"متجر واحد في كل خانة، مرتبط بإحدى شركاتكم. هذه هي المعلومات التي ستظهر على موقع الجمعية. لمتجر ثانٍ يبيع الأشياء نفسها، استعملوا « إضافة متجر مطابق »: يُنسخ كل شيء ولا يبقى سوى تغيير العنوان.",add_mag:"+ إضافة متجر مختلف",add_mag_copy:"+ إضافة متجر مطابق (نسخة من السابق)",mag:"متجر",enseigne:"اسم المتجر",rue:"الشارع",autre_rue:"شارع آخر…",rue_autre_ph:"اسم الشارع",numero:"الرقم",commune:"البلدية",societe_de:"شركة هذا المتجر",categorie:"نوع التجارة",
+g_mode:"الموضة والإكسسوارات",g_bouche:"المواد الغذائية",g_maison:"المنزل",g_beaute:"التجميل والعناية",g_services:"الخدمات",
+c1:"ملابس تقليدية / قفاطين",c2:"فساتين سهرة / أعراس",c3:"ملابس جاهزة",c4:"أحذية",c5:"مجوهرات / إكسسوارات",c6:"أقمشة / خردوات",c7:"حلاقة",c8:"بقالة / سوبرماركت",c9:"مطعم / مقهى / وجبات خفيفة",c10:"حلويات",c11:"اتصالات / إلكترونيات",c12:"منزل / ديكور",c13:"وكالة (أسفار، تأمين، عقارات)",c14:"ملابس أطفال",c15:"ملابس داخلية",c16:"حقائب / أمتعة",c17:"جزارة",c18:"دواجن / مشاوي",c19:"بيع الأسماك",c20:"مخبزة",c21:"خضر وفواكه",c22:"مطبخ جاهز / وجبات للأخذ",c23:"شاي، قهوة، توابل، فواكه جافة",c24:"نسيج منزلي",c25:"أواني / هدايا",c26:"بازار / تخفيضات",c27:"صالون تجميل",c28:"عطور / مستحضرات تجميل",c29:"صيدلية / نظارات",c30:"بنك / تحويل أموال",c31:"تنظيف جاف / خياطة وتعديل",
+articles:"المنتجات أو الخدمات المعروضة",articles_ph:"صفوا في بضع كلمات ما تبيعونه",debut:"سنة بداية النشاط في الشارع",tel_mag:"هاتف المتجر",email_mag:"بريد المتجر الإلكتروني",description:"تقديم للموقع (من جملتين إلى أربع)",desc_ph:"ما ينبغي أن يعرفه الزبائن عنكم.",
+langues:"اللغات المستعملة في المتجر",L1:"الفرنسية",L2:"الهولندية",L3:"الإنجليزية",L4:"العربية",L5:"التركية",L6:"الأردية",L7:"الإسبانية",
+jours_ouv:"أيام الفتح",horaires:"أوقات العمل المعتادة",ouverture:"الفتح",fermeture:"الإغلاق",horaires_h:"تنطبق هذه الأوقات على كل أيام الفتح المحددة.",horaires_diff:"بعض الأيام لها أوقات مختلفة",d1:"الاثنين",d2:"الثلاثاء",d3:"الأربعاء",d4:"الخميس",d5:"الجمعة",d6:"السبت",d7:"الأحد",
+priere:"يوم الجمعة، هل يُغلق المتجر للصلاة؟",pr_oui:"نعم",pr_non:"لا، مفتوح باستمرار",pr_var:"حسب الظروف",priere_from:"الإغلاق",priere_to:"إعادة الفتح",priere_hint:"أدخلوا أوقات التوقيت الشتوي. كثير من المتاجر تغلق حوالي 12:50 وتفتح حوالي 13:30؛ عدّلوها حسب عادتكم.",priere_ete:"في التوقيت الصيفي، يتأخر ذلك بساعة",
+fermetures:"أيام الإغلاق في الأعياد",aid_fitr:"مغلق يوم عيد الفطر",aid_adha:"مغلق يوم عيد الأضحى",autres_ferm:"إغلاقات أخرى (العطلة السنوية، الأعياد الرسمية…)",
+logo:"الشعار (صورة)",photo:"صورة الواجهة",online:"الحضور على الإنترنت (اختياري)",site:"الموقع الإلكتروني",maps:"صفحة خرائط Google (رابط)",
+resp_sum:"مسؤول المتجر",resp:"اسم ولقب المسؤول في المتجر",murs:"مالك المحل / العقار (إن كنتم تعرفونه)",murs_ph:"اسم أو شركة",
+s4:"4. الجمعية وأنتم",membre:"هل أنتم أعضاء في الجمعية؟",m_oui:"نعم",m_int:"لا، لكن الأمر يهمني",m_non:"لا",m_nsp:"لا أعرف",interets:"المواضيع التي تهمكم",i1:"النظافة والأمن",i2:"الأنشطة والاحتفالات",i3:"الظهور على الإنترنت",i4:"ركن السيارات والتنقل",i5:"العلاقات مع البلدية",i6:"الشراء الجماعي",remarques:"ملاحظات، طلبات، أفكار",
+consent_site:"أوافق على نشر معلومات المتاجر (الاسم، العنوان، هاتف المتجر، الأوقات، المنتجات، التقديم، الروابط، الشعار، الصورة) على موقع الجمعية.",consent_rgpd:"أوافق على احتفاظ الجمعية بهذه البيانات لتسيير الجمعية وللاتصال بي. بيانات الاتصال الشخصية وبيانات الشركة لا تُنشر أبدًا. يمكن طلب تعديلها أو حذفها في أي وقت.",
+submit:"إرسال بطاقتي",sending:"جارٍ الإرسال…",done_h:"شكرًا، تم تسجيل بطاقتكم.",done_p:"ستتصل بكم الجمعية إن احتاج الأمر إلى توضيح.",
+err_req:"حقل إلزامي (معلّم بـ *) ناقص.",err_photo:"إحدى الصور تتجاوز 8 ميغابايت.",err_save:"رُفض التسجيل. حاولوا مجددًا بعد قليل.",err_generic:"حدث خطأ. حاولوا مجددًا بعد قليل."},
+
+ur:{s0_abs_t:"آپ کے پتے پر رجسٹرڈ دیگر ادارے",s0_abs_h:"جو اب اس پتے پر نہیں ہیں انہیں نشان زد کریں: وہ سائٹ سے ہٹا دیے جائیں گے۔ اگر کوئی اور دکان واقعی یہی نمبر استعمال کرتی ہے تو کچھ نشان زد نہ کریں۔",done_ref:"آپ کی جمع کرائی کا حوالہ",latin_hint:"براہِ کرم تمام خانے لاطینی حروف میں بھریں (مثلاً: Rue de Brabant 230, Mohamed Alami)۔ صرف عنوانات اردو میں ہیں؛ اندراج بائیں سے دائیں ہوتا ہے۔",s0:"0. کیا آپ پہلے سے ڈائریکٹری میں ہیں؟",s0h:"اپنی دکان تلاش کریں (تجارتی نام، کمپنی، کمپنی نمبر یا گلی نمبر)۔ سرکاری معلومات خود بخود بھر جائیں گی؛ آپ صرف کمی پوری کریں۔ کئی دکانیں؟ ایک ایک کر کے شامل کریں۔",s0_ph:"تجارتی نام، کمپنی، BCE نمبر یا گلی نمبر…",s0_btn:"تلاش",s0_pick:"لیں",s0_none:"کوئی نتیجہ نہیں: نیچے فارم بھریں۔",s0_done:"معلومات ڈائریکٹری سے لی گئیں۔ جانچیں، پھر مکمل کریں۔",s0_err:"تلاش فی الحال ممکن نہیں: فارم بھریں۔",gerant2:"دوسرا منیجر (اگر ہو)",resp_h:"وہ شخص جس سے ACRB اور گاہک اس دکان کے لیے سب سے پہلے رابطہ کریں گے۔ اگر آپ خود ہیں تو خالی چھوڑیں۔",murs_sum:"عمارت کا مالک (اختیاری)","add_soc_same":"+ یہی کاروبار دوسری کمپنی کے تحت","add_soc_same_h":"ہم ایک کمپنی اور پچھلی جیسی ایک دکان شامل کرتے ہیں: آپ صرف کمپنی کا نام اور دکان کا نمبر لکھیں۔",eyebrow:"رو دو برابانٹ تاجر انجمن",h1:"آئیے اپنی دکان کا ریکارڈ اپ ڈیٹ کریں",intro:"ACRB اپنی ڈائریکٹری اور ویب سائٹ نئی بنا رہی ہے۔ صرف * والے خانے لازمی ہیں۔ اگر آپ کی کئی کمپنیاں یا کئی دکانیں ہیں تو انہیں ایک ایک کر کے شامل کریں: ہر دکان اپنی کمپنی سے منسلک ہوتی ہے۔",
+s1:"1. آپ",s1h:"وہ شخص جو یہ فارم بھر رہا ہے اور جس سے ACRB رابطہ کر سکتی ہے۔",nomprenom:"پورا نام",gsm:"موبائل",tel:"فون",email:"ای میل",
+s2:"2. آپ کی کمپنیاں",s2h:"ہر خانے میں ایک کمپنی۔ انتظامی معلومات کبھی شائع نہیں کی جاتیں۔",add_soc:"+ کمپنی شامل کریں",soc:"کمپنی",rm:"ہٹائیں",denomination:"کمپنی کا قانونی نام",bce:"کمپنی نمبر (BCE / VAT)",forme:"قانونی حیثیت",choose:"منتخب کریں…",indep:"خود روزگار (انفرادی)",autre:"دیگر",siege:"رجسٹرڈ دفتر (اگر دکان سے مختلف ہو)",soc_details:"کمپنی کا منیجر اور مالک (اختیاری، اگر آپ خود نہیں ہیں)",gerant:"منیجر",proprio_soc:"کمپنی کا مالک",
+s3:"3. آپ کی دکانیں",s3h:"ہر خانے میں ایک دکان، آپ کی کسی ایک کمپنی سے منسلک۔ یہی معلومات ACRB کی ویب سائٹ پر نظر آئیں گی۔ ایک جیسی چیزیں بیچنے والی دوسری دکان کے لیے « ایک جیسی دکان شامل کریں » استعمال کریں: سب کچھ نقل ہو جاتا ہے، صرف پتہ بدلنا ہوتا ہے۔",add_mag:"+ مختلف دکان شامل کریں",add_mag_copy:"+ ایک جیسی دکان شامل کریں (پچھلی کی نقل)",mag:"دکان",enseigne:"دکان کا نام",rue:"سڑک",autre_rue:"دوسری سڑک…",rue_autre_ph:"سڑک کا نام",numero:"نمبر",commune:"میونسپلٹی",societe_de:"اس دکان کی کمپنی",categorie:"کاروبار کی قسم",
+g_mode:"فیشن اور لوازمات",g_bouche:"خوراک",g_maison:"گھر",g_beaute:"بیوٹی اور دیکھ بھال",g_services:"خدمات",
+c1:"روایتی لباس / قفطان",c2:"شام / شادی کے لباس",c3:"تیار شدہ ملبوسات",c4:"جوتے",c5:"زیورات / لوازمات",c6:"کپڑا / سلائی کا سامان",c7:"حجام / باربر",c8:"گروسری / سپر مارکیٹ",c9:"ریسٹورنٹ / کیفے / سنیک",c10:"بیکری و مٹھائی",c11:"ٹیلی کام / الیکٹرانکس",c12:"گھر / سجاوٹ",c13:"ایجنسی (سفر، انشورنس، جائیداد)",c14:"بچوں کے کپڑے",c15:"زیر جامہ",c16:"بیگ / سامان",c17:"قصاب",c18:"مرغی / روسٹ",c19:"مچھلی فروش",c20:"بیکری (روٹی)",c21:"پھل اور سبزیاں",c22:"کیٹرنگ / ٹیک اوے",c23:"چائے، کافی، مصالحے، خشک میوہ",c24:"گھریلو ٹیکسٹائل",c25:"برتن / تحائف",c26:"بازار / ڈسکاؤنٹ",c27:"بیوٹی سیلون",c28:"پرفیوم / کاسمیٹکس",c29:"فارمیسی / چشمے",c30:"بینک / رقم کی منتقلی",c31:"ڈرائی کلیننگ / کپڑوں کی مرمت",
+articles:"پیش کی جانے والی اشیا یا خدمات",articles_ph:"چند الفاظ میں بتائیں آپ کیا بیچتے ہیں",debut:"اس سڑک پر کاروبار شروع کرنے کا سال",tel_mag:"دکان کا فون",email_mag:"دکان کا ای میل",description:"ویب سائٹ کے لیے تعارف (2 سے 4 جملے)",desc_ph:"گاہکوں کو آپ کے بارے میں کیا جاننا چاہیے۔",
+langues:"دکان میں بولی جانے والی زبانیں",L1:"فرانسیسی",L2:"ڈچ",L3:"انگریزی",L4:"عربی",L5:"ترکی",L6:"اردو",L7:"ہسپانوی",
+jours_ouv:"کھلنے کے دن",horaires:"معمول کے اوقات",ouverture:"کھلنا",fermeture:"بند ہونا",horaires_h:"یہ اوقات تمام منتخب کردہ دنوں پر لاگو ہوتے ہیں۔",horaires_diff:"کچھ دنوں کے اوقات مختلف ہیں",d1:"پیر",d2:"منگل",d3:"بدھ",d4:"جمعرات",d5:"جمعہ",d6:"ہفتہ",d7:"اتوار",
+priere:"کیا جمعہ کو نماز کے لیے دکان بند ہوتی ہے؟",pr_oui:"ہاں",pr_non:"نہیں، مسلسل کھلی",pr_var:"مختلف ہوتا ہے",priere_from:"بند",priere_to:"دوبارہ کھلنا",priere_hint:"سردیوں کے اوقات لکھیں۔ بہت سی دکانیں تقریباً 12:50 پر بند اور 13:30 پر دوبارہ کھلتی ہیں؛ اپنے معمول کے مطابق درج کریں۔",priere_ete:"گرمیوں کے وقت میں ایک گھنٹہ بعد",
+fermetures:"تہواروں پر بندش کے دن",aid_fitr:"عید الفطر کے دن بند",aid_adha:"عید الاضحیٰ کے دن بند",autres_ferm:"دیگر بندش (سالانہ چھٹیاں، عام تعطیلات…)",
+logo:"لوگو (تصویر)",photo:"دکان کے سامنے کی تصویر",online:"آن لائن موجودگی (اختیاری)",site:"ویب سائٹ",maps:"Google Maps صفحہ (لنک)",
+resp_sum:"دکان کا ذمہ دار",resp:"دکان پر ذمہ دار شخص کا پورا نام",murs:"دکان / عمارت کا مالک (اگر معلوم ہو)",murs_ph:"نام یا کمپنی",
+s4:"4. انجمن اور آپ",membre:"کیا آپ ACRB کے رکن ہیں؟",m_oui:"ہاں",m_int:"نہیں، لیکن دلچسپی ہے",m_non:"نہیں",m_nsp:"معلوم نہیں",interets:"وہ موضوعات جن میں آپ کو دلچسپی ہے",i1:"صفائی اور سلامتی",i2:"تقریبات اور میلے",i3:"آن لائن نمائش",i4:"پارکنگ اور آمد و رفت",i5:"میونسپلٹی سے تعلقات",i6:"اجتماعی خریداری",remarques:"تبصرے، درخواستیں، تجاویز",
+consent_site:"میں متفق ہوں کہ دکان کی معلومات (نام، پتہ، دکان کا فون، اوقات، اشیا، تعارف، لنکس، لوگو، تصویر) ACRB کی ویب سائٹ پر شائع کی جائیں۔",consent_rgpd:"میں رضامند ہوں کہ ACRB یہ معلومات انجمن کے انتظام اور مجھ سے رابطے کے لیے محفوظ رکھے۔ ذاتی رابطہ تفصیلات اور کمپنی کی معلومات کبھی شائع نہیں کی جاتیں۔ آپ کسی بھی وقت تبدیلی یا حذف کی درخواست کر سکتے ہیں۔",
+submit:"میرا فارم بھیجیں",sending:"بھیجا جا رہا ہے…",done_h:"شکریہ، آپ کا فارم محفوظ ہو گیا۔",done_p:"اگر کسی وضاحت کی ضرورت ہوئی تو ACRB آپ سے رابطہ کرے گی۔",
+err_req:"ایک لازمی خانہ (* والا) خالی ہے۔",err_photo:"ایک تصویر 8 MB سے بڑی ہے۔",err_save:"محفوظ کرنے سے انکار ہوا۔ تھوڑی دیر بعد دوبارہ کوشش کریں۔",err_generic:"کوئی خرابی ہوئی۔ تھوڑی دیر بعد دوبارہ کوشش کریں۔"}
+};
+</script>
+<script>
+(function(){
+  var SB="https://blaehmatdmobhwlhqfjo.supabase.co";
+  var KEY="sb_publishable_c1ovcVD1pbOGPedrJfDU3g_jtS1bY73";
+  var DAYS=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
+  var f=document.getElementById("f"), btn=document.getElementById("btn"), msg=document.getElementById("msg");
+  var socBox=document.getElementById("societes"), magBox=document.getElementById("magasins");
+  var lang="fr", T=I18N.fr;
+
+  function translate(root){
+    Array.prototype.forEach.call(root.querySelectorAll("[data-i18n]"),function(el){var s=T[el.dataset.i18n];if(s!=null)el.textContent=s;});
+    Array.prototype.forEach.call(root.querySelectorAll("[data-i18n-ph]"),function(el){var s=T[el.dataset.i18nPh];if(s!=null)el.placeholder=s;});
+    Array.prototype.forEach.call(root.querySelectorAll("[data-i18n-label]"),function(el){var s=T[el.dataset.i18nLabel];if(s!=null)el.label=s;});
+  }
+  function setLang(l){
+    if(!I18N[l]) l="fr";
+    lang=l;T=I18N[l];
+    document.documentElement.lang=l;
+    document.documentElement.dir=(l==="ar"||l==="ur")?"rtl":"ltr";
+    translate(document);
+    Array.prototype.forEach.call(document.querySelectorAll("#langs button"),function(b){b.setAttribute("aria-pressed",b.dataset.lang===l?"true":"false");});
+    if(!btn.disabled) btn.textContent=T.submit;
+    refreshSocSelects();
+    try{localStorage.setItem("acrb_lang",l);}catch(e){}
+  }
+  document.getElementById("langs").addEventListener("click",function(e){var b=e.target.closest("button[data-lang]");if(b)setLang(b.dataset.lang);});
+
+  function uid(){
+    if(window.crypto&&crypto.randomUUID) return crypto.randomUUID();
+    var b=new Uint8Array(16);(window.crypto||window.msCrypto).getRandomValues(b);b[6]=(b[6]&15)|64;b[8]=(b[8]&63)|128;
+    var h=Array.prototype.map.call(b,function(x){return ("0"+x.toString(16)).slice(-2);}).join("");
+    return h.slice(0,8)+"-"+h.slice(8,12)+"-"+h.slice(12,16)+"-"+h.slice(16,20)+"-"+h.slice(20);
+  }
+  function val(el){var s=(el&&el.value||"").trim();return s?s:null;}
+  function fail(t){msg.className="msg err";msg.textContent=t;btn.disabled=false;btn.textContent=T.submit;}
+
+  function renumber(box){
+    Array.prototype.forEach.call(box.children,function(it,i){
+      it.querySelector(".n").textContent=i+1;
+      it.querySelector(".rm").hidden=(box.children.length===1);
+    });
+  }
+  function refreshSocSelects(){
+    var socs=Array.prototype.map.call(socBox.children,function(it,i){
+      return {id:it.dataset.id, name:val(it.querySelector('[data-k="denomination"]'))||(T.soc+" "+(i+1))};
+    });
+    Array.prototype.forEach.call(magBox.querySelectorAll(".soc_sel"),function(sel){
+      var cur=sel.value;
+      sel.innerHTML='<option value="">'+T.choose+'</option>'+socs.map(function(s){return '<option value="'+s.id+'">'+s.name.replace(/</g,"&lt;")+'</option>';}).join("");
+      sel.value=socs.some(function(s){return s.id===cur;})?cur:(socs.length===1?socs[0].id:"");
+    });
+  }
+  function wireMag(node){
+    var pn="p"+node.dataset.id.slice(0,8);
+    var pbox=node.querySelector(".pbox");
+    Array.prototype.forEach.call(node.querySelectorAll("[data-p]"),function(r){
+      r.name=pn;
+      r.addEventListener("change",function(){pbox.hidden=(r.value!=="Oui");});
+    });
+    var rue=node.querySelector(".rue_sel"), ra=node.querySelector(".rue_autre");
+    rue.addEventListener("change",function(){ra.hidden=(rue.value!=="Autre");if(!ra.hidden)ra.focus();});
+    function syncDays(force){
+      var o=node.querySelector('[data-g="open"]').value, c=node.querySelector('[data-g="close"]').value;
+      DAYS.forEach(function(d){
+        var io=node.querySelector('[data-do="'+d+'"]'), ic=node.querySelector('[data-dc="'+d+'"]');
+        if(force||!io.dataset.manual){io.value=o;delete io.dataset.manual;}
+        if(force||!ic.dataset.manual){ic.value=c;delete ic.dataset.manual;}
+      });
+    }
+    node.syncDays=syncDays;
+    Array.prototype.forEach.call(node.querySelectorAll("[data-g]"),function(g){g.addEventListener("input",function(){syncDays(false);});});
+    Array.prototype.forEach.call(node.querySelectorAll("[data-do],[data-dc]"),function(i){i.addEventListener("input",function(){i.dataset.manual="1";});});
+    node.querySelector(".hdiff").addEventListener("toggle",function(){if(this.open)syncDays(false);});
+  }
+  function addItem(box, tplId){
+    var node=document.getElementById(tplId).content.firstElementChild.cloneNode(true);
+    node.dataset.id=uid();
+    translate(node);
+    if(tplId==="t_mag") wireMag(node);
+    node.querySelector(".rm").addEventListener("click",function(){
+      if(box.children.length>1){node.remove();renumber(box);refreshSocSelects();}
+    });
+    box.appendChild(node);renumber(box);refreshSocSelects();
+    return node;
+  }
+  function copyMag(src){
+    var node=addItem(magBox,"t_mag");
+    var skip={numero:1,rue_autre:1};
+    Array.prototype.forEach.call(src.querySelectorAll("[data-k]"),function(el){
+      if(skip[el.dataset.k]) return;
+      var dst=node.querySelector('[data-k="'+el.dataset.k+'"]');if(dst)dst.value=el.value;
+    });
+    ["data-k2","data-l","data-d","data-p"].forEach(function(a){
+      Array.prototype.forEach.call(src.querySelectorAll("["+a+"]"),function(el){
+        var dst=node.querySelector("["+a+'="'+el.getAttribute(a)+'"]');if(dst)dst.checked=el.checked;
+      });
+    });
+    ["data-g","data-do","data-dc"].forEach(function(a){
+      Array.prototype.forEach.call(src.querySelectorAll("["+a+"]"),function(el){
+        var dst=node.querySelector("["+a+'="'+el.getAttribute(a)+'"]');if(dst){dst.value=el.value;if(el.dataset.manual)dst.dataset.manual="1";}
+      });
+    });
+    node.querySelector(".pbox").hidden=!(src.querySelector('[data-p][value="Oui"]').checked);
+    node.querySelector(".hdiff").open=src.querySelector(".hdiff").open;
+    node.querySelector(".rue_autre").hidden=(node.querySelector(".rue_sel").value!=="Autre");
+    var num=node.querySelector('[data-k="numero"]');num.focus();if(num.scrollIntoView)num.scrollIntoView({block:"center"});
+    return node;
+  }
+  socBox.addEventListener("input",function(e){if(e.target.matches('[data-k="denomination"]'))refreshSocSelects();});
+  document.getElementById("add_soc").addEventListener("click",function(){addItem(socBox,"t_soc").querySelector("input").focus();});
+  document.getElementById("add_mag").addEventListener("click",function(){addItem(magBox,"t_mag").querySelector("input").focus();});
+  document.getElementById("add_mag_copy").addEventListener("click",function(){copyMag(magBox.lastElementChild);});
+  document.getElementById("add_soc_same").addEventListener("click",function(){
+    var soc=addItem(socBox,"t_soc");
+    var mag=copyMag(magBox.lastElementChild);
+    mag.querySelector(".soc_sel").value=soc.dataset.id;
+    var den=soc.querySelector('[data-k="denomination"]');den.focus();if(den.scrollIntoView)den.scrollIntoView({block:"center"});
+  });
+
+  /* ---- étape 0 : reprise depuis l'annuaire (acrb_bce) ---- */
+  var lk=document.getElementById("lk"), hits=document.getElementById("hits"), picked=document.getElementById("picked"), lkmsg=document.getElementById("lkmsg");
+  var PICKED={}, USED={soc:false,mag:false};
+  var RUES={"RUE DE BRABANT":"rue de Brabant","PLACE LIEDTS":"place Liedts","RUE DE QUATRECHT":"rue Quatrecht","RUE ALLARD":"rue Allard","RUE D'HOOGVORST":"rue d'Hoogvorst","RUE GALLAIT":"rue Gallait","AVENUE DE LA REINE":"avenue de la Reine","RUE DES PALAIS":"rue des Palais","RUE ROGIER":"rue Rogier"};
+  function formeOf(f){f=String(f||"");if(!f)return "";if(/responsabilit|SPRL|SRL|BV/i.test(f))return "SRL";if(/anonyme|^SA$|NV/i.test(f))return "SA";if(/nom collectif|SNC|VOF/i.test(f))return "SNC";if(/commandite|SCS|SComm|CommV/i.test(f))return "SCS";if(/sans but|ASBL|VZW/i.test(f))return "ASBL";if(/physique|natuur|indép/i.test(f))return "Indépendant (personne physique)";return "Autre";}
+  function dotUe(u){var d=String(u||"").replace(/\D/g,"");return d.length===10?d[0]+"."+d.slice(1,4)+"."+d.slice(4,7)+"."+d.slice(7):u;}
+  function esc(x){return String(x==null?"":x).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+  function sbGet(q){return fetch(SB+"/rest/v1/acrb_bce?"+q,{headers:{"apikey":KEY,"Authorization":"Bearer "+KEY}}).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();});}
+  function fmtBce(b){var d=String(b||"").replace(/\D/g,"");return d.length===10?d.slice(0,4)+"."+d.slice(4,7)+"."+d.slice(7):(b||"");}
+  function search(){
+    var q=(lk.value||"").trim();if(q.length<2)return;
+    hits.innerHTML="";lkmsg.textContent="…";
+    var d=q.replace(/\D/g,""), parts;
+    if(d.length>=6) parts="bce.ilike.*"+d.slice(0,4)+"*"+d.slice(4,7)+"*"+d.slice(7)+"*";
+    else if(/^\d{1,4}[a-z]?$/i.test(q)) parts="numero.eq."+d;
+    else {var t=q.replace(/[,()*]/g," ").replace(/\s+/g,"*");parts="enseigne.ilike.*"+t+"*,denomination.ilike.*"+t+"*";}
+    sbGet("select=ue,bce,rue,numero,cp,enseigne,denomination,forme,ue_depuis,tel,email,web,fonctions,activites&masque=not.is.true&or=("+parts+")&order=rue,numero&limit=12").then(function(rows){
+      lkmsg.textContent=rows.length?"":T.s0_none;
+      hits.innerHTML=rows.map(function(r){return '<button type="button" class="hit" data-ue="'+esc(r.ue)+'"><span><b>'+esc(r.enseigne||r.denomination)+'</b><small>'+esc(r.denomination)+' · '+esc((RUES[r.rue]||r.rue)+" "+r.numero+", "+r.cp)+'</small></span><span class="pick">'+T.s0_pick+' →</span></button>';}).join("");
+      hits._rows=rows;
+    }).catch(function(){lkmsg.textContent=T.s0_err;});
+  }
+  lk.addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();search();}});
+  document.getElementById("lkbtn").addEventListener("click",search);
+  hits.addEventListener("click",function(e){var b=e.target.closest(".hit");if(!b)return;var r=(hits._rows||[]).filter(function(x){return String(x.ue)===b.dataset.ue;})[0];if(r)prefill(r);hits.innerHTML="";lk.value="";});
+  function setK(node,k,v){var el=node.querySelector('[data-k="'+k+'"]');if(el&&v!=null&&v!==""&&!el.value)el.value=v;}
+  function prefill(r){
+    var uk=String(r.ue).replace(/\D/g,"");if(PICKED[uk])return;PICKED[uk]=r;
+    var bn=String(r.bce||"").replace(/\D/g,"");
+    var soc=Array.prototype.filter.call(socBox.children,function(it){return (val(it.querySelector('[data-k="bce"]'))||"").replace(/\D/g,"")===bn&&bn;})[0];
+    if(!soc){
+      soc=(!USED.soc&&!val(socBox.firstElementChild.querySelector('[data-k="denomination"]')))?socBox.firstElementChild:addItem(socBox,"t_soc");
+      USED.soc=true;
+      setK(soc,"denomination",r.denomination);setK(soc,"bce",fmtBce(r.bce));
+      var fo=soc.querySelector('[data-k="forme_juridique"]');if(fo&&!fo.value)fo.value=formeOf(r.forme);
+      var g=(r.fonctions||[]).filter(function(x){return /g[ée]rant|administrateur|fondateur|zaakvoerder|bestuurder/i.test(x.role||"");});
+      if(g[0])setK(soc,"gerant_nom",g[0].nom);if(g[1])setK(soc,"gerant2_nom",g[1].nom);
+      refreshSocSelects();
+    }
+    var mag=(!USED.mag&&!val(magBox.firstElementChild.querySelector('[data-k="enseigne"]')))?magBox.firstElementChild:addItem(magBox,"t_mag");
+    USED.mag=true;mag.dataset.ue=String(r.ue).replace(/\D/g,"");
+    setK(mag,"enseigne",r.enseigne||r.denomination);
+    var rs=mag.querySelector(".rue_sel");if(RUES[r.rue])rs.value=RUES[r.rue];else{rs.value="Autre";setK(mag,"rue_autre",r.rue);mag.querySelector(".rue_autre").hidden=false;}
+    setK(mag,"numero",r.numero);
+    var cm=mag.querySelector('[data-k="commune"]');if(r.cp==="1210")cm.value="Saint-Josse (1210)";else if(r.cp==="1000")cm.value="Bruxelles (1000)";
+    mag.querySelector(".soc_sel").value=soc.dataset.id;
+    setK(mag,"tel",r.tel);setK(mag,"email",r.email);setK(mag,"site_web",r.web);
+    var y=(String(r.ue_depuis||"").match(/\d{4}/)||[])[0];setK(mag,"debut_activite",y);
+    picked.insertAdjacentHTML("beforeend",'<div data-ue="'+esc(r.ue)+'"><span>✓ '+esc(r.enseigne||r.denomination)+' · '+esc((RUES[r.rue]||r.rue)+" "+r.numero)+'</span></div>');
+    lkmsg.textContent=T.s0_done;
+    sbGet("select=ue,enseigne,denomination,statut_v&masque=not.is.true&rue=eq."+encodeURIComponent(r.rue)+"&numero=eq."+r.numero+"&cp=eq."+r.cp+"&ue=neq."+encodeURIComponent(r.ue)).then(function(rows){rows=rows.filter(function(x){return !x.statut_v||x.statut_v==="ouvert";});if(!rows.length)return;
+      var box=document.getElementById("absents");box.hidden=false;var list=document.getElementById("absents_list");
+      list.insertAdjacentHTML("beforeend",rows.map(function(x){return '<label class="chk"><input type="checkbox" name="absent" value="'+esc(x.ue)+'" data-src="'+esc(uk)+'"> '+esc(x.enseigne||x.denomination)+' <small>('+esc(x.denomination)+')</small></label>';}).join(""));}).catch(function(){});
+  }
+  try{var ues=(new URLSearchParams(location.search).get("ue")||"").split(",").map(function(u){return u.replace(/\D/g,"");}).filter(Boolean);
+    if(ues.length){sbGet("select=ue,bce,rue,numero,cp,enseigne,denomination,forme,ue_depuis,tel,email,web,fonctions,activites&ue=in.("+ues.map(function(u){return '"'+dotUe(u)+'"';}).join(",")+")").then(function(rows){rows.forEach(prefill);}).catch(function(){lkmsg.textContent=T.s0_err;});}
+  }catch(e){}
+
+  var initial="fr";
+  try{initial=new URLSearchParams(location.search).get("lang")||localStorage.getItem("acrb_lang")||"fr";}catch(e){}
+  setLang(initial);
+  addItem(socBox,"t_soc"); addItem(magBox,"t_mag");
+
+  function readKeys(it){
+    var o={};
+    Array.prototype.forEach.call(it.querySelectorAll("[data-k]"),function(el){o[el.dataset.k]=val(el);});
+    Array.prototype.forEach.call(it.querySelectorAll("[data-k2]"),function(el){o[el.dataset.k2]=el.checked;});
+    return o;
+  }
+  function hours(it){
+    var o=it.querySelector('[data-g="open"]').value||null, c=it.querySelector('[data-g="close"]').value||null;
+    var diff=it.querySelector(".hdiff").open;
+    var json={}, lines=[], jours=[];
+    DAYS.forEach(function(d){
+      var on=it.querySelector('[data-d="'+d+'"]').checked;
+      var io=it.querySelector('[data-do="'+d+'"]').value, ic=it.querySelector('[data-dc="'+d+'"]').value;
+      var mo=it.querySelector('[data-do="'+d+'"]').dataset.manual, mc=it.querySelector('[data-dc="'+d+'"]').dataset.manual;
+      var oo=(diff&&mo)?(io||null):o, cc=(diff&&mc)?(ic||null):c;
+      if(on){jours.push(d);json[d]={ouvre:oo,ferme:cc};lines.push(d+" : "+((oo||cc)?((oo||"?")+" – "+(cc||"?")):"ouvert"));}
+      else{json[d]=null;lines.push(d+" : fermé");}
+    });
+    return {json:json,text:lines.join("\n"),jours:jours};
+  }
+  function upload(file, prefix){
+    if(!file) return Promise.resolve(null);
+    if(file.size>8*1024*1024) return Promise.reject(new Error(T.err_photo));
+    var ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg";
+    var path=prefix+"/"+Date.now()+"-"+Math.random().toString(36).slice(2,8)+"."+ext;
+    return fetch(SB+"/storage/v1/object/acrb/"+path,{method:"POST",headers:{"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":file.type||"application/octet-stream"},body:file})
+      .then(function(r){if(!r.ok) throw new Error(T.err_save+" ("+r.status+")");return SB+"/storage/v1/object/public/acrb/"+path;});
+  }
+  function insert(table, rows){
+    return fetch(SB+"/rest/v1/"+table,{method:"POST",headers:{"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":"application/json","Prefer":"return=minimal"},body:JSON.stringify(rows)})
+      .then(function(r){if(!r.ok) return r.text().then(function(t){throw new Error(T.err_save+" ("+r.status+") "+t.slice(0,120));});});
+  }
+
+  f.addEventListener("submit",function(ev){
+    ev.preventDefault();
+    msg.className="msg";
+    if(document.getElementById("website_url").value) return;
+    var bad=f.querySelector(":invalid");
+    if(bad){
+      var d=bad.closest("details");if(d)d.open=true;
+      bad.focus();bad.scrollIntoView({block:"center"});
+      return fail(T.err_req);
+    }
+    btn.disabled=true;btn.textContent=T.sending;
+
+    var pid=uid();
+    var personne={
+      id:pid, nom:val(document.getElementById("p_nom")), tel:val(document.getElementById("p_tel")), email:val(document.getElementById("p_email")),
+      membre_acrb:(f.querySelector('input[name="membre_acrb"]:checked')||{}).value||null,
+      interets:Array.prototype.map.call(f.querySelectorAll('input[name="interets"]:checked'),function(e){return e.value;}),
+      remarques:val(document.getElementById("remarques")),
+      consent_site:document.getElementById("consent_site").checked, consent_rgpd:document.getElementById("consent_rgpd").checked,
+      langue_formulaire:lang, user_agent:navigator.userAgent.slice(0,200)
+    };
+    var societes=Array.prototype.map.call(socBox.children,function(it){
+      var o=readKeys(it);o.id=it.dataset.id;o.personne_id=pid;return o;
+    });
+    var uploads=[];
+    var magasins=Array.prototype.map.call(magBox.children,function(it){
+      var o=readKeys(it);
+      o.id=it.dataset.id;o.personne_id=pid;o.societe_id=o.societe||null;delete o.societe;o.ue=it.dataset.ue||null;
+      if(o.rue==="Autre") o.rue=o.rue_autre||"Autre"; delete o.rue_autre;
+      o.code_postal=((o.commune||"").match(/\d{4}/)||[null])[0];
+      o.langues=Array.prototype.map.call(it.querySelectorAll("[data-l]:checked"),function(e){return e.value;});
+      var h=hours(it);o.horaires=h.text;o.horaires_json=h.json;o.jours_ouverture=h.jours;
+      var pr=it.querySelector("[data-p]:checked");o.priere_vendredi=pr?pr.value:null;
+      if(o.priere_vendredi!=="Oui"){o.priere_fermeture=null;o.priere_reouverture=null;o.priere_ete_decalage=null;}
+      var logo=it.querySelector('[data-f="logo"]').files[0], photo=it.querySelector('[data-f="photo"]').files[0];
+      uploads.push(upload(logo,"logos").then(function(u){o.logo_url=u;}));
+      uploads.push(upload(photo,"facades").then(function(u){o.photo_url=u;}));
+      return o;
+    });
+
+    Promise.all(uploads)
+      .then(function(){return insert("acrb_personnes",[personne]);})
+      .then(function(){return insert("acrb_societes",societes);})
+      .then(function(){return insert("acrb_magasins",magasins);})
+      .then(function(){return fetch(SB+"/rest/v1/rpc/acrb_soumettre",{method:"POST",headers:{"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":"application/json"},body:JSON.stringify({p_personne_id:pid,p_langue:lang,p_user_agent:navigator.userAgent.slice(0,200)})}).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;});})
+      .then(function(j){var abs=Array.prototype.map.call(document.querySelectorAll('input[name="absent"]:checked'),function(c){return c;});
+        if(abs.length){var bySrc={};abs.forEach(function(c){(bySrc[c.dataset.src]=bySrc[c.dataset.src]||[]).push(c.value);});
+          Object.keys(bySrc).forEach(function(src){fetch(SB+"/rest/v1/rpc/acrb_declarer_absents",{method:"POST",headers:{"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":"application/json"},body:JSON.stringify({p_personne_id:pid,p_ue_source:src,p_ues:bySrc[src]})}).catch(function(){});});}
+        return j;})
+      .then(function(j){f.hidden=true;var d=document.getElementById("done");d.hidden=false;if(j&&j.journal_id){var r=document.createElement("p");r.className="ref";r.textContent=(T.done_ref||"Référence")+" : "+j.journal_id+" · "+j.empreinte.slice(0,12);d.appendChild(r);}window.scrollTo(0,0);})
+      .catch(function(e){fail((e&&e.message)||T.err_generic);});
+  });
+})();
+</script>
+</body>
+</html>

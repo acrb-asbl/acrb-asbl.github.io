@@ -1,0 +1,35 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Signature — ACRB</title><meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@700;800&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>:root{--navy:#14233c;--line:#dfe3ea;--muted:#5f6675;--green:#1f8a4c}*{box-sizing:border-box}body{margin:0;background:#f4f5f8;color:#222;font:17px/1.5 "Source Sans 3","Segoe UI",Arial,sans-serif}
+.top{background:#0d1729;color:#c9d1de;font-size:13px;padding:8px 20px}.wrap{max-width:820px;margin:0 auto;padding:24px 16px 60px}h1{font:800 clamp(24px,4vw,32px)/1.1 "Libre Franklin",Arial,sans-serif;margin:0 0 6px}.lead{color:var(--muted);margin:0 0 18px;font-size:15.5px}
+.doc{background:#fff;border:1px solid var(--line);padding:10px;margin-bottom:18px}.doc canvas{display:block;width:100%;height:auto;border:1px solid var(--line);margin-bottom:8px}.doc .open{font-size:14px}.doc .open a{color:var(--navy)}
+.pad{background:#fff;border:1px solid var(--line);padding:16px}.pad b{display:block;font:800 16px "Libre Franklin",Arial,sans-serif;margin-bottom:8px}canvas#sig{width:100%;height:180px;border:2px dashed #c6ccd6;background:#fff;touch-action:none;display:block}.row{display:flex;gap:8px;margin-top:8px;align-items:center;flex-wrap:wrap}.row button{font:700 14px "Libre Franklin",Arial,sans-serif;padding:11px 16px;border:1px solid var(--navy);background:#fff;color:var(--navy);cursor:pointer}.row button.p{background:var(--navy);color:#fff}.row button:disabled{opacity:.5}
+.chk{display:flex;gap:10px;align-items:flex-start;margin:14px 0;font-size:14.5px}.chk input{margin-top:4px;width:20px;height:20px}
+.msg{margin-top:12px;font-size:15px}.ok{background:#e4f3ea;color:#174d2c;padding:16px;border:1px solid #bfe3cc}.err{color:#b23a2b}</style></head><body>
+<div class="top">A.C.R.B. asbl — Association des Commerçants de la rue Brabant, Liedts et Gallait</div>
+<div class="wrap"><h1>Document à signer</h1><p class="lead" id="lead">Chargement…</p>
+<div class="doc" id="doc"></div>
+<div class="pad" id="pad" hidden><b>Votre signature, au doigt ou à la souris</b><canvas id="sig"></canvas><div class="row"><button type="button" id="clear">Effacer</button></div>
+<label class="chk"><input type="checkbox" id="ok1"><span>Je soussigné(e) <b id="who" style="display:inline;font:inherit;font-weight:700"></b> déclare avoir lu le document ci-dessus et le signer électroniquement en toute connaissance de cause. Cette signature a la même valeur qu'une signature manuscrite (règlement eIDAS, art. 25). La date, l'heure, l'adresse IP et l'empreinte du document sont enregistrées.</span></label>
+<div class="row"><button type="button" class="p" id="go" disabled>Signer le document</button></div><div class="msg" id="msg"></div></div>
+<div class="msg" id="done" hidden></div></div>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script><script src="https://cdn.jsdelivr.net/npm/signature_pad@4.2.0/dist/signature_pad.umd.min.js"></script>
+<script>
+(function(){var SB="https://blaehmatdmobhwlhqfjo.supabase.co",KEY="sb_publishable_c1ovcVD1pbOGPedrJfDU3g_jtS1bY73",j=new URLSearchParams(location.search).get("j")||"";
+function rpc(n,b){return fetch(SB+"/rest/v1/rpc/"+n,{method:"POST",headers:{"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":"application/json"},body:JSON.stringify(b)}).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.message||d.hint||"erreur");return d;});});}
+var lead=document.getElementById("lead"),doc=document.getElementById("doc"),msg=document.getElementById("msg");
+if(!j){lead.textContent="Lien incomplet.";return;}
+rpc("acrb_signature_info",{p_jeton:j}).then(function(info){if(!info){lead.textContent="Ce lien n'est pas valable.";return;}
+  if(info.statut!=="attente"){lead.textContent="Document déjà signé le "+String(info.signe_le).slice(0,10).split("-").reverse().join("/")+". Merci.";return;}
+  info.doc_nom=String(info.chemin_public||"").split("/").pop().replace(/\.pdf$/,"").replace(/-/g," ");lead.textContent="Référence "+info.reference+" · "+info.doc_nom+" · signataire : "+info.signataire+(info.role?" ("+info.role+")":"")+". Lisez le document, puis signez en bas.";document.getElementById("who").textContent=info.signataire;
+  var url=SB+"/storage/v1/object/public/acrb-signer/"+info.chemin_public;
+  pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+  pdfjsLib.getDocument(url).promise.then(async function(pdf){for(var n=1;n<=pdf.numPages;n++){var pg=await pdf.getPage(n),vp=pg.getViewport({scale:1.6}),c=document.createElement("canvas");c.width=vp.width;c.height=vp.height;doc.appendChild(c);await pg.render({canvasContext:c.getContext("2d"),viewport:vp}).promise;}
+    doc.insertAdjacentHTML("beforeend",'<div class="open"><a href="'+url+'" target="_blank" rel="noopener">Ouvrir le PDF dans une autre fenêtre</a></div>');}).catch(function(){doc.innerHTML='<div class="open"><a href="'+url+'" target="_blank" rel="noopener">Ouvrir le document (PDF)</a></div>';});
+  var pad=document.getElementById("pad");pad.hidden=false;var cv=document.getElementById("sig");var lastW=0;function size(){if(cv.offsetWidth===lastW)return;lastW=cv.offsetWidth;var data=sp?sp.toData():null,r=window.devicePixelRatio||1;cv.width=cv.offsetWidth*r;cv.height=cv.offsetHeight*r;cv.getContext("2d").scale(r,r);sp.clear();if(data&&data.length)sp.fromData(data);}
+  var sp=new SignaturePad(cv,{minWidth:1,maxWidth:2.5});size();window.addEventListener("resize",size);
+  var go=document.getElementById("go"),ok1=document.getElementById("ok1");function chk(){go.disabled=!(ok1.checked&&!sp.isEmpty());}sp.addEventListener("endStroke",chk);ok1.onchange=chk;document.getElementById("clear").onclick=function(){sp.clear();chk();};
+  go.onclick=function(){go.disabled=true;msg.textContent="Envoi…";var img=sp.toDataURL("image/png");
+    rpc("acrb_signer",{p_jeton:j,p_image:img,p_consentement:document.querySelector(".chk span").textContent.trim(),p_user_agent:navigator.userAgent}).then(function(r){pad.hidden=true;var d=document.getElementById("done");d.hidden=false;d.className="msg ok";d.textContent="Merci, "+info.signataire+". Votre signature est enregistrée et horodatée ; le document signé est conservé par l'association.";}).catch(function(e){msg.className="msg err";msg.textContent="Échec : "+e.message;go.disabled=false;});};
+}).catch(function(e){lead.textContent="Ce lien n'est pas valable ("+e.message+").";});})();
+</script></body></html>
