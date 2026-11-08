@@ -1,0 +1,138 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mon espace commerçant — Shopping Brabant · ACRB</title><meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@700;800&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>:root{--navy:#14233c;--line:#dfe3ea;--muted:#5f6675;--green:#1f8a4c;--brick:#b23a2b;--amber:#9a5b00}*{box-sizing:border-box}body{margin:0;background:#f4f5f8;color:#222;font:17px/1.5 "Source Sans 3","Segoe UI",Arial,sans-serif}a{color:var(--navy)}
+.top{background:#0d1729;color:#c9d1de;font-size:13px;padding:9px 20px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}.top a{color:#fff;text-decoration:none;margin-right:16px;font-weight:600}
+.wrap{max-width:1040px;margin:0 auto;padding:26px 16px 60px}h1{font:800 clamp(26px,4vw,36px)/1.1 "Libre Franklin",Arial,sans-serif;margin:0 0 6px}.lead{color:var(--muted);margin:0 0 18px;font-size:15.5px;max-width:70ch}
+.auth{background:#fff;border:1px solid var(--line);padding:18px 20px;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:18px}.auth b{display:block;font:800 17px "Libre Franklin",Arial,sans-serif}.auth span{color:var(--muted);font-size:14.5px}
+.g{display:inline-flex;align-items:center;gap:10px;padding:12px 18px;border:1px solid #c6ccd6;background:#fff;font:700 15px "Libre Franklin",Arial,sans-serif;color:#222;cursor:pointer}.g svg{width:20px;height:20px}.lk{background:none;border:0;color:var(--navy);text-decoration:underline;cursor:pointer;font:600 14px "Source Sans 3",sans-serif}
+.g[hidden],.lk[hidden],.c[hidden],.grid[hidden],[hidden]{display:none!important}
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--navy);margin:6px 0 18px;overflow-x:auto}.tabs button{flex:0 0 auto;background:none;border:0;padding:10px 14px;font:700 14px "Libre Franklin",Arial,sans-serif;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap}.tabs button[aria-selected="true"]{color:var(--navy);border-bottom-color:var(--navy)}.tabs button .n{display:inline-block;min-width:18px;padding:0 5px;margin-left:6px;background:#eef1f6;color:var(--navy);font-size:11px;line-height:18px;text-align:center}.tabs button .n.warn{background:#fdecea;color:var(--brick)}
+.c{background:#fff;border:1px solid var(--line);border-top:3px solid var(--navy);padding:20px 22px;margin-bottom:16px}.c h2{font:800 19px "Libre Franklin",Arial,sans-serif;margin:0 0 6px}.c p{margin:0 0 10px;font-size:15.5px}.soon{font-size:13.5px;color:var(--muted);margin:6px 0 0}
+.btn{display:inline-block;padding:10px 16px;background:var(--navy);color:#fff;text-decoration:none;font:700 14px "Libre Franklin",Arial,sans-serif;border:1px solid var(--navy);cursor:pointer;line-height:1.2}.btn.o{background:#fff;color:var(--navy)}.btn.d{background:#fff;color:var(--muted);border-color:#c9ccd3}.btn:disabled{opacity:.5;cursor:default}.docs{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.rows{border-top:1px solid var(--line)}.row{display:grid;grid-template-columns:1fr auto;gap:8px 14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.row .id{min-width:0}.row .id b{display:block;font:800 16px "Libre Franklin",Arial,sans-serif}.row .id span{font-size:13.5px;color:var(--muted)}.row .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.row .acts .btn{padding:8px 11px;font-size:13px}.row.off .id b{color:var(--muted);text-decoration:line-through}
+.st{display:inline-block;font:700 11px "Libre Franklin",Arial,sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;margin-left:8px;vertical-align:middle;background:#f0f2f6;color:var(--muted)}.st.ok{background:#e4f3ea;color:var(--green)}.st.warn{background:#fff6e5;color:var(--amber)}.st.bad{background:#fdecea;color:var(--brick)}
+.prm{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}.prm label{display:grid;gap:3px;font-size:12.5px;color:var(--muted)}.prm input,.prm select,.prm textarea{padding:9px 10px;border:1px solid #c6ccd6;font:15px "Source Sans 3",sans-serif;color:#222;background:#fff;min-width:0}.prm .w{grid-column:1/-1}.chips{display:flex;flex-wrap:wrap;gap:6px}.chips label{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border:1px solid #c6ccd6;font-size:14px;color:#222;cursor:pointer}.chips input{margin:0}
+.charte{white-space:pre-wrap;font-size:15.5px;line-height:1.55;background:#fafbfc;border:1px solid var(--line);padding:16px 18px;max-height:420px;overflow:auto}
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:4px 0 14px}.kpi div{border:1px solid var(--line);padding:12px 14px}.kpi b{display:block;font:800 22px "Libre Franklin",Arial,sans-serif}.kpi span{font-size:13px;color:var(--muted)}
+.inline{display:grid;grid-template-columns:1fr auto auto;gap:6px;grid-column:1/-1;margin-top:6px}.inline input,.inline select{padding:8px 10px;border:1px solid #c6ccd6;font:15px "Source Sans 3",sans-serif}
+.msg{font-size:14px;color:var(--muted);margin-top:8px}.msg.ok{color:var(--green)}.msg.bad{color:var(--brick)}
+footer{padding:24px 20px;font-size:13px;color:var(--muted);text-align:center}
+@media(max-width:700px){.row{grid-template-columns:1fr}.row .acts{justify-content:flex-start}.prm,.kpi{grid-template-columns:1fr}.inline{grid-template-columns:1fr}}</style></head><body>
+<div class="top"><span><a href="../shopping/">Shopping Brabant</a><a href="../acrb/">ACRB, l'association</a></span><span id="topwho"></span></div>
+<div class="wrap"><h1>Mon espace commerçant</h1><p class="lead">Vos commerces sur Shopping Brabant, vos cotisations et leur paiement, la charte, vos coordonnées : tout ce qui vous concerne, et rien d'autre. Un seul compte, celui de votre adresse Google.</p>
+<div class="auth"><div><b id="who_b">Vous n'êtes pas connecté</b><span id="who_s">Connectez-vous avec Google ; si vous n'avez pas encore de fiche, créez-la : elle ouvre cet espace aussitôt.</span></div><div><button class="g" id="gbtn"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.5l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.3l7.9 6.1C12.4 13.4 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.5 28.6c-.5-1.5-.8-3-.8-4.6s.3-3.1.8-4.6l-7.9-6.1C.9 16.5 0 20.1 0 24s.9 7.5 2.6 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.3 0 11.7-2.1 15.6-5.8l-7.7-6c-2.1 1.4-4.8 2.3-7.9 2.3-6.3 0-11.6-3.9-13.5-9.4l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>Se connecter avec Google</button><button class="lk" id="out" hidden>Se déconnecter</button></div></div>
+<div id="nofiche" class="c" hidden><h2>Aucune fiche reliée à cette adresse</h2><p>Votre espace s'ouvre dès que votre fiche commerçant existe avec cette adresse (<span id="nf_mail"></span>). Cinq minutes, six langues, données officielles reprises automatiquement.</p><div class="docs"><a class="btn" href="../shopping/fiche.html">Créer ma fiche commerçant</a><a class="btn o" href="#" id="nf_help">J'ai déjà une fiche avec une autre adresse</a></div></div>
+<div id="app" hidden>
+<div class="tabs" role="tablist"><button role="tab" data-t="com" aria-selected="true">Mes commerces<span class="n" id="n_com">0</span></button><button role="tab" data-t="fac">Cotisations et factures<span class="n" id="n_fac">0</span></button><button role="tab" data-t="charte">Charte</button><button role="tab" data-t="avis">Mon avis</button><button role="tab" data-t="profil">Mes coordonnées</button><button role="tab" data-t="hist">Historique</button></div>
+
+<section data-p="com">
+<div class="c"><h2>Mes commerces</h2><p>Tels qu'ils apparaissent sur Shopping Brabant. « Validé » signifie qu'un administrateur a confirmé l'enseigne sur place. Un commerce fermé ou cédé se retire d'un geste ; il reste dans votre historique et peut être rétabli.</p><div class="rows" id="comlist"></div><div class="docs"><a class="btn" href="../shopping/fiche.html">Déclarer un autre commerce</a><a class="btn o" href="../shopping/" target="_blank" rel="noopener">Voir Shopping Brabant</a></div></div>
+<div class="c" id="c_soc" hidden><h2>Mes sociétés</h2><div class="rows" id="soclist"></div></div>
+</section>
+
+<section data-p="fac" hidden>
+<div class="c"><h2>Cotisations et factures</h2><div class="kpi"><div><b id="k_open">0,00 €</b><span>à payer</span></div><div><b id="k_late">0</b><span>en retard</span></div><div><b id="k_paid">0,00 €</b><span>payé cette année</span></div></div>
+<p id="cot_info" class="soon"></p><div class="rows" id="faclist"></div><p class="soon" id="iban_info"></p></div>
+</section>
+
+<section data-p="charte" hidden>
+<div class="c"><h2>Charte du commerçant</h2><p id="charte_state" class="soon"></p><div class="charte" id="charte_txt"></div><div class="docs"><button class="btn" id="charte_ok">J'adhère à la charte</button><button class="btn o" id="charte_pdf">Télécharger en PDF</button></div><div class="msg" id="charte_msg"></div></div>
+</section>
+
+<section data-p="avis" hidden>
+<div class="c"><h2>Mon avis compte</h2><p>Ce qui vous préoccupe aujourd'hui, et votre intérêt pour une marketplace en ligne qui regrouperait tous les commerçants du quartier Nord : une seule boutique en ligne pour tout le quartier, livraison ou retrait en magasin.</p>
+<form id="avis" class="prm"><label class="w">Sujets qui vous intéressent<div class="chips" id="avis_int"></div></label><label class="w">Votre préoccupation principale aujourd'hui (une phrase)<input name="preoc"></label><label class="w">Une marketplace du quartier Nord vous intéresserait-elle ?<div class="chips"><label><input type="radio" name="mk" value="oui"> Oui, je suis intéressé</label><label><input type="radio" name="mk" value="peut_etre"> Peut-être, j'aimerais en savoir plus</label><label><input type="radio" name="mk" value="non"> Non</label></div></label><label class="w">Ce que vous attendriez d'une telle marketplace (facultatif)<input name="com"></label><label style="justify-self:start"><span>&nbsp;</span><button class="btn" type="submit">Enregistrer mon avis</button></label></form><div class="msg" id="avis_state"></div></div>
+</section>
+
+<section data-p="profil" hidden>
+<div class="c"><h2>Mes coordonnées</h2><p>L'adresse Google est votre identifiant ; elle ne se change pas ici. Le reste se corrige librement.</p>
+<form id="profil" class="prm"><label>Nom et prénom<input name="nom" required></label><label>Téléphone<input name="tel"></label><label>Adresse Google<input name="email" disabled></label><label>Membre de l'ACRB<input name="membre" disabled></label><label class="w"><span class="chips"><label><input type="checkbox" name="nl"> Recevoir la lettre d'information de l'association</label></span></label><label style="justify-self:start"><span>&nbsp;</span><button class="btn" type="submit">Enregistrer</button></label></form><div class="msg" id="profil_msg"></div></div>
+<div class="c"><h2>Vos données</h2><p>Chaque envoi est horodaté et conservé comme preuve dans un journal infalsifiable ; vos coordonnées ne servent qu'à l'association et à l'annuaire si vous l'avez accepté. Pour toute question ou pour retirer vos données : <a href="../acrb/#contact">écrire à l'association</a>.</p></div>
+</section>
+
+<section data-p="hist" hidden>
+<div class="c"><h2>Historique de mes envois</h2><p>Les trente derniers événements liés à votre fiche, avec l'empreinte de preuve.</p><div class="rows" id="histlist"></div></div>
+</section>
+</div></div><footer>ACRB asbl · Association des Commerçants de la Rue de Brabant · Shopping Brabant</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script>
+(function(){var sb=window.supabase.createClient("https://blaehmatdmobhwlhqfjo.supabase.co","sb_publishable_c1ovcVD1pbOGPedrJfDU3g_jtS1bY73");
+var AS={nom:"Association des Commerçants de la rue Brabant, Liedts et Gallait",abr:"A.C.R.B. asbl",num:"0468.701.030",siege:"Quai des Usines 160, 1000 Bruxelles"};
+var INTS=["Propreté et sécurité","Animations et fêtes","Visibilité en ligne","Stationnement et mobilité","Relations avec la commune","Achats groupés","Marketplace du quartier Nord"];
+var MOIS=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function fmt(d){if(!d)return"";var p=String(d).slice(0,10).split("-");return p[2]+"/"+p[1]+"/"+p[0];}function dl(d){var p=String(d).slice(0,10).split("-");return (+p[2])+" "+MOIS[+p[1]-1]+" "+p[0];}
+function eur(n){return (Math.round(+n*100)/100).toFixed(2).replace(".",",")+" €";}
+var D=null,user=null,P=null;
+document.getElementById("gbtn").onclick=function(){sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.href.split("#")[0]}});};
+document.getElementById("out").onclick=function(){sb.auth.signOut().then(function(){location.reload();});};
+document.querySelectorAll(".tabs button").forEach(function(b){b.onclick=function(){document.querySelectorAll(".tabs button").forEach(function(x){x.setAttribute("aria-selected",x===b);});document.querySelectorAll("section[data-p]").forEach(function(s){s.hidden=s.dataset.p!==b.dataset.t;});try{history.replaceState(null,"","#"+b.dataset.t);}catch(e){}};});
+function tab(t){var b=document.querySelector('.tabs button[data-t="'+t+'"]');if(b)b.onclick();}
+document.getElementById("nf_help").onclick=function(e){e.preventDefault();alert("Indiquez dans votre fiche, comme responsable du magasin, l'adresse "+(user&&user.email)+" : elle ouvrira cet espace. Sinon, écrivez à l'association depuis le portail ACRB, elle reliera votre fiche à cette adresse.");};
+
+function start(){sb.auth.getSession().then(function(r){var sess=r.data.session;var g=document.getElementById("gbtn"),o=document.getElementById("out");
+  if(!sess){g.hidden=false;o.hidden=true;return;}user=sess.user;g.hidden=true;o.hidden=false;
+  document.getElementById("who_b").textContent=user.user_metadata&&user.user_metadata.full_name||user.email;document.getElementById("topwho").textContent=user.email;document.getElementById("who_s").textContent="Connecté. Vos données sont chargées à partir de votre fiche.";
+  load();});}
+function load(){sb.rpc("acrb_mon_espace").then(function(x){D=x.data||{};var ps=D.personnes||[];
+  if(!ps.length){document.getElementById("nofiche").hidden=false;document.getElementById("nf_mail").textContent=user.email;return;}
+  P=ps[0];document.getElementById("app").hidden=false;renderCom();renderFac();renderCharte();renderAvis();renderProfil();renderHist();
+  var h=(location.hash||"").slice(1);if(h)tab(h);});}
+
+/* ---- commerces ---- */
+function renderCom(){var ms=D.magasins||[],list=document.getElementById("comlist");document.getElementById("n_com").textContent=ms.filter(function(m){return !m.retire_le;}).length;
+  list.innerHTML=ms.length?ms.map(function(m){var off=!!m.retire_le;return '<div class="row'+(off?" off":"")+'" data-id="'+m.id+'"><div class="id"><b>'+esc(m.enseigne||"(sans enseigne)")+(off?'<span class="st bad">Retiré · '+esc(m.retire_motif||"")+'</span>':m.valide?'<span class="st ok">Validé sur place</span>':'<span class="st warn">En attente de validation</span>')+'</b><span>'+esc((m.rue||"")+" "+(m.numero||"")+", "+(m.commune||""))+(m.categorie?" · "+esc(m.categorie):"")+' · déclaré le '+fmt(m.cree_le)+'</span></div><div class="acts">'+(off?'<button class="btn o" data-a="retablir">Rétablir</button>':'<a class="btn" href="../shopping/fiche.html'+(m.ue?"?ue="+encodeURIComponent(m.ue):"")+'">Modifier</a>'+(m.ue?'<a class="btn o" href="../shopping/#'+encodeURIComponent(m.ue)+'" target="_blank" rel="noopener">Voir</a>':"")+'<button class="btn d" data-a="retirer">Retirer</button>')+'</div></div>';}).join(""):'<div class="row"><div class="id"><span>Aucun commerce déclaré pour l\'instant.</span></div></div>';
+  list.querySelectorAll("button[data-a]").forEach(function(b){b.onclick=function(){var row=b.closest(".row"),id=row.dataset.id;
+    if(b.dataset.a==="retirer"){if(row.querySelector(".inline"))return;row.insertAdjacentHTML("beforeend",'<form class="inline"><select name="motif"><option>Commerce fermé</option><option>Commerce cédé / repris</option><option>Déménagé hors du quartier</option><option>Erreur, ce n\'est pas mon commerce</option></select><button class="btn d" type="button" data-x>Annuler</button><button class="btn" type="submit">Retirer de l\'annuaire</button></form>');
+      var f=row.querySelector(".inline");f.querySelector("[data-x]").onclick=function(){f.remove();};f.onsubmit=function(e){e.preventDefault();act(id,"retirer",f.motif.value);};return;}
+    act(id,"retablir",null);};});
+  var socs=D.societes||[];document.getElementById("c_soc").hidden=!socs.length;document.getElementById("soclist").innerHTML=socs.map(function(s){return '<div class="row"><div class="id"><b>'+esc(s.denomination||"")+'</b><span>'+esc(s.forme||"")+(s.bce?" · BCE "+esc(s.bce):"")+'</span></div></div>';}).join("");}
+function act(id,a,motif){sb.rpc("acrb_mon_magasin",{p_magasin_id:id,p_action:a,p_motif:motif}).then(function(x){if(x.error)alert("Échec : "+x.error.message);load();});}
+
+/* ---- factures ---- */
+function renderFac(){var fs=D.factures||[],list=document.getElementById("faclist"),rg=D.reglages||{};var open=0,late=0,paid=0,y=new Date().getFullYear();
+  fs.forEach(function(f){if(f.statut==="ouverte"||f.statut==="en_retard")open+=+f.montant;if(f.statut==="en_retard")late++;if(f.statut==="payee"&&String(f.paye_le||"").slice(0,4)==String(y))paid+=+f.montant;});
+  document.getElementById("k_open").textContent=eur(open);document.getElementById("k_late").textContent=late;document.getElementById("k_paid").textContent=eur(paid);
+  var n=document.getElementById("n_fac");n.textContent=fs.filter(function(f){return f.statut!=="payee"&&f.statut!=="annulee";}).length;n.className="n"+(late?" warn":"");
+  document.getElementById("cot_info").textContent=typeof rg.cotisation_info==="string"?rg.cotisation_info:"";
+  document.getElementById("iban_info").textContent=typeof rg.iban==="string"&&rg.iban?"Compte de l'association : "+rg.iban+" — utilisez la communication structurée de chaque facture.":"Le numéro de compte de l'association sera indiqué ici dès que le trésorier l'aura enregistré.";
+  list.innerHTML=fs.length?fs.map(function(f){var st=f.statut==="payee"?'<span class="st ok">Payée le '+fmt(f.paye_le)+'</span>':f.statut==="en_retard"?'<span class="st bad">En retard · échéance '+fmt(f.echeance)+'</span>':f.statut==="annulee"?'<span class="st">Annulée</span>':'<span class="st warn">À payer avant le '+fmt(f.echeance)+'</span>';
+    return '<div class="row" data-id="'+f.id+'"><div class="id"><b>'+esc(f.numero)+' — '+esc(f.objet)+st+'</b><span>'+eur(f.montant)+' · émise le '+fmt(f.date_emission)+(f.communication?' · communication '+esc(f.communication):"")+'</span></div><div class="acts"><button class="btn o" data-pdf="'+f.id+'">PDF</button></div></div>';}).join(""):'<div class="row"><div class="id"><span>Aucune facture ni cotisation pour l\'instant.</span></div></div>';
+  list.querySelectorAll("[data-pdf]").forEach(function(b){b.onclick=function(){var f=fs.filter(function(q){return String(q.id)===b.dataset.pdf;})[0];pdfFacture(f).then(function(blob){dl_(blob,f.numero+".pdf");});};});}
+function dl_(blob,name){var u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(u);a.remove();},2000);}
+async function pdfBase(titre){var L=window.PDFLib,doc=await L.PDFDocument.create();doc.setTitle(titre);doc.setAuthor(AS.abr);var F=await doc.embedFont(L.StandardFonts.Helvetica),B=await doc.embedFont(L.StandardFonts.HelveticaBold);var W=595.28,H=841.89,M=60;var page=doc.addPage([W,H]);
+  page.drawText(AS.abr+" — "+AS.nom,{x:M,y:H-34,size:8,font:B,color:L.rgb(.2,.2,.2)});page.drawText("N° d'entreprise "+AS.num+" · Siège : "+AS.siege,{x:M,y:H-46,size:7.5,font:F,color:L.rgb(.35,.35,.35)});page.drawLine({start:{x:M,y:H-52},end:{x:W-M,y:H-52},thickness:.6,color:L.rgb(.1,.14,.24)});
+  return {doc:doc,page:page,F:F,B:B,W:W,H:H,M:M,L:L};}
+async function pdfFacture(f){var k=await pdfBase("Facture "+f.numero),p=k.page,y=k.H-100,rg=D.reglages||{};function t(s,x,sz,b){p.drawText(s,{x:x,y:y,size:sz,font:b?k.B:k.F});}
+  t(f.statut==="payee"?"REÇU — "+f.numero:"FACTURE "+f.numero,k.M,16,true);y-=26;t("Date d'émission : "+dl(f.date_emission)+"   ·   Échéance : "+dl(f.echeance),k.M,10);y-=30;
+  t("Adressée à",k.M,9,true);y-=14;t(P.nom||"",k.M,11);y-=14;if(P.email)t(P.email,k.M,10);y-=14;var ms=(D.magasins||[]).filter(function(m){return !m.retire_le;});if(ms.length){t(ms.map(function(m){return m.enseigne;}).join(", "),k.M,10);y-=14;}
+  y-=20;p.drawLine({start:{x:k.M,y:y},end:{x:k.W-k.M,y:y},thickness:.5});y-=16;t("Objet",k.M,9,true);t("Montant",k.W-k.M-60,9,true);y-=16;t(f.objet,k.M,11);t(eur(f.montant),k.W-k.M-60,11,true);y-=12;p.drawLine({start:{x:k.M,y:y},end:{x:k.W-k.M,y:y},thickness:.5});y-=18;t("Total à payer : "+eur(f.montant)+" (association non assujettie à la TVA)",k.M,11,true);
+  y-=40;if(f.statut==="payee"){t("Payée le "+dl(f.paye_le)+(f.mode_paiement?" par "+f.mode_paiement:"")+". Merci.",k.M,11,true);}else{t("Paiement par virement",k.M,10,true);y-=14;t("Compte : "+(typeof rg.iban==="string"&&rg.iban?rg.iban:"(communiqué par le trésorier)"),k.M,10);y-=14;t("Communication structurée : "+(f.communication||""),k.M,10,true);}
+  p.drawText("Document généré par la plateforme de l'association le "+fmt(new Date().toISOString())+" · "+f.numero,{x:k.M,y:30,size:7,font:k.F,color:k.L.rgb(.4,.4,.4)});
+  return new Blob([await k.doc.save()],{type:"application/pdf"});}
+
+/* ---- charte ---- */
+function renderCharte(){var rg=D.reglages||{},txt=typeof rg.charte==="string"?rg.charte:"";document.getElementById("charte_txt").textContent=txt||"La charte sera publiée ici par le conseil d'administration.";
+  var ok=document.getElementById("charte_ok"),st=document.getElementById("charte_state");if(P.charte_acceptee_le){st.textContent="Vous avez adhéré à la charte le "+fmt(P.charte_acceptee_le)+".";ok.textContent="Charte acceptée ✓";ok.disabled=true;}else{st.textContent="En adhérant, vous vous engagez, au nom de vos commerces, à respecter ces principes communs.";ok.disabled=!txt;}
+  ok.onclick=function(){ok.disabled=true;sb.rpc("acrb_mon_profil",{p_personne_id:P.id,p_nom:null,p_tel:null,p_newsletter:null,p_charte:true}).then(function(x){document.getElementById("charte_msg").className="msg "+(x.error?"bad":"ok");document.getElementById("charte_msg").textContent=x.error?"Échec : "+x.error.message:"Merci, votre adhésion à la charte est enregistrée et horodatée.";load();});};
+  document.getElementById("charte_pdf").onclick=async function(){var k=await pdfBase("Charte du commerçant"),p=k.page,y=k.H-100;function wrap(t,s,w){var out=[];t.split("\n").forEach(function(par){var ws=par.split(" "),cur="";ws.forEach(function(wd){var tt=cur?cur+" "+wd:wd;if(k.F.widthOfTextAtSize(tt,s)>w&&cur){out.push(cur);cur=wd;}else cur=tt;});out.push(cur);});return out;}
+    p.drawText("CHARTE DU COMMERÇANT",{x:k.M,y:y,size:15,font:k.B});y-=30;wrap(txt,10.5,k.W-2*k.M).forEach(function(l){if(y<80){p=k.doc.addPage([k.W,k.H]);y=k.H-k.M;}p.drawText(l,{x:k.M,y:y,size:10.5,font:k.F});y-=15;});
+    if(P.charte_acceptee_le){y-=20;p.drawText("Adhésion de "+(P.nom||"")+" enregistrée le "+fmt(P.charte_acceptee_le)+".",{x:k.M,y:y,size:10,font:k.B});}
+    dl_(new Blob([await k.doc.save()],{type:"application/pdf"}),"Charte-du-commercant.pdf");};}
+
+/* ---- avis ---- */
+function renderAvis(){var f=document.getElementById("avis");document.getElementById("avis_int").innerHTML=INTS.map(function(i){return '<label><input type="checkbox" name="int" value="'+esc(i)+'"'+((P.interets||[]).indexOf(i)>=0?" checked":"")+'> '+esc(i)+'</label>';}).join("");
+  f.preoc.value=P.preoccupation_principale||"";f.com.value=P.marketplace_commentaire||"";if(P.marketplace){var r=f.querySelector('input[name="mk"][value="'+P.marketplace+'"]');if(r)r.checked=true;}
+  f.onsubmit=function(e){e.preventDefault();var bt=f.querySelector("button");bt.disabled=true;sb.rpc("acrb_mon_avis",{p_personne_id:P.id,p_interets:Array.prototype.map.call(f.querySelectorAll('input[name="int"]:checked'),function(c){return c.value;}),p_preoccupation:f.preoc.value.trim()||null,p_marketplace:(f.querySelector('input[name="mk"]:checked')||{}).value||null,p_commentaire:f.com.value.trim()||null}).then(function(x){bt.disabled=false;var m=document.getElementById("avis_state");m.className="msg "+(x.error?"bad":"ok");m.textContent=x.error?"Échec : "+x.error.message:"Merci, votre avis est enregistré.";});};}
+
+/* ---- profil ---- */
+function renderProfil(){var f=document.getElementById("profil");f.nom.value=P.nom||"";f.tel.value=P.tel||"";f.email.value=P.email||user.email;f.membre.value=P.membre_acrb||"—";f.nl.checked=P.newsletter!==false;
+  f.onsubmit=function(e){e.preventDefault();var bt=f.querySelector("button");bt.disabled=true;sb.rpc("acrb_mon_profil",{p_personne_id:P.id,p_nom:f.nom.value,p_tel:f.tel.value,p_newsletter:f.nl.checked,p_charte:false}).then(function(x){bt.disabled=false;var m=document.getElementById("profil_msg");m.className="msg "+(x.error?"bad":"ok");m.textContent=x.error?"Échec : "+x.error.message:"Coordonnées enregistrées.";if(!x.error)load();});};}
+
+/* ---- historique ---- */
+var TYPES={soumission:"Fiche envoyée",avis_commercant:"Avis enregistré",magasin_retirer:"Commerce retiré",magasin_retablir:"Commerce rétabli",charte_acceptee:"Charte acceptée",profil_maj:"Coordonnées modifiées",absents_declares:"Autres établissements signalés absents"};
+function renderHist(){var js=D.journal||[];document.getElementById("histlist").innerHTML=js.length?js.map(function(j){return '<div class="row"><div class="id"><b>'+esc(TYPES[j.type]||j.type)+'</b><span>'+fmt(j.le)+" à "+String(j.le).slice(11,16)+' · empreinte '+esc(j.empreinte)+'…</span></div></div>';}).join(""):'<div class="row"><div class="id"><span>Aucun événement.</span></div></div>';}
+
+sb.auth.onAuthStateChange(function(ev){if(ev==="SIGNED_IN")setTimeout(start,100);});start();})();
+</script></body></html>
