@@ -407,9 +407,14 @@ function streetView(W,key){
   /* côté de la rue : signe du produit vectoriel par rapport à l'axe */
   var A=lo[0].ll,toR=Math.PI/180,kx=Math.cos(A[0]*toR);function side(ll){var ex=(ll[1]-A[1])*kx,ny=ll[0]-A[0],bx=Math.sin(axis*toR),by=Math.cos(axis*toR);return (bx*ny-by*ex)>0?-1:1;}
   var cur=0;
-  function show(i){cur=Math.max(0,Math.min(seq.length-1,i));var it=seq[cur],s=it.arr[0],h=(axis+90*side(s.ll)+360)%360;
-    f.src="https://www.google.com/maps/embed/v1/streetview?key="+encodeURIComponent(key)+"&location="+s.ll[0].toFixed(6)+","+s.ll[1].toFixed(6)+"&heading="+h.toFixed(0)+"&pitch=2&fov=85&source=outdoor&radius=40&language="+L_;
+  function show(i){cur=Math.max(0,Math.min(seq.length-1,i));var it=seq[cur],s=it.arr[0];
     var other=null,od=1e9;W.items[it.n%2?"even":"odd"].forEach(function(o){var d=Math.abs(o.t+o.w/2-(it.t+it.w/2));if(d<od){od=d;other=o;}});
+    /* point de vue au milieu de la chaussée (entre la façade et son vis-à-vis), regard vers la façade : on évite les panoramas intérieurs des magasins */
+    var sg=side(s.ll),h,loc;
+    if(other&&od<30){var o=other.arr[0].ll;loc=[(s.ll[0]+o[0])/2,(s.ll[1]+o[1])/2];}
+    else{var ang=((axis-90*sg)+360)%360*toR,m=9/111320;loc=[s.ll[0]+Math.cos(ang)*m,s.ll[1]+Math.sin(ang)*m/kx];}
+    h=bearingDeg(loc,s.ll);
+    f.src="https://www.google.com/maps/embed/v1/streetview?key="+encodeURIComponent(key)+"&location="+loc[0].toFixed(6)+","+loc[1].toFixed(6)+"&heading="+h.toFixed(0)+"&pitch=2&fov=85&source=outdoor&radius=25&language="+L_;
     here.textContent=s.n+" · n° "+it.n+(other&&od<18?" · "+T.walk_facing.replace("{n}",other.n):"");fiche.href="#c-"+s.id;fiche.hidden=false;
     Array.prototype.forEach.call(list.children,function(b,k){b.classList.toggle("on",k===cur);});var b=list.children[cur];if(b)b.scrollIntoView({inline:"center",block:"nearest",behavior:"smooth"});}
   list.innerHTML=seq.map(function(it,i){var s=it.arr[0];return '<button type="button" class="'+(it.n%2?"od":"ev")+'" data-i="'+i+'"><b>N° '+it.n+'</b>'+esc(s.n)+'</button>';}).join("");
