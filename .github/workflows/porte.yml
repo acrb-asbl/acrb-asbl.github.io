@@ -1,0 +1,67 @@
+# PORTE DE PUBLICATION ACRB : on ne publie plus directement sur main.
+# On pousse sur la branche « travail » ; la porte teste la copie, publie seulement si vert,
+# re-teste le site en ligne, et revient automatiquement au commit précédent si rouge.
+name: porte
+on:
+  push:
+    branches: [travail]
+  workflow_dispatch:
+permissions:
+  contents: write
+  issues: write
+concurrency:
+  group: porte
+  cancel-in-progress: false
+jobs:
+  porte:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Outils de test
+        run: npm i --no-save --no-package-lock playwright@1.49.1 && npx playwright install --with-deps chromium webkit
+      - name: Porte AVANT publication (copie de ce commit, servie localement)
+        run: |
+          python3 -m http.server 8765 >/dev/null 2>&1 &
+          sleep 2
+          node .porte/porte.mjs http://localhost:8765 sortie/avant
+      - name: Publication (main avance jusqu'à ce commit)
+        run: |
+          git fetch origin main
+          echo "AVANT=$(git rev-parse origin/main)" >> $GITHUB_ENV
+          git push origin HEAD:main
+      - name: Attente de la mise en ligne
+        id: attente
+        run: node .porte/attendre.mjs
+        continue-on-error: true
+      - name: Porte APRÈS publication (site en ligne)
+        id: apres
+        if: steps.attente.outcome == 'success'
+        run: node .porte/porte.mjs https://acrb-asbl.github.io sortie/apres
+        continue-on-error: true
+      - name: Retour automatique au commit précédent
+        if: steps.apres.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "porte-acrb"
+          git config user.email "porte-acrb@users.noreply.github.com"
+          git fetch origin main
+          git checkout -B retour origin/main
+          git revert --no-edit "$AVANT"..HEAD
+          git push origin HEAD:main
+          git push -f origin HEAD:travail
+          gh label create retour-arriere --color b60205 --force || true
+          gh issue create --label retour-arriere --title "[porte] Retour arrière automatique du ${GITHUB_SHA::7}" --body "La publication ${GITHUB_SHA} était rouge en ligne. Le site est revenu au commit ${AVANT}. Nouveaux rouges : $(cat sortie/apres/nouveaux.txt 2>/dev/null | head -20)"
+          exit 1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: porte-${{ github.sha }}
+          path: sortie
+          retention-days: 14
