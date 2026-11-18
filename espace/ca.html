@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>Mon mandat d'administrateur — ACRB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>:root{--navy:#14233c;--line:#dfe3ea;--muted:#5f6675;--brick:#b23a2b;--green:#1f8a4c}*{box-sizing:border-box}
+body{margin:0;background:#f4f5f8;color:#222;font:17px/1.55 "Source Sans 3","Segoe UI",Arial,sans-serif}
+.top{background:#0d1729;color:#c9d1de;font-size:13px;padding:8px 16px}.top a{color:#fff;text-decoration:none}
+.wrap{max-width:620px;margin:0 auto;padding:32px 16px 48px}h1{font:800 clamp(26px,6vw,34px)/1.15 "Libre Franklin",Arial,sans-serif;letter-spacing:-.02em;margin:0 0 8px}
+.lead{color:var(--muted);margin:0 0 22px}.box{background:#fff;border:1px solid var(--line);border-top:4px solid var(--navy);padding:20px}
+.who b{display:block;font:800 20px "Libre Franklin",Arial,sans-serif}.who span{color:var(--muted);font-size:15px}
+.ch{display:grid;gap:10px;margin-top:18px}
+button,.btn{display:block;width:100%;text-align:center;padding:15px 16px;font:700 16px "Libre Franklin",Arial,sans-serif;border:1px solid var(--navy);background:var(--navy);color:#fff;cursor:pointer;text-decoration:none}
+button.o{background:#fff;color:var(--navy)}button:disabled{opacity:.55;cursor:default}
+.fin{margin-top:12px;padding:14px;border:1px solid var(--line);background:#f9fafb}.fin[hidden]{display:none}.fin label{display:block;font-weight:600;margin-bottom:6px}
+.fin input{width:100%;padding:12px;border:1px solid #c6ccd6;font:17px "Source Sans 3",sans-serif;margin-bottom:10px}
+.msg{margin-top:14px;font-size:15.5px}.msg.bad{color:var(--brick)}.msg.ok{color:var(--green)}.small{font-size:13.5px;color:var(--muted);margin-top:18px}
+</style></head><body>
+<div class="top"><a href="../acrb/">ACRB, l'association</a></div>
+<div class="wrap"><h1>Mon mandat d'administrateur</h1>
+<p class="lead">L'ACRB met à jour la liste de son conseil d'administration. Un clic suffit : aucun mot de passe, aucun compte à créer pour répondre.</p>
+<div class="box" id="box"><p id="etat">Chargement…</p></div>
+<p class="small">Ce lien est personnel : ne le transférez pas. Votre réponse est enregistrée et horodatée dans le registre du conseil. En cas d'erreur, demandez un nouveau lien au conseil.</p></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
+<script>(function(){
+var sb=window.supabase.createClient("https://blaehmatdmobhwlhqfjo.supabase.co","sb_publishable_c1ovcVD1pbOGPedrJfDU3g_jtS1bY73",{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
+var T=(location.search.match(/[?&]t=([0-9a-f]{32})/)||[])[1],box=document.getElementById("box");
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function d(s){return s?new Date(s+"T12:00:00").toLocaleDateString("fr-BE",{day:"numeric",month:"long",year:"numeric"}):"";}
+function err(e){var m=(e&&e.message)||String(e);return m.replace(/^.*?:\s(?=[A-ZÀ-Ý])/,"");}
+function acces(inv){return inv?'<p style="margin:16px 0 8px">Dernière étape : ouvrez votre accès à l’espace du conseil (votes, actes, documents). Un seul geste avec votre compte Google, valable un an.</p><a class="btn" href="index.html?invit='+esc(inv)+'">Ouvrir mon accès au conseil</a>':'';}
+if(!T){box.innerHTML='<p>Ce lien est incomplet. Ouvrez le lien exact reçu du conseil, ou demandez-en un nouveau.</p>';return;}
+sb.rpc("acrb_ca_lien_lire",{p_token:T}).then(function(x){
+  if(x.error){box.innerHTML='<p class="msg bad">'+esc(err(x.error))+'</p>';return;}
+  var c=x.data,head='<div class="who"><b>'+esc(c.nom)+'</b><span>'+esc(c.fonction)+(c.depuis?' · au conseil depuis le '+esc(d(c.depuis))+' (Banque-Carrefour des Entreprises)':'')+'</span></div>';
+  if(c.repondu_le){var r=c.reponse||{};
+    box.innerHTML=head+'<p class="msg ok">'+(r.choix==="demission"?'Vous avez déclaré avoir quitté le conseil le '+esc(d(r.fin))+'. Merci, c’est enregistré.':'Vous avez confirmé votre mandat. Merci.')+'</p>'+(r.choix==="confirme"?acces(c.invitation):'');return;}
+  box.innerHTML=head+'<div class="ch"><button id="oui">Je suis administrateur'+(c.depuis?' depuis le '+esc(d(c.depuis)):'')+'</button>'+
+    '<button class="o" id="non">Je ne suis plus administrateur</button></div>'+
+    '<div class="fin" id="fin" hidden><label for="dfin">Depuis quelle date ?</label><input type="date" id="dfin" max="'+new Date().toISOString().slice(0,10)+'"'+(c.depuis?' min="'+esc(c.depuis)+'"':'')+'><button id="ok_fin">Confirmer ma démission</button></div><div class="msg" id="msg"></div>';
+  var msg=document.getElementById("msg");
+  function rep(choix,fin,b){b.disabled=true;msg.className="msg";msg.textContent="Enregistrement…";
+    sb.rpc("acrb_ca_lien_repondre",{p_token:T,p_choix:choix,p_fin:fin||null}).then(function(y){
+      if(y.error){b.disabled=false;msg.className="msg bad";msg.textContent=err(y.error);return;}
+      box.innerHTML=head+(choix==="confirme"?'<p class="msg ok">Merci, votre mandat est confirmé : votre nom apparaît comme validé et votre voix compte dans les votes du conseil.</p>'+acces(y.data.invitation)
+        :'<p class="msg ok">Merci, votre départ du conseil au '+esc(d(fin))+' est enregistré. Le conseil prépare l’acte officiel (publication au Moniteur belge).</p>');});}
+  document.getElementById("oui").onclick=function(){rep("confirme",null,this);};
+  document.getElementById("non").onclick=function(){document.getElementById("fin").hidden=false;document.getElementById("dfin").focus();};
+  document.getElementById("ok_fin").onclick=function(){var v=document.getElementById("dfin").value;if(!v){msg.className="msg bad";msg.textContent="Indiquez la date de votre départ.";return;}rep("demission",v,this);};
+});
+})();</script></body></html>

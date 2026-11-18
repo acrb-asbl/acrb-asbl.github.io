@@ -9,7 +9,7 @@ function num(v){v=String(v||"").replace(/\s/g,"").replace(",",".");return v===""
 function $(id){return document.getElementById(id);}
 function err(x){return (x&&x.error&&(x.error.message||x.error))||"";}
 function etat(t,cls){var e=$("vo_state");e.textContent=t||"";e.className="soon"+(cls?" "+cls:"");}
-function lienVote(id){return "https://acrb-asbl.github.io/espace/?vote="+id;}
+function lienVote(id){return "https://acrb-asbl.github.io/espace/?vote="+id+"#/conseil/votes";}
 
 function charger(){
   return sb.rpc("acrb_scrutins_liste").then(function(x){
@@ -28,6 +28,7 @@ function bilan(s){
   if(s.statut==="adopte")return {txt:"Adopté à l'unanimité ("+n+" sur "+n+")",cls:"ok"};
   if(s.statut==="annule")return {txt:"Annulé",cls:"out"};
   if(votes<n)return {txt:votes+" vote"+(votes>1?"s":"")+" sur "+n,cls:"warn"};
+  if(b.some(function(v){return v.secret;}))return {txt:"Tous ont voté, sans unanimité : chacun peut revoir son vote",cls:"out"};
   var tous=b.every(function(v){return v.offre_id===null;});
   if(tous)return {txt:"Aucune offre retenue (rejet unanime)",cls:"out"};
   return {txt:"Pas d'unanimité : chacun peut revoir son vote",cls:"out"};
@@ -50,7 +51,10 @@ function carte(s,moi){
   var h='<div class="vo" id="vo_'+s.id+'"><div class="vo_h"><div><b>'+esc(s.titre)+'</b><span class="st '+bl.cls+'">'+esc(bl.txt)+'</span></div>'+
     '<span class="soon">Ouvert le '+esc(dt(s.cree_le))+(s.echeance?' · à voter avant le '+esc(new Date(s.echeance).toLocaleDateString("fr-BE")):'')+'</span></div>';
   if(s.objet)h+='<p class="vo_obj">'+esc(s.objet)+'</p>';
-  if(s.statut==="adopte"&&s.decision){var d=s.decision;
+  if(s.secret)h+='<p class="soon">Vote secret jusqu\u2019à la clôture : chacun voit qui a voté, pas ce qu\u2019il a choisi. Tout devient nominatif quand le vote est clos (procès-verbal).</p>';
+  if(s.statut==="adopte"&&s.decision&&s.effet&&s.effet.type==="fonction"){var d=s.decision,f=s.effet;
+    h+='<div class="vo_dec"><b>Décision du conseil : '+esc(f.nom)+' devient '+esc(f.fonction_fr)+'</b> (auparavant '+esc(f.avant||'')+').<br>Adoptée à l\u2019unanimité des '+esc(d.unanimite)+' administrateurs votants, le '+esc(dt(d.le))+'.<br><button class="btn o" type="button" data-pv="'+s.id+'">Imprimer la décision</button></div>';}
+  else if(s.statut==="adopte"&&s.decision){var d=s.decision;
     h+='<div class="vo_dec"><b>Décision du conseil : commande à '+esc(d.prestataire)+'</b>'+(d.objet?' — '+esc(d.objet):'')+
       (d.montant_tvac!=null?'<br>Montant : '+esc(eur(d.montant_tvac))+' TVAC':'')+(d.montant_htva!=null?' ('+esc(eur(d.montant_htva))+' HTVA)':'')+
       '<br>Adoptée à l’unanimité des '+esc(d.unanimite)+' administrateurs votants, le '+esc(dt(d.le))+'.<br><button class="btn o" type="button" data-pv="'+s.id+'">Imprimer la décision</button></div>';}
@@ -75,6 +79,7 @@ function carte(s,moi){
   // votants
   h+='<div class="vo_el"><b>Votants ('+(s.electeurs||[]).length+')</b><ul>'+(s.electeurs||[]).map(function(e){
     var b=(s.bulletins||[]).filter(function(x){return x.ca_id===e.id;})[0];var o=b&&b.offre_id?offreDe(s,b.offre_id):null;
+    if(b&&b.secret)return '<li>'+esc(e.nom)+' — <b>a voté</b> <span class="soon">('+esc(dt(b.vote_le))+', choix secret jusqu\u2019à la clôture)</span></li>';
     return '<li>'+esc(e.nom)+' — '+(b?(o?'a choisi <b>'+esc(o.prestataire)+'</b>':'<b>aucune de ces offres</b>')+' <span class="soon">('+esc(dt(b.vote_le))+')</span>'+(b.commentaire?'<br><i>« '+esc(b.commentaire)+' »</i>':''):'<span class="soon">n’a pas encore voté'+(e.acces?'':' — pas encore d’accès à la plateforme')+'</span>')+'</li>';
   }).join("")+'</ul></div>';
   if(open){
@@ -115,7 +120,7 @@ function clic(e){
     t.disabled=true;etat("Enregistrement du vote…");
     sb.rpc("acrb_voter",{p_scrutin:sid,p_offre:off,p_commentaire:c?c.value:null}).then(function(x){
       if(x.error){etat("Vote refusé : "+err(x),"bad");t.disabled=false;return;}
-      etat(x.data&&x.data.statut==="adopte"?"Unanimité atteinte : la commande à "+x.data.prestataire+" est décidée.":"Vote enregistré. Vous pouvez le changer tant que le vote est ouvert.","ok");charger();});return;}
+      etat(x.data&&x.data.statut==="adopte"?(/^Approuver : /.test(x.data.prestataire)?"Unanimité atteinte : "+x.data.prestataire.replace(/^Approuver : /,"")+" (c\u2019est fait).":"Unanimité atteinte : la commande à "+x.data.prestataire+" est décidée."):"Vote enregistré. Vous pouvez le changer tant que le vote est ouvert.","ok");charger();});return;}
   if(t.dataset.doc){sb.storage.from("acrb-actes").createSignedUrl(t.dataset.doc,900).then(function(r){if(r.error){etat("Document inaccessible : "+r.error.message,"bad");return;}window.open(r.data.signedUrl,"_blank","noopener");});return;}
   if(t.dataset.retirer){if(!confirm("Retirer cette offre du vote ?"))return;sb.rpc("acrb_offre_retirer",{p_offre:+t.dataset.retirer}).then(function(x){if(x.error)etat(err(x),"bad");charger();});return;}
   if(t.dataset.annuler){var m=prompt("Annuler ce vote ? Indiquez le motif :");if(m===null)return;sb.rpc("acrb_scrutin_annuler",{p_scrutin:+t.dataset.annuler,p_motif:m}).then(function(x){if(x.error)etat(err(x),"bad");charger();});return;}
@@ -143,7 +148,7 @@ function imprimer(id){
   w.document.write('<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Décision du conseil — '+esc(s.titre)+'</title><style>body{font:15px/1.5 Arial,sans-serif;max-width:720px;margin:32px auto;padding:0 16px;color:#111}h1{font-size:20px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #bbb;padding:6px 8px;text-align:left}</style></head><body>'+
     '<p>A.C.R.B. asbl — Association des Commerçants de la Rue de Brabant · 0468.701.030</p><h1>Décision du conseil d’administration</h1>'+
     '<p><b>Objet :</b> '+esc(s.titre)+(s.objet?'<br>'+esc(s.objet):'')+'</p><p><b>Offres examinées :</b></p><ul>'+off+'</ul>'+
-    '<p><b>Décision :</b> le conseil d’administration décide, à l’unanimité, de passer commande à <b>'+esc(d.prestataire)+'</b>'+(d.objet?' ('+esc(d.objet)+')':'')+(d.montant_tvac!=null?' pour un montant de '+esc(eur(d.montant_tvac))+' TVAC':'')+'.</p>'+
+    (s.effet&&s.effet.type==="fonction"?'<p><b>Décision :</b> le conseil d’administration décide, à l’unanimité, que <b>'+esc(s.effet.nom)+'</b> exerce désormais la fonction de <b>'+esc(s.effet.fonction_fr)+'</b> (auparavant '+esc(s.effet.avant||'')+').</p>':'<p><b>Décision :</b> le conseil d’administration décide, à l’unanimité, de passer commande à <b>'+esc(d.prestataire)+'</b>'+(d.objet?' ('+esc(d.objet)+')':'')+(d.montant_tvac!=null?' pour un montant de '+esc(eur(d.montant_tvac))+' TVAC':'')+'.</p>')+
     '<p>Vote ouvert le '+esc(dt(s.cree_le))+', clos à l’unanimité le '+esc(dt(d.le))+' sur la plateforme de l’association.</p>'+
     '<table><tr><th>Administrateur</th><th>Fonction</th><th>Vote exprimé le</th></tr>'+rows+'</table>'+
     '<p style="margin-top:24px;font-size:12px;color:#555">Chaque vote est enregistré avec l’adresse de connexion du votant et l’heure, dans le journal de preuve de l’association. Référence du vote : V'+s.id+'.</p>'+
@@ -151,7 +156,7 @@ function imprimer(id){
   w.document.close();
 }
 
-window.VOTES={init:function(_sb,_user){sb=_sb;user=_user;
+window.VOTES={recharger:function(){return sb&&charger();},init:function(_sb,_user){sb=_sb;user=_user;
   if(!window.VOTES._lie){window.VOTES._lie=1;
     $("c_votes").addEventListener("click",clic);
     $("c_votes").addEventListener("submit",function(e){var f=e.target;if(f.id==="vo_new"){e.preventDefault();
