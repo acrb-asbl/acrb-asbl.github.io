@@ -20,8 +20,18 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Outils de test
-        run: npm i --no-save --no-package-lock playwright@1.63.0 && npx playwright install --with-deps chromium webkit
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: pw-1.63.0-${{ runner.os }}
+      - name: Outils de test (3 essais de 5 min, jamais bloqué)
+        timeout-minutes: 16
+        run: |
+          for i in 1 2 3; do
+            timeout 300 bash -c 'npm i --no-save --no-package-lock playwright@1.63.0 && npx playwright install --with-deps chromium webkit' && exit 0
+            echo "essai $i bloqué ou en échec, nouvel essai"; sleep 5
+          done
+          exit 1
       - name: Robot universel (vrais boutons, lecture seule)
         run: node .porte/robot-universel.mjs https://acrb-asbl.github.io/acrb sortie/robot 40 20 "Pixel 7"
         continue-on-error: true
