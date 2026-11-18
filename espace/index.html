@@ -251,7 +251,7 @@ return {init:function(client,u){sb=client;user=u;who=u.user_metadata&&u.user_met
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
 <script>
-(function(){var sb=window.supabase.createClient("https://blaehmatdmobhwlhqfjo.supabase.co","sb_publishable_c1ovcVD1pbOGPedrJfDU3g_jtS1bY73",{auth:{flowType:"implicit",detectSessionInUrl:true,persistSession:true}});
+(function(){function acrbBase(){return location.origin+location.pathname.split("&")[0]+(location.search||"");}function acrbClean(){if(location.pathname.indexOf("&")>=0){try{history.replaceState(null,"",location.pathname.split("&")[0]+location.search+(location.hash&&location.hash.indexOf("access_token")<0?location.hash:""));}catch(e){}}}acrbClean();setTimeout(acrbClean,300);setTimeout(acrbClean,1500);var sb=window.supabase.createClient("https://blaehmatdmobhwlhqfjo.supabase.co","sb_publishable_c1ovcVD1pbOGPedrJfDU3g_jtS1bY73",{auth:{flowType:"implicit",detectSessionInUrl:true,persistSession:true}});
 var ROLES={commercant:"Commerçant",ca:"Conseil d'administration",admin:"Administrateur de la plateforme",tresorier:"Trésorier",benevole_admin:"Bénévole administratif",benevole_terrain:"Bénévole terrain"};
 var INTS=["Propreté et sécurité","Animations et fêtes","Visibilité en ligne","Stationnement et mobilité","Relations avec la commune","Achats groupés","Marketplace du quartier Nord"];
 function has(roles,l){return l.some(function(r){return roles.indexOf(r)>=0;});}
@@ -384,13 +384,13 @@ function refresh(){sb.auth.getSession().then(function(r){var sess=r.data.session
   if(!sess){show(null,[]);if(INV){document.getElementById("who_b").textContent="Vous avez reçu une invitation de l’ACRB";document.getElementById("who_s").textContent="Connectez-vous avec votre compte Google, quel qu’il soit : votre accès s’ouvre aussitôt.";}return;}
   var p=INV?sb.rpc("acrb_invitation_utiliser",{p_token:INV}).then(function(x){if(x.error)INVERR=x.error.message;INV=null;try{localStorage.removeItem("acrb_invit");}catch(e){}try{history.replaceState(null,"",location.pathname+location.hash);}catch(e){}}):Promise.resolve();
   p.then(function(){return sb.rpc("acrb_mes_roles");}).then(function(x){show(sess.user,x.data||[]);if(INVERR)document.getElementById("who_s").textContent="Invitation non valide : "+INVERR;});});}
-document.getElementById("gbtn").addEventListener("click",function(){sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.href.split("#")[0]}});});
+document.getElementById("gbtn").addEventListener("click",function(){sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:acrbBase()}});});
 document.getElementById("out").addEventListener("click",function(){sb.auth.signOut().then(refresh);});
-sb.auth.onAuthStateChange(function(ev,sess){if(ev==="SIGNED_IN"||ev==="INITIAL_SESSION"||ev==="SIGNED_OUT"||ev==="TOKEN_REFRESHED")refresh();});refresh();
+sb.auth.onAuthStateChange(function(ev,sess){acrbClean();if(ev==="SIGNED_IN"||ev==="INITIAL_SESSION"||ev==="SIGNED_OUT"||ev==="TOKEN_REFRESHED")refresh();});refresh();
 /* connexion : Google (flux implicite, un seul geste) ou lien par e-mail */
 (function(){var ab=document.getElementById("altbtn"),af=document.getElementById("altform"),am=document.getElementById("alt_msg");if(!ab)return;ab.onclick=function(){window.open("https://accounts.google.com/signup","_blank","noopener");am.textContent="Choisissez « Utiliser mon adresse e-mail actuelle », puis revenez ici et touchez « Se connecter avec Google ».";};
   af.onsubmit=function(e){e.preventDefault();var em=document.getElementById("alt_email").value.trim();var bt=af.querySelector("button");bt.disabled=true;am.textContent="Envoi…";
-    sb.auth.signInWithOtp({email:em,options:{emailRedirectTo:location.href.split("#")[0].split("?")[0],shouldCreateUser:true}}).then(function(x){bt.disabled=false;if(x.error){am.textContent="Échec : "+x.error.message;return;}am.textContent="Lien envoyé à "+em+". Ouvrez le courriel sur cet appareil et touchez le lien : vous êtes connecté pour un an.";});};})();
+    sb.auth.signInWithOtp({email:em,options:{emailRedirectTo:acrbBase().split("?")[0],shouldCreateUser:true}}).then(function(x){bt.disabled=false;if(x.error){am.textContent="Échec : "+x.error.message;return;}am.textContent="Lien envoyé à "+em+". Ouvrez le courriel sur cet appareil et touchez le lien : vous êtes connecté pour un an.";});};})();
 if(/[#&](access_token|error)=|[?&]code=/.test(location.href)){try{history.replaceState(null,"",location.pathname+location.hash.replace(/[#&](access_token|refresh_token|expires_in|expires_at|token_type|type|provider_token|provider_refresh_token)=[^&]*/g,"").replace(/^#&/,"#").replace(/^#$/,""));}catch(e){}}
 })();
 </script></body></html>

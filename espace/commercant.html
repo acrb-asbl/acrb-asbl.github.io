@@ -65,7 +65,7 @@ footer{padding:24px 20px;font-size:13px;color:var(--muted);text-align:center}.al
 <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
 <script>
-(function(){var sb=window.supabase.createClient("https://blaehmatdmobhwlhqfjo.supabase.co","sb_publishable_c1ovcVD1pbOGPedrJfDU3g_jtS1bY73",{auth:{flowType:"implicit",detectSessionInUrl:true,persistSession:true}});
+(function(){function acrbBase(){return location.origin+location.pathname.split("&")[0]+(location.search||"");}function acrbClean(){if(location.pathname.indexOf("&")>=0){try{history.replaceState(null,"",location.pathname.split("&")[0]+location.search+(location.hash&&location.hash.indexOf("access_token")<0?location.hash:""));}catch(e){}}}acrbClean();setTimeout(acrbClean,300);setTimeout(acrbClean,1500);var sb=window.supabase.createClient("https://blaehmatdmobhwlhqfjo.supabase.co","sb_publishable_c1ovcVD1pbOGPedrJfDU3g_jtS1bY73",{auth:{flowType:"implicit",detectSessionInUrl:true,persistSession:true}});
 var AS={nom:"Association des Commerçants de la rue Brabant, Liedts et Gallait",abr:"A.C.R.B. asbl",num:"0468.701.030",siege:"Quai des Usines 160, 1000 Bruxelles"};
 var INTS=["Propreté et sécurité","Animations et fêtes","Visibilité en ligne","Stationnement et mobilité","Relations avec la commune","Achats groupés","Marketplace du quartier Nord"];
 var MOIS=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
@@ -73,7 +73,7 @@ function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return
 function fmt(d){if(!d)return"";var p=String(d).slice(0,10).split("-");return p[2]+"/"+p[1]+"/"+p[0];}function dl(d){var p=String(d).slice(0,10).split("-");return (+p[2])+" "+MOIS[+p[1]-1]+" "+p[0];}
 function eur(n){return (Math.round(+n*100)/100).toFixed(2).replace(".",",")+" €";}
 var D=null,user=null,P=null;
-document.getElementById("gbtn").onclick=function(){sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.href.split("#")[0]}});};
+document.getElementById("gbtn").onclick=function(){sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:acrbBase()}});};
 document.getElementById("out").onclick=function(){sb.auth.signOut().then(function(){location.reload();});};
 document.querySelectorAll(".tabs button").forEach(function(b){b.onclick=function(){document.querySelectorAll(".tabs button").forEach(function(x){x.setAttribute("aria-selected",x===b);});document.querySelectorAll("section[data-p]").forEach(function(s){s.hidden=s.dataset.p!==b.dataset.t;});try{history.replaceState(null,"","#"+b.dataset.t);}catch(e){}};});
 function tab(t){var b=document.querySelector('.tabs button[data-t="'+t+'"]');if(b)b.onclick();}
@@ -173,11 +173,11 @@ function renderProfil(){var f=document.getElementById("profil");f.nom.value=P.no
 var TYPES={soumission:"Fiche envoyée",avis_commercant:"Avis enregistré",magasin_retirer:"Commerce retiré",magasin_retablir:"Commerce rétabli",charte_acceptee:"Charte acceptée",profil_maj:"Coordonnées modifiées",absents_declares:"Autres établissements signalés absents"};
 function renderHist(){var js=D.journal||[];document.getElementById("histlist").innerHTML=js.length?js.map(function(j){return '<div class="row"><div class="id"><b>'+esc(TYPES[j.type]||j.type)+'</b><span>'+fmt(j.le)+" à "+String(j.le).slice(11,16)+' · empreinte '+esc(j.empreinte)+'…</span></div></div>';}).join(""):'<div class="row"><div class="id"><span>Aucun événement.</span></div></div>';}
 
-sb.auth.onAuthStateChange(function(ev){if(ev==="SIGNED_IN"||ev==="INITIAL_SESSION")setTimeout(start,50);});start();
+sb.auth.onAuthStateChange(function(ev){acrbClean();if(ev==="SIGNED_IN"||ev==="INITIAL_SESSION")setTimeout(start,50);});start();
 /* connexion : Google (flux implicite, un seul geste) ou lien par e-mail */
 (function(){var ab=document.getElementById("altbtn"),af=document.getElementById("altform"),am=document.getElementById("alt_msg");if(!ab)return;ab.onclick=function(){window.open("https://accounts.google.com/signup","_blank","noopener");am.textContent="Choisissez « Utiliser mon adresse e-mail actuelle », puis revenez ici et touchez « Se connecter avec Google ».";};
   af.onsubmit=function(e){e.preventDefault();var em=document.getElementById("alt_email").value.trim();var bt=af.querySelector("button");bt.disabled=true;am.textContent="Envoi…";
-    sb.auth.signInWithOtp({email:em,options:{emailRedirectTo:location.href.split("#")[0].split("?")[0],shouldCreateUser:true}}).then(function(x){bt.disabled=false;if(x.error){am.textContent="Échec : "+x.error.message;return;}am.textContent="Lien envoyé à "+em+". Ouvrez le courriel sur cet appareil et touchez le lien : vous êtes connecté pour un an.";});};})();
+    sb.auth.signInWithOtp({email:em,options:{emailRedirectTo:acrbBase().split("?")[0],shouldCreateUser:true}}).then(function(x){bt.disabled=false;if(x.error){am.textContent="Échec : "+x.error.message;return;}am.textContent="Lien envoyé à "+em+". Ouvrez le courriel sur cet appareil et touchez le lien : vous êtes connecté pour un an.";});};})();
 if(/[#&](access_token|error)=|[?&]code=/.test(location.href)){try{history.replaceState(null,"",location.pathname+location.hash.replace(/[#&](access_token|refresh_token|expires_in|expires_at|token_type|type|provider_token|provider_refresh_token)=[^&]*/g,"").replace(/^#&/,"#").replace(/^#$/,""));}catch(e){}}
 })();
 </script></body></html>
