@@ -15,6 +15,12 @@ concurrency:
 jobs:
   porte:
     runs-on: ubuntu-24.04
+    defaults:
+      run:
+        shell: bash
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --ipc=host
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
@@ -23,21 +29,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: pw-1.63.0-${{ runner.os }}
-      - name: Outils de test (3 essais de 5 min, jamais bloqué)
-        timeout-minutes: 16
+      - name: Outils de test (navigateurs déjà dans l'image Playwright officielle : aucune installation système)
+        timeout-minutes: 5
         run: |
-          for i in 1 2 3; do
-            timeout 300 bash -c 'npm i --no-save --no-package-lock playwright@1.63.0 && npx playwright install --with-deps chromium webkit' && exit 0
-            echo "essai $i bloqué ou en échec, nouvel essai"; sleep 5
-          done
-          exit 1
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          npm i --no-save --no-package-lock playwright@1.63.0
       - name: Porte AVANT publication (copie de ce commit, servie localement)
         run: |
-          python3 -m http.server 8765 >/dev/null 2>&1 &
+          node .porte/servir.mjs 8765 . >/dev/null 2>&1 &
           sleep 2
           node .porte/porte.mjs http://localhost:8765 sortie/avant
       - name: Publication (main avance jusqu'à ce commit)
@@ -66,8 +65,7 @@ jobs:
           git revert --no-edit "$AVANT"..HEAD
           git push origin HEAD:main
           git push -f origin HEAD:travail
-          gh label create retour-arriere --color b60205 --force || true
-          gh issue create --label retour-arriere --title "[porte] Retour arrière automatique du ${GITHUB_SHA::7}" --body "La publication ${GITHUB_SHA} était rouge en ligne. Le site est revenu au commit ${AVANT}. Nouveaux rouges : $(cat sortie/apres/nouveaux.txt 2>/dev/null | head -20)"
+          node .porte/github.mjs ticket "[porte] Retour arrière automatique du ${GITHUB_SHA::7}" "La publication ${GITHUB_SHA} était rouge en ligne. Le site est revenu au commit ${AVANT}. Nouveaux rouges : $(cat sortie/apres/nouveaux.txt 2>/dev/null | head -20)" "retour-arriere"
           exit 1
       - uses: actions/upload-artifact@v4
         if: always()
