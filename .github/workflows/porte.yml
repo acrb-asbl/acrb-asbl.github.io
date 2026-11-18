@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: 20
       - name: Outils de test
-        run: npm i --no-save --no-package-lock playwright@1.49.1 && npx playwright install --with-deps chromium webkit
+        run: npm i --no-save --no-package-lock playwright@1.63.0 && npx playwright install --with-deps chromium webkit
       - name: Porte AVANT publication (copie de ce commit, servie localement)
         run: |
           python3 -m http.server 8765 >/dev/null 2>&1 &
