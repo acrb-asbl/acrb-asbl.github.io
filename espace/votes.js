@@ -67,7 +67,7 @@ function carte(s,moi){
       (o.notes?'<div class="soon">'+esc(o.notes)+'</div>':'')+
       '<div class="vo_docs">'+(o.fichier?'<button type="button" class="lk" data-doc="'+esc(o.fichier)+'">Voir l’offre (document)</button>':'')+(o.lien?'<a class="lk" target="_blank" rel="noopener" href="'+esc(o.lien)+'">Ouvrir le lien</a>':'')+
       (open&&!dejaVote?'<button type="button" class="lk d" data-retirer="'+o.id+'">Retirer</button>':'')+'</div>'+
-      (pour.length?'<div class="vo_pour">Pour : '+pour.map(esc).join(", ")+'</div>':'')+
+      (pour.length?'<div class="vo_pour">Pour : '+pour.map(esc).join(", ")+'</div>':'')+notesHtml(o,moi,votant&&open)+
       (open&&votant&&offres.length?'<button type="button" class="btn'+(choisi?'':' o')+'" data-voter="'+s.id+'" data-offre="'+o.id+'">'+(choisi?'Votre choix ✓':'Choisir cette offre')+'</button>':'')+
       '</div>';
   });
@@ -86,6 +86,15 @@ function carte(s,moi){
   return h+'</div>';
 }
 
+function notesHtml(o,moi,peut){
+  var ns=o.notes||[],mienne=ns.filter(function(n){return n.ca_id===moi;})[0];
+  var autres=ns.filter(function(n){return n.ca_id!==moi;}).map(function(n){return '<div class="vo_note"><b>'+esc(n.nom)+'</b> : '+esc(n.texte).replace(/\n/g,'<br>')+'</div>';}).join('');
+  var h='<div class="vo_notes">'+(ns.length||peut?'<div class="vo_nh">Notes des administrateurs</div>':'')+autres;
+  if(peut)h+='<textarea id="vo_nt_'+o.id+'" rows="4" placeholder="Ma note : remarque, analyse, pour / contre…">'+esc(mienne?mienne.texte:'')+'</textarea><button type="button" class="lk" data-note="'+o.id+'">Enregistrer ma note</button>';
+  else if(mienne)h+='<div class="vo_note"><b>Ma note</b> : '+esc(mienne.texte).replace(/\n/g,'<br>')+'</div>';
+  return h+'</div>';
+}
+
 function formOffre(id){
   return '<details class="vo_add"'+(ouvert["f"+id]?' open':'')+'><summary data-f="'+id+'">+ Ajouter une offre reçue</summary><form data-offre-form="'+id+'">'+
     '<input name="p" placeholder="Prestataire (nom de la société)" required>'+
@@ -99,7 +108,8 @@ function formOffre(id){
 }
 
 function clic(e){
-  var t=e.target.closest("[data-voter],[data-doc],[data-retirer],[data-annuler],[data-pv],[data-f]");if(!t)return;
+  var t=e.target.closest("[data-voter],[data-doc],[data-retirer],[data-annuler],[data-pv],[data-f],[data-note]");if(!t)return;
+  if(t.dataset.note){var ta=$("vo_nt_"+t.dataset.note);t.disabled=true;sb.rpc("acrb_note_offre",{p_offre:+t.dataset.note,p_texte:ta?ta.value:""}).then(function(x){t.disabled=false;if(x.error){etat("Note refusée : "+err(x),"bad");return;}etat("Note enregistrée.","ok");charger();});return;}
   if(t.dataset.f){ouvert["f"+t.dataset.f]=!ouvert["f"+t.dataset.f];return;}
   if(t.dataset.voter){var sid=+t.dataset.voter,off=t.dataset.offre?+t.dataset.offre:null,c=$("vo_com_"+sid);
     t.disabled=true;etat("Enregistrement du vote…");

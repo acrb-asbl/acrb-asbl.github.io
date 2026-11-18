@@ -1,10 +1,10 @@
 [
- "acrb/fiche.html|iphone13|debordement|14 px",
- "acrb/index-nl.html|iphone13|debordement|66 px",
- "acrb/index.html|iphone13|debordement|90 px",
- "index.html|iphone13|debordement|90 px",
- "parcours-tresorier|iphone13|debordement|138 px",
- "shopping/fiche.html|iphone13|debordement|14 px",
- "shopping/index.html|iphone13|clic|« N° 100\nALLO CARPET »",
+ "acrb/fiche.html|iphone13|debordement",
+ "acrb/index-nl.html|iphone13|debordement",
+ "acrb/index.html|iphone13|debordement",
+ "index.html|iphone13|debordement",
+ "parcours-tresorier|iphone13|debordement",
+ "shopping/fiche.html|iphone13|debordement",
+ "shopping/index.html|iphone13|clic|« N° 100 ALLO CARPET »",
  "shopping/index.html|iphone13|script|Error: Could not load \"util\"."
 ]

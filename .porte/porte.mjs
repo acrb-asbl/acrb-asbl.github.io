@@ -19,6 +19,8 @@ const PAGES = ['index.html', 'acrb/index.html', 'acrb/index-nl.html', 'acrb/annu
 const PROFILS = { iphone13: [webkit, devices['iPhone 13']], android: [chromium, devices['Pixel 7']] }
 const DANGER = /envoyer|supprim|retir|valider|signer|payer|publier|enregistr|émettre|emettre|confirmer|google|déconnect|deconnect|inscri|ajouter|créer|creer|adhérer|adherer|commander|voter|demander|ouvrir le vote|relier|déposer|deposer|annuler|lien de connexion|invitation/i
 const ECRITURE = /\/rest\/v1\/rpc\/[a-z_]*(creer|ajout|maj|inscri|signal|adher|demande|soumet|enregistr|envoy|valid|retir|regler|import|bulk|utiliser|voter|annuler|pousser|rectifier|rappels)|\/rest\/v1\/(?!rpc)|\/storage\/v1\/object\/(?!sign|public)|\/functions\/v1\//i
+// clé d'un rouge pour le cliquet : sans les chiffres qui varient d'une machine à l'autre (pixels, millisecondes)
+const cle = (pg, pr, x) => pg + '|' + pr + '|' + x.split(':')[0] + (/^(debordement|lent)/.test(x) ? '' : '|' + x.slice(x.indexOf(':') + 1, x.indexOf(':') + 60).replace(/\s+/g, ' '))
 const t0 = Date.now(), rouges = [], ecrans = [], bloquees = []
 
 // santé : si le site ne répond pas, le test n'est pas valable (on ne conclut rien)
@@ -66,7 +68,7 @@ async function ecran(moteur, prof, pg) {
   await ctx.close()
   const uniq = [...new Set(pb)]
   ecrans.push({ page: pg, profil: prof[2], http: st, ms, clics, problemes: uniq })
-  for (const x of uniq) rouges.push(pg + '|' + prof[2] + '|' + x.split(':')[0] + '|' + x.slice(x.indexOf(':') + 1, x.indexOf(':') + 60))
+  for (const x of uniq) rouges.push(cle(pg, prof[2], x))
   console.log(`${uniq.length ? 'ROUGE' : 'vert '} ${prof[2].padEnd(8)} ${pg.padEnd(26)} ${st} ${ms} ms, ${clics} clics${uniq.length ? ' | ' + uniq.join(' ; ') : ''}`)
 }
 
@@ -91,7 +93,8 @@ async function tresorier(moteur, prof) {
   const p = await ctx.newPage()
   p.on('pageerror', e => pb.push('script:' + e.message.slice(0, 120)))
   await p.goto(BASE + '/espace/index.html', { waitUntil: 'load', timeout: 30000 }).catch(e => pb.push('ouverture:' + e.message.slice(0, 80)))
-  await p.waitForTimeout(3500)
+  await p.waitForFunction(() => /Trésorier/.test((document.getElementById('who_s') || {}).innerText || '') && (document.getElementById('co_lien') || {}).innerText !== 'Chargement…', null, { timeout: 20000 }).catch(() => {})
+  await p.waitForTimeout(800)
   const v = await p.evaluate(() => { const vis = id => { const x = document.getElementById(id); return !!x && x.offsetParent !== null }
     return { acces: (document.getElementById('who_s') || {}).innerText || '', treso: document.body.classList.contains('treso'), facturer: vis('facadd'), cotisations: vis('c_fac'),
       votes: vis('c_votes'), courrier: vis('c_courrier'), relier: vis('co_form') || (document.getElementById('co_cfg') || {}).open === true, debord: document.documentElement.scrollWidth - innerWidth } }).catch(() => ({}))
@@ -104,16 +107,19 @@ async function tresorier(moteur, prof) {
   await p.screenshot({ path: `${OUT}/${prof[2]}_parcours_tresorier.png` }).catch(() => {})
   await ctx.close()
   ecrans.push({ page: 'parcours-tresorier', profil: prof[2], etat: v, problemes: pb })
-  for (const x of pb) rouges.push('parcours-tresorier|' + prof[2] + '|' + x.split(':')[0] + '|' + x.slice(x.indexOf(':') + 1, x.indexOf(':') + 60))
+  for (const x of pb) rouges.push(cle('parcours-tresorier', prof[2], x))
   console.log(`${pb.length ? 'ROUGE' : 'vert '} ${prof[2].padEnd(8)} parcours du trésorier${pb.length ? ' | ' + pb.join(' ; ') : ''}`)
 }
 
 const wk = await webkit.launch(), ch = await chromium.launch()
+setTimeout(() => { console.log('FIN ROUGE : la porte a dépassé 20 minutes'); process.exit(1) }, 20 * 60 * 1000).unref()
 const moteurs = { iphone13: wk, android: ch }
 for (const [k, v] of Object.entries(PROFILS)) v[2] = k
 const jobs = []
 for (const k of Object.keys(PROFILS)) { for (const pg of PAGES) jobs.push(() => ecran(moteurs[k], PROFILS[k], pg)); jobs.push(() => tresorier(moteurs[k], PROFILS[k])) }
-let i = 0; await Promise.all(Array.from({ length: 4 }, async () => { while (i < jobs.length) await jobs[i++]() }))
+// chaque écran a 2 minutes au plus : un écran qui fige devient un rouge, jamais une porte bloquée
+const delai = (f, n) => Promise.race([f(), new Promise(r => setTimeout(() => { rouges.push('delai|' + n + '|fige'); console.log('ROUGE délai dépassé ' + n); r() }, 120000))])
+let i = 0; await Promise.all(Array.from({ length: 4 }, async () => { while (i < jobs.length) { const k = i++; await delai(jobs[k], 'tache-' + k) } }))
 await wk.close(); await ch.close()
 
 // données d'essai restantes dans la vraie base
