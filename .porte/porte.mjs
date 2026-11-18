@@ -84,7 +84,8 @@ async function tresorier(moteur, prof) {
     if (/\/auth\/v1\/user/.test(u)) return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(user) })
     if (/\/auth\/v1\/token/.test(u)) return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(sess) })
     if (/rpc\/acrb_mes_roles/.test(u)) return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(['tresorier', 'ca', 'admin']) })
-    if (/rpc\/acrb_scrutins_liste/.test(u)) return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ moi: null, en_attente: [], scrutins: [] }) })
+    if (/rpc\/acrb_scrutins_liste/.test(u)) return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ moi: 3, en_attente: [], scrutins: [{ id: 1, titre: 'Essai porte', statut: 'ouvert', secret: true, electeurs: [{ id: 3, nom: 'Robot' }], offres: [{ id: 1, prestataire: 'Offre A', notes: [] }, { id: 2, prestataire: 'Offre B', notes: [] }], bulletins: [], cree_le: '2026-01-01T00:00:00Z' }] }) })
+    if (/rpc\/acrb_note_offre/.test(u)) return r.fulfill({ status: 200, contentType: 'application/json', body: 'null' })
     if (/rpc\/acrb_pingen_etat/.test(u)) return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ relie: false, courriers: [] }) })
     if (/rpc\//.test(u)) return r.fulfill({ status: 200, contentType: 'application/json', body: '[]' })
     if (/\/rest\/v1\//.test(u)) return r.fulfill({ status: 200, contentType: 'application/json', body: '[]' })
@@ -109,6 +110,10 @@ async function tresorier(moteur, prof) {
   if (!v.menu) pb.push('menu:absent')
   v.cotisations = await ouvrir('c_fac'); v.facturer = await vis('facadd')
   v.votes = await ouvrir('c_votes')
+  // faute du 18/11 : un bouton qui agit sans rien montrer près de lui passe pour mort. Chaque bouton d'enregistrement doit afficher sa confirmation à côté de lui.
+  try { await p.fill('#vo_nt_1', 'note de la porte'); await p.click('[data-note="1"]', { timeout: 4000 })
+    await p.waitForFunction(() => { const e = document.getElementById('vo_nok_1'); if (!e || !/Enregistrée/.test(e.innerText)) return false; const r = e.getBoundingClientRect(); return r.height > 0 && r.top >= 0 && r.bottom <= innerHeight }, null, { timeout: 6000 })
+  } catch (e) { pb.push('bouton muet:Enregistrer ma note (aucune confirmation visible à côté)') }
   v.courrier = await ouvrir('c_courrier'); v.relier = (await vis('co_form')) || await p.evaluate(() => (document.getElementById('co_cfg') || {}).open === true).catch(() => false)
   v.debord = await p.evaluate(() => document.documentElement.scrollWidth - innerWidth).catch(() => 0)
   if (!/Trésorier/.test(v.acces || '')) pb.push('tresorier:rôle non affiché')

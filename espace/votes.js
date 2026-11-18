@@ -1,7 +1,7 @@
 /* Votes du conseil d'administration — décision à l'unanimité entre plusieurs offres de prestataires.
    Toute la règle (qui vote, unanimité, verrouillage) est appliquée dans la base ; cette page ne fait qu'afficher et transmettre. */
 (function(){
-var sb, user, data = null, ouvert = {};
+var sb, user, data = null, ouvert = {}, noteOk = {};
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
 function eur(n){if(n==null||n==="")return "";return Number(n).toLocaleString("fr-BE",{minimumFractionDigits:2,maximumFractionDigits:2})+" €";}
 function dt(s){if(!s)return "";var d=new Date(s);return d.toLocaleDateString("fr-BE")+" à "+d.toLocaleTimeString("fr-BE",{hour:"2-digit",minute:"2-digit"});}
@@ -95,7 +95,7 @@ function notesHtml(o,moi,peut){
   var ns=o.notes||[],mienne=ns.filter(function(n){return n.ca_id===moi;})[0];
   var autres=ns.filter(function(n){return n.ca_id!==moi;}).map(function(n){return '<div class="vo_note"><b>'+esc(n.nom)+'</b> : '+esc(n.texte).replace(/\n/g,'<br>')+'</div>';}).join('');
   var h='<div class="vo_notes">'+(ns.length||peut?'<div class="vo_nh">Notes des administrateurs</div>':'')+autres;
-  if(peut)h+='<textarea id="vo_nt_'+o.id+'" rows="4" placeholder="Ma note : remarque, analyse, pour / contre…">'+esc(mienne?mienne.texte:'')+'</textarea><button type="button" class="lk" data-note="'+o.id+'">Enregistrer ma note</button>';
+  if(peut){var ok=noteOk[o.id];h+='<textarea id="vo_nt_'+o.id+'" rows="4" placeholder="Ma note : remarque, analyse, pour / contre…">'+esc(mienne?mienne.texte:'')+'</textarea><div class="vo_nb"><button type="button" class="btn o" data-note="'+o.id+'">Enregistrer ma note</button><span class="vo_nok" id="vo_nok_'+o.id+'">'+(ok?'✓ Enregistrée à '+esc(ok):(mienne&&mienne.maj_le?'Dernière version enregistrée le '+esc(dt(mienne.maj_le)):''))+'</span></div>';}
   else if(mienne)h+='<div class="vo_note"><b>Ma note</b> : '+esc(mienne.texte).replace(/\n/g,'<br>')+'</div>';
   return h+'</div>';
 }
@@ -114,7 +114,10 @@ function formOffre(id){
 
 function clic(e){
   var t=e.target.closest("[data-voter],[data-doc],[data-retirer],[data-annuler],[data-pv],[data-f],[data-note]");if(!t)return;
-  if(t.dataset.note){var ta=$("vo_nt_"+t.dataset.note);t.disabled=true;sb.rpc("acrb_note_offre",{p_offre:+t.dataset.note,p_texte:ta?ta.value:""}).then(function(x){t.disabled=false;if(x.error){etat("Note refusée : "+err(x),"bad");return;}etat("Note enregistrée.","ok");charger();});return;}
+  if(t.dataset.note){var id=t.dataset.note,ta=$("vo_nt_"+id),sp=$("vo_nok_"+id);t.disabled=true;t.textContent="Enregistrement…";if(sp){sp.className="vo_nok";sp.textContent="";}
+    sb.rpc("acrb_note_offre",{p_offre:+id,p_texte:ta?ta.value:""}).then(function(x){t.disabled=false;t.textContent="Enregistrer ma note";
+      if(x.error){if(sp){sp.className="vo_nok bad";sp.textContent="Non enregistrée : "+err(x);}return;}
+      noteOk[id]=new Date().toLocaleTimeString("fr-BE",{hour:"2-digit",minute:"2-digit"});if(sp)sp.textContent="✓ Enregistrée à "+noteOk[id];charger();});return;}
   if(t.dataset.f){ouvert["f"+t.dataset.f]=!ouvert["f"+t.dataset.f];return;}
   if(t.dataset.voter){var sid=+t.dataset.voter,off=t.dataset.offre?+t.dataset.offre:null,c=$("vo_com_"+sid);
     t.disabled=true;etat("Enregistrement du vote…");
