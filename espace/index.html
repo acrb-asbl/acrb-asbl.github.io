@@ -391,6 +391,6 @@ sb.auth.onAuthStateChange(function(ev,sess){acrbClean();if(ev==="SIGNED_IN"||ev=
 (function(){var ab=document.getElementById("altbtn"),af=document.getElementById("altform"),am=document.getElementById("alt_msg");if(!ab)return;ab.onclick=function(){window.open("https://accounts.google.com/signup","_blank","noopener");am.textContent="Choisissez « Utiliser mon adresse e-mail actuelle », puis revenez ici et touchez « Se connecter avec Google ».";};
   af.onsubmit=function(e){e.preventDefault();var em=document.getElementById("alt_email").value.trim();var bt=af.querySelector("button");bt.disabled=true;am.textContent="Envoi…";
     sb.auth.signInWithOtp({email:em,options:{emailRedirectTo:acrbBase().split("?")[0],shouldCreateUser:true}}).then(function(x){bt.disabled=false;if(x.error){am.textContent="Échec : "+x.error.message;return;}am.textContent="Lien envoyé à "+em+". Ouvrez le courriel sur cet appareil et touchez le lien : vous êtes connecté pour un an.";});};})();
-if(/[#&](access_token|error)=|[?&]code=/.test(location.href)){try{history.replaceState(null,"",location.pathname+location.hash.replace(/[#&](access_token|refresh_token|expires_in|expires_at|token_type|type|provider_token|provider_refresh_token)=[^&]*/g,"").replace(/^#&/,"#").replace(/^#$/,""));}catch(e){}}
+
 })();
 </script></body></html>
