@@ -95,9 +95,22 @@ async function tresorier(moteur, prof) {
   await p.goto(BASE + '/espace/index.html', { waitUntil: 'load', timeout: 30000 }).catch(e => pb.push('ouverture:' + e.message.slice(0, 80)))
   await p.waitForFunction(() => /Trésorier/.test((document.getElementById('who_s') || {}).innerText || '') && (document.getElementById('co_lien') || {}).innerText !== 'Chargement…', null, { timeout: 20000 }).catch(() => {})
   await p.waitForTimeout(800)
-  const v = await p.evaluate(() => { const vis = id => { const x = document.getElementById(id); return !!x && x.offsetParent !== null }
-    return { acces: (document.getElementById('who_s') || {}).innerText || '', treso: document.body.classList.contains('treso'), facturer: vis('facadd'), cotisations: vis('c_fac'),
-      votes: vis('c_votes'), courrier: vis('c_courrier'), relier: vis('co_form') || (document.getElementById('co_cfg') || {}).open === true, debord: document.documentElement.scrollWidth - innerWidth } }).catch(() => ({}))
+  // chaque rubrique s'atteint par le menu, comme un humain : la section, puis la rubrique ; on vérifie qu'elle s'affiche
+  const vis = id => p.evaluate(i => { const x = document.getElementById(i); return !!x && x.offsetParent !== null }, id).catch(() => false)
+  const ouvrir = async id => {
+    const h = await p.evaluate(i => { const a = document.querySelector('.nv [data-nav-go="' + i + '"]'); return a ? a.getAttribute('href') : '' }, id).catch(() => '')
+    if (!h) return vis(id)
+    const sec = h.split('/').slice(0, 2).join('/')
+    try { await p.click(`.nv .r1 a[href="${sec}"]`, { timeout: 4000 }); await p.waitForTimeout(150)
+      if (await p.isVisible(`.nv .r2 a[href="${h}"]`)) { await p.click(`.nv .r2 a[href="${h}"]`, { timeout: 4000 }); await p.waitForTimeout(150) } } catch (e) { pb.push('menu:' + id + ' inaccessible') }
+    return vis(id)
+  }
+  const v = await p.evaluate(() => ({ acces: (document.getElementById('who_s') || {}).innerText || '', treso: document.body.classList.contains('treso'), menu: !!document.querySelector('.nv:not([hidden]) .r1 a') })).catch(() => ({}))
+  if (!v.menu) pb.push('menu:absent')
+  v.cotisations = await ouvrir('c_fac'); v.facturer = await vis('facadd')
+  v.votes = await ouvrir('c_votes')
+  v.courrier = await ouvrir('c_courrier'); v.relier = (await vis('co_form')) || await p.evaluate(() => (document.getElementById('co_cfg') || {}).open === true).catch(() => false)
+  v.debord = await p.evaluate(() => document.documentElement.scrollWidth - innerWidth).catch(() => 0)
   if (!/Trésorier/.test(v.acces || '')) pb.push('tresorier:rôle non affiché')
   if (!v.treso) pb.push('tresorier:mode trésorier inactif')
   if (!v.cotisations || !v.facturer) pb.push('tresorier:facturation invisible')
