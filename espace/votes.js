@@ -67,7 +67,6 @@ function carte(s,moi){
     var choisi=mien&&mien.offre_id===o.id;
     h+='<div class="vo_o'+(choisi?' sel':'')+(s.decision&&s.decision.offre_id===o.id?' win':'')+'"><div class="vo_on">Offre '+(i+1)+' · <b>'+esc(o.prestataire)+'</b></div>'+
       (o.objet?'<div>'+esc(o.objet)+'</div>':'')+
-      (Math.max(+o.montant_tvac||0,+o.montant_htva||0)>12500?'<div class="vo_ag">Plus de 12 500 € : l\u2019accord de l\u2019assemblée générale aux deux tiers est requis (statuts, art. 15).</div>':'')+
       '<div class="vo_m">'+(o.montant_tvac!=null?esc(eur(o.montant_tvac))+' TVAC':'')+(o.montant_htva!=null?(o.montant_tvac!=null?' · ':'')+esc(eur(o.montant_htva))+' HTVA':'')+(o.montant_tvac==null&&o.montant_htva==null?'<span class="soon">montant non indiqué</span>':'')+'</div>'+
       (o.notes?'<div class="soon">'+esc(o.notes)+'</div>':'')+
       '<div class="vo_docs">'+(o.fichier?'<button type="button" class="lk" data-doc="'+esc(o.fichier)+'">Voir l’offre (document)</button>':'')+(o.lien?'<a class="lk" target="_blank" rel="noopener" href="'+esc(o.lien)+'">Ouvrir le lien</a>':'')+
@@ -83,8 +82,6 @@ function carte(s,moi){
     if(b&&b.secret)return '<li>'+esc(e.nom)+' — <b>a voté</b> <span class="soon">('+esc(dt(b.vote_le))+', choix secret jusqu\u2019à la clôture)</span></li>';
     return '<li>'+esc(e.nom)+' — '+(b?(o?'a choisi <b>'+esc(o.prestataire)+'</b>':'<b>aucune de ces offres</b>')+' <span class="soon">('+esc(dt(b.vote_le))+')</span>'+(b.commentaire?'<br><i>« '+esc(b.commentaire)+' »</i>':''):'<span class="soon">n’a pas encore voté'+(e.acces?'':' — pas encore d’accès à la plateforme')+'</span>')+'</li>';
   }).join("")+'</ul></div>';
-  if((s.conflits||[]).length)h+='<div class="vo_el"><b>Conflits d\u2019intérêts déclarés</b> <span class="soon">(charte du conseil, point 6 : ces administrateurs ne votent pas et l\u2019inscription figure au procès-verbal)</span><ul>'+s.conflits.map(function(c){return '<li>'+esc(c.nom)+' — '+esc(c.motif)+' <span class="soon">('+esc(dt(c.le))+')</span></li>';}).join("")+'</ul></div>';
-  if(open&&votant)h+='<div class="vo_act"><button type="button" class="btn o" data-conflit="'+s.id+'">Déclarer un conflit d\u2019intérêts</button></div>';
   if(open){
     if(votant&&offres.length)h+='<div class="vo_act"><input id="vo_com_'+s.id+'" placeholder="Commentaire (facultatif)" value="'+esc(mien&&mien.commentaire||"")+'"><button type="button" class="btn o" data-voter="'+s.id+'" data-offre="">Aucune de ces offres</button></div>';
     if(!dejaVote)h+=formOffre(s.id);
@@ -116,9 +113,7 @@ function formOffre(id){
 }
 
 function clic(e){
-  var t=e.target.closest("[data-voter],[data-doc],[data-retirer],[data-annuler],[data-pv],[data-f],[data-note],[data-conflit]");if(!t)return;
-  if(t.dataset.conflit){var mo=prompt("Déclarer un conflit d\u2019intérêts sur ce vote.\nVous ne voterez pas et ne participerez plus au débat ; votre déclaration et ses raisons figureront au procès-verbal (charte, point 6).\n\nNature du lien :");if(mo===null)return;
-    sb.rpc("acrb_conflit_declarer",{p_scrutin:+t.dataset.conflit,p_motif:mo}).then(function(x){if(x.error){etat("Non enregistré : "+err(x),"bad");return;}etat("Conflit d\u2019intérêts enregistré : vous ne votez plus sur ce point.","ok");charger();});return;}
+  var t=e.target.closest("[data-voter],[data-doc],[data-retirer],[data-annuler],[data-pv],[data-f],[data-note]");if(!t)return;
   if(t.dataset.note){var id=t.dataset.note,ta=$("vo_nt_"+id),sp=$("vo_nok_"+id);t.disabled=true;t.textContent="Enregistrement…";if(sp){sp.className="vo_nok";sp.textContent="";}
     sb.rpc("acrb_note_offre",{p_offre:+id,p_texte:ta?ta.value:""}).then(function(x){t.disabled=false;t.textContent="Enregistrer ma note";
       if(x.error){if(sp){sp.className="vo_nok bad";sp.textContent="Non enregistrée : "+err(x);}return;}
@@ -159,8 +154,6 @@ function imprimer(id){
     (s.effet&&s.effet.type==="fonction"?'<p><b>Décision :</b> le conseil d’administration décide, à l’unanimité, que <b>'+esc(s.effet.nom)+'</b> exerce désormais la fonction de <b>'+esc(s.effet.fonction_fr)+'</b> (auparavant '+esc(s.effet.avant||'')+').</p>':'<p><b>Décision :</b> le conseil d’administration décide, à l’unanimité, de passer commande à <b>'+esc(d.prestataire)+'</b>'+(d.objet?' ('+esc(d.objet)+')':'')+(d.montant_tvac!=null?' pour un montant de '+esc(eur(d.montant_tvac))+' TVAC':'')+'.</p>')+
     '<p>Vote ouvert le '+esc(dt(s.cree_le))+', clos à l’unanimité le '+esc(dt(d.le))+' sur la plateforme de l’association.</p>'+
     '<table><tr><th>Administrateur</th><th>Fonction</th><th>Vote exprimé le</th></tr>'+rows+'</table>'+
-    ((s.conflits||[]).length?'<p><b>Conflits d’intérêts déclarés</b> (ces administrateurs se sont abstenus des débats et du vote) :</p><ul>'+s.conflits.map(function(c){return '<li>'+esc(c.nom)+' : '+esc(c.motif)+' ('+esc(dt(c.le))+')</li>';}).join("")+'</ul>':'')+
-    (Math.max(+d.montant_tvac||0,+d.montant_htva||0)>12500?'<p><b>Condition :</b> la dépense dépassant 12 500 €, son engagement est soumis à l’accord de l’assemblée générale aux deux tiers des voix exprimées (statuts, art. 15).</p>':'')+
     '<p style="margin-top:24px;font-size:12px;color:#555">Chaque vote est enregistré avec l’adresse de connexion du votant et l’heure, dans le journal de preuve de l’association. Référence du vote : V'+s.id+'.</p>'+
     '<script>window.print()<\/script></body></html>');
   w.document.close();
