@@ -20,7 +20,8 @@ const PROFILS = { iphone13: [webkit, devices['iPhone 13']], android: [chromium, 
 const DANGER = /envoyer|supprim|retir|valider|signer|payer|publier|enregistr|émettre|emettre|confirmer|google|déconnect|deconnect|inscri|ajouter|créer|creer|adhérer|adherer|commander|voter|demander|ouvrir le vote|relier|déposer|deposer|annuler|lien de connexion|invitation/i
 const ECRITURE = /\/rest\/v1\/rpc\/[a-z_]*(creer|ajout|maj|inscri|signal|adher|demande|soumet|enregistr|envoy|valid|retir|regler|import|bulk|utiliser|voter|annuler|pousser|rectifier|rappels)|\/rest\/v1\/(?!rpc)|\/storage\/v1\/object\/(?!sign|public)|\/functions\/v1\//i
 // clé d'un rouge pour le cliquet : sans les chiffres qui varient d'une machine à l'autre (pixels, millisecondes)
-const cle = (pg, pr, x) => pg + '|' + pr + '|' + x.split(':')[0] + (/^(debordement|lent)/.test(x) ? '' : '|' + x.slice(x.indexOf(':') + 1, x.indexOf(':') + 60).replace(/\s+/g, ' '))
+// clé stable : sans pixels ni millisecondes, et le nom du commerce cliqué (tiré au hasard) remplacé par « fiche »
+const cle = (pg, pr, x) => pg + '|' + pr + '|' + x.split(':')[0] + (/^(debordement|lent)/.test(x) ? '' : '|' + x.slice(x.indexOf(':') + 1, x.indexOf(':') + 60).replace(/\s+/g, ' ').replace(/« N° [^»]*»/, '« fiche »'))
 const t0 = Date.now(), rouges = [], ecrans = [], bloquees = []
 
 // santé : si le site ne répond pas, le test n'est pas valable (on ne conclut rien)
@@ -41,7 +42,7 @@ async function ecran(moteur, prof, pg) {
   const ctx = await moteur.newContext({ ...prof[1], locale: 'fr-BE' }); await garde(ctx)
   const p = await ctx.newPage(); const pb = []
   p.on('console', m => { if (m.type() === 'error' && !/ERR_ABORTED|ERR_FAILED|net::|Failed to load resource|access control checks/i.test(m.text())) pb.push('console:' + m.text().slice(0, 120)) })
-  p.on('pageerror', e => pb.push('script:' + e.message.slice(0, 120)))
+  p.on('pageerror', e => { if (!/maps\.googleapis|maps\/api|Could not load "util"|access control checks/i.test(e.message)) pb.push('script:' + e.message.slice(0, 120)) })
   p.on('response', s => { const u = s.url(); if (s.status() >= 400 && (u.startsWith(BASE) || u.startsWith(SB)) && !u.endsWith('/favicon.ico')) pb.push('requete:' + s.status() + ' ' + u.replace(BASE, '').replace(SB, '').split('?')[0]) })
   p.on('dialog', d => d.dismiss().catch(() => {}))
   let st = 0; const s0 = Date.now()
@@ -92,7 +93,7 @@ async function tresorier(moteur, prof) {
     return r.fulfill({ status: 200, contentType: 'application/json', body: '{}' })
   })
   const p = await ctx.newPage()
-  p.on('pageerror', e => pb.push('script:' + e.message.slice(0, 120)))
+  p.on('pageerror', e => { if (!/maps\.googleapis|maps\/api|Could not load "util"|access control checks/i.test(e.message)) pb.push('script:' + e.message.slice(0, 120)) })
   await p.goto(BASE + '/espace/index.html', { waitUntil: 'load', timeout: 30000 }).catch(e => pb.push('ouverture:' + e.message.slice(0, 80)))
   await p.waitForFunction(() => /Trésorier/.test((document.getElementById('who_s') || {}).innerText || '') && (document.getElementById('co_lien') || {}).innerText !== 'Chargement…', null, { timeout: 20000 }).catch(() => {})
   await p.waitForTimeout(800)

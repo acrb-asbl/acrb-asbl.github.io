@@ -20,7 +20,7 @@ var CSS='.nv{position:sticky;top:0;z-index:30;background:#fff;border:1px solid v
 '.nvh .tl a{display:block;background:#fff;border:1px solid var(--line,#dfe3ea);border-left:4px solid var(--navy,#14233c);padding:12px 14px;text-decoration:none;color:#222;min-height:64px}'+
 '.nvh .tl a:hover,.nvh .tl a:focus{border-left-color:var(--brick,#b23a2b)}.nvh .tl b{display:block;font:800 15.5px "Libre Franklin",Arial,sans-serif;color:var(--navy,#14233c)}.nvh .tl span{display:block;font-size:13.5px;color:var(--muted,#5f6675);line-height:1.35;margin-top:3px}'+
 '.nvh .vide{color:var(--muted,#5f6675);font-size:15px}'+
-'@media(max-width:700px){.nv .r1{display:grid;grid-template-columns:repeat(3,1fr);gap:0}.nv .r1 a{justify-content:center;padding:0 4px;font-size:14px;min-height:44px}.nv .r1 a .n{display:none}}';
+'@media(max-width:700px){.nv .r1{display:grid;grid-template-columns:repeat(3,1fr);gap:0}.nv .r1 a{justify-content:center;padding:0 4px;font-size:14px;min-height:44px}.nv .r1 a .n{display:none}.nv .r2{flex-wrap:wrap;overflow-x:visible}.nv .r2 a{min-height:36px;padding:0 10px;font-size:13.5px}}';
 
 /* Trouve la carte d'une rubrique : par identifiant, ou par le début de son titre (« h2:Mes commerces »). */
 function carte(sel){
