@@ -1,4 +1,4 @@
-/* Votes du conseil d'administration — décision à l'unanimité entre plusieurs offres de prestataires.
+/* Votes du conseil d'administration — décision à la majorité absolue (statuts, art. 21) ou à l'unanimité, entre plusieurs offres.
    Toute la règle (qui vote, unanimité, verrouillage) est appliquée dans la base ; cette page ne fait qu'afficher et transmettre. */
 (function(){
 var sb, user, data = null, ouvert = {}, noteOk = {};
@@ -23,11 +23,14 @@ function charger(){
 function nomDe(s,id){var e=(s.electeurs||[]).filter(function(x){return x.id===id;})[0];return e?e.nom:"?";}
 function offreDe(s,id){return (s.offres||[]).filter(function(o){return o.id===id;})[0];}
 
+function adopte(d){return d.mode==="majorite"?"Adoptée à la majorité absolue : "+d.voix+" voix sur "+d.votants+" votants":d.mode==="voix_preponderante"?"Adoptée par la voix prépondérante du président (égalité à "+d.voix+" voix sur "+d.votants+")":"Adoptée à l\u2019unanimité des "+(d.unanimite||d.votants)+" administrateurs votants";}
 function bilan(s){
   var n=(s.electeurs||[]).length,b=s.bulletins||[],votes=b.length;
-  if(s.statut==="adopte")return {txt:"Adopté à l'unanimité ("+n+" sur "+n+")",cls:"ok"};
+  var maj=s.regle==="majorite",d=s.decision||{};
+  if(s.statut==="adopte")return {txt:d.mode==="majorite"?"Adopté à la majorité absolue ("+d.voix+" voix sur "+d.votants+")":d.mode==="voix_preponderante"?"Adopté, voix du président prépondérante ("+d.voix+" sur "+d.votants+")":"Adopté à l'unanimité ("+n+" sur "+n+")",cls:"ok"};
   if(s.statut==="annule")return {txt:"Annulé",cls:"out"};
   if(votes<n)return {txt:votes+" vote"+(votes>1?"s":"")+" sur "+n,cls:"warn"};
+  if(maj)return {txt:"Tous ont voté, sans majorité absolue : chacun peut revoir son vote",cls:"out"};
   if(b.some(function(v){return v.secret;}))return {txt:"Tous ont voté, sans unanimité : chacun peut revoir son vote",cls:"out"};
   var tous=b.every(function(v){return v.offre_id===null;});
   if(tous)return {txt:"Aucune offre retenue (rejet unanime)",cls:"out"};
@@ -51,13 +54,14 @@ function carte(s,moi){
   var h='<div class="vo" id="vo_'+s.id+'"><div class="vo_h"><div><b>'+esc(s.titre)+'</b><span class="st '+bl.cls+'">'+esc(bl.txt)+'</span></div>'+
     '<span class="soon">Ouvert le '+esc(dt(s.cree_le))+(s.echeance?' · à voter avant le '+esc(new Date(s.echeance).toLocaleDateString("fr-BE")):'')+'</span></div>';
   if(s.objet)h+='<p class="vo_obj">'+esc(s.objet)+'</p>';
+  h+='<p class="soon"><b>Règle :</b> '+(s.regle==="majorite"?'majorité absolue des votants (statuts, art. 21), voix du président prépondérante en cas d\u2019égalité':'unanimité des votants')+'.</p>';
   if(s.secret)h+='<p class="soon">Vote secret jusqu\u2019à la clôture : chacun voit qui a voté, pas ce qu\u2019il a choisi. Tout devient nominatif quand le vote est clos (procès-verbal).</p>';
   if(s.statut==="adopte"&&s.decision&&s.effet&&s.effet.type==="fonction"){var d=s.decision,f=s.effet;
-    h+='<div class="vo_dec"><b>Décision du conseil : '+esc(f.nom)+' devient '+esc(f.fonction_fr)+'</b> (auparavant '+esc(f.avant||'')+').<br>Adoptée à l\u2019unanimité des '+esc(d.unanimite)+' administrateurs votants, le '+esc(dt(d.le))+'.<br><button class="btn o" type="button" data-pv="'+s.id+'">Imprimer la décision</button></div>';}
+    h+='<div class="vo_dec"><b>Décision du conseil : '+esc(f.nom)+' devient '+esc(f.fonction_fr)+'</b> (auparavant '+esc(f.avant||'')+').<br>'+adopte(d)+', le '+esc(dt(d.le))+'.<br><button class="btn o" type="button" data-pv="'+s.id+'">Imprimer la décision</button></div>';}
   else if(s.statut==="adopte"&&s.decision){var d=s.decision;
     h+='<div class="vo_dec"><b>Décision du conseil : commande à '+esc(d.prestataire)+'</b>'+(d.objet?' — '+esc(d.objet):'')+
       (d.montant_tvac!=null?'<br>Montant : '+esc(eur(d.montant_tvac))+' TVAC':'')+(d.montant_htva!=null?' ('+esc(eur(d.montant_htva))+' HTVA)':'')+
-      '<br>Adoptée à l’unanimité des '+esc(d.unanimite)+' administrateurs votants, le '+esc(dt(d.le))+'.<br><button class="btn o" type="button" data-pv="'+s.id+'">Imprimer la décision</button></div>';}
+      '<br>'+adopte(d)+', le '+esc(dt(d.le))+'.<br><button class="btn o" type="button" data-pv="'+s.id+'">Imprimer la décision</button></div>';}
   // offres
   var offres=s.offres||[];
   h+='<div class="vo_off">';
@@ -156,8 +160,8 @@ function imprimer(id){
   w.document.write('<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Décision du conseil — '+esc(s.titre)+'</title><style>body{font:15px/1.5 Arial,sans-serif;max-width:720px;margin:32px auto;padding:0 16px;color:#111}h1{font-size:20px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #bbb;padding:6px 8px;text-align:left}</style></head><body>'+
     '<p>A.C.R.B. asbl — Association des Commerçants de la Rue de Brabant · 0468.701.030</p><h1>Décision du conseil d’administration</h1>'+
     '<p><b>Objet :</b> '+esc(s.titre)+(s.objet?'<br>'+esc(s.objet):'')+'</p><p><b>Offres examinées :</b></p><ul>'+off+'</ul>'+
-    (s.effet&&s.effet.type==="fonction"?'<p><b>Décision :</b> le conseil d’administration décide, à l’unanimité, que <b>'+esc(s.effet.nom)+'</b> exerce désormais la fonction de <b>'+esc(s.effet.fonction_fr)+'</b> (auparavant '+esc(s.effet.avant||'')+').</p>':'<p><b>Décision :</b> le conseil d’administration décide, à l’unanimité, de passer commande à <b>'+esc(d.prestataire)+'</b>'+(d.objet?' ('+esc(d.objet)+')':'')+(d.montant_tvac!=null?' pour un montant de '+esc(eur(d.montant_tvac))+' TVAC':'')+'.</p>')+
-    '<p>Vote ouvert le '+esc(dt(s.cree_le))+', clos à l’unanimité le '+esc(dt(d.le))+' sur la plateforme de l’association.</p>'+
+    (s.effet&&s.effet.type==="fonction"?'<p><b>Décision :</b> le conseil d’administration décide, '+(d.mode&&d.mode!=='unanimite'?'à la majorité':'à l’unanimité')+', que <b>'+esc(s.effet.nom)+'</b> exerce désormais la fonction de <b>'+esc(s.effet.fonction_fr)+'</b> (auparavant '+esc(s.effet.avant||'')+').</p>':'<p><b>Décision :</b> le conseil d’administration décide, '+(d.mode&&d.mode!=='unanimite'?'à la majorité':'à l’unanimité')+', de passer commande à <b>'+esc(d.prestataire)+'</b>'+(d.objet?' ('+esc(d.objet)+')':'')+(d.montant_tvac!=null?' pour un montant de '+esc(eur(d.montant_tvac))+' TVAC':'')+'.</p>')+
+    '<p>Vote ouvert le '+esc(dt(s.cree_le))+', clos le '+esc(dt(d.le))+' sur la plateforme de l’association. '+esc(adopte(d))+(d.mode==='majorite'||d.mode==='voix_preponderante'?' (statuts, art. 21)':'')+'.</p>'+
     '<table><tr><th>Administrateur</th><th>Fonction</th><th>Vote exprimé le</th></tr>'+rows+'</table>'+
     ((s.conflits||[]).length?'<p><b>Conflits d’intérêts déclarés</b> (ces administrateurs se sont abstenus des débats et du vote) :</p><ul>'+s.conflits.map(function(c){return '<li>'+esc(c.nom)+' : '+esc(c.motif)+' ('+esc(dt(c.le))+')</li>';}).join("")+'</ul>':'')+
     (Math.max(+d.montant_tvac||0,+d.montant_htva||0)>12500?'<p><b>Condition :</b> la dépense dépassant 12 500 €, son engagement est soumis à l’accord de l’assemblée générale aux deux tiers des voix exprimées (statuts, art. 15).</p>':'')+
@@ -172,7 +176,7 @@ window.VOTES={recharger:function(){return sb&&charger();},init:function(_sb,_use
     $("c_votes").addEventListener("submit",function(e){var f=e.target;if(f.id==="vo_new"){e.preventDefault();
         var ti=$("vo_titre").value.trim(),ob=$("vo_objet").value.trim(),ec=$("vo_ech").value||null,b=f.querySelector("button");
         if(!ti){etat("Donnez un titre au vote.","bad");return;}b.disabled=true;
-        sb.rpc("acrb_scrutin_creer",{p_titre:ti,p_objet:ob||null,p_echeance:ec}).then(function(x){b.disabled=false;if(x.error){etat("Ouverture refusée : "+err(x),"bad");return;}
+        sb.rpc("acrb_scrutin_creer",{p_titre:ti,p_objet:ob||null,p_echeance:ec,p_regle:$("vo_regle").value}).then(function(x){b.disabled=false;if(x.error){etat("Ouverture refusée : "+err(x),"bad");return;}
           f.reset();ouvert["f"+x.data]=true;etat("Vote ouvert. Ajoutez maintenant les offres reçues.","ok");charger();});}
       else if(f.dataset.offreForm){e.preventDefault();soumettreOffre(f);}});}
   charger();}};
