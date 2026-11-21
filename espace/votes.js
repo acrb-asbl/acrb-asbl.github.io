@@ -57,11 +57,11 @@ function carte(s,moi){
   h+='<p class="soon"><b>Règle :</b> '+(s.regle==="majorite"?'majorité absolue des votants (statuts, art. 21), voix du président prépondérante en cas d\u2019égalité':'unanimité des votants')+'.</p>';
   if(s.secret)h+='<p class="soon">Vote secret jusqu\u2019à la clôture : chacun voit qui a voté, pas ce qu\u2019il a choisi. Tout devient nominatif quand le vote est clos (procès-verbal).</p>';
   if(s.statut==="adopte"&&s.decision&&s.effet&&s.effet.type==="fonction"){var d=s.decision,f=s.effet;
-    h+='<div class="vo_dec"><b>Décision du conseil : '+esc(f.nom)+' devient '+esc(f.fonction_fr)+'</b> (auparavant '+esc(f.avant||'')+').<br>'+adopte(d)+', le '+esc(dt(d.le))+'.<br><button class="btn o" type="button" data-pv="'+s.id+'">Imprimer la décision</button></div>';}
+    h+='<div class="vo_dec"><b>Décision du conseil : '+esc(f.nom)+' devient '+esc(f.fonction_fr)+'</b> (auparavant '+esc(f.avant||'')+').<br>'+adopte(d)+', le '+esc(dt(d.le))+'.<br><button class="btn o" type="button" data-pv="'+s.id+'">Document de la décision (PDF)</button></div>';}
   else if(s.statut==="adopte"&&s.decision){var d=s.decision;
     h+='<div class="vo_dec"><b>Décision du conseil : commande à '+esc(d.prestataire)+'</b>'+(d.objet?' — '+esc(d.objet):'')+
       (d.montant_tvac!=null?'<br>Montant : '+esc(eur(d.montant_tvac))+' TVAC':'')+(d.montant_htva!=null?' ('+esc(eur(d.montant_htva))+' HTVA)':'')+
-      '<br>'+adopte(d)+', le '+esc(dt(d.le))+'.<br><button class="btn o" type="button" data-pv="'+s.id+'">Imprimer la décision</button></div>';}
+      '<br>'+adopte(d)+', le '+esc(dt(d.le))+'.<br><button class="btn o" type="button" data-pv="'+s.id+'">Document de la décision (PDF)</button></div>';}
   // offres
   var offres=s.offres||[];
   h+='<div class="vo_off">';
@@ -136,7 +136,7 @@ function clic(e){
   if(t.dataset.doc){sb.storage.from("acrb-actes").createSignedUrl(t.dataset.doc,900).then(function(r){if(r.error){etat("Document inaccessible : "+r.error.message,"bad");return;}window.open(r.data.signedUrl,"_blank","noopener");});return;}
   if(t.dataset.retirer){if(!confirm("Retirer cette offre du vote ?"))return;sb.rpc("acrb_offre_retirer",{p_offre:+t.dataset.retirer}).then(function(x){if(x.error)etat(err(x),"bad");charger();});return;}
   if(t.dataset.annuler){var m=prompt("Annuler ce vote ? Indiquez le motif :");if(m===null)return;sb.rpc("acrb_scrutin_annuler",{p_scrutin:+t.dataset.annuler,p_motif:m}).then(function(x){if(x.error)etat(err(x),"bad");charger();});return;}
-  if(t.dataset.pv){imprimer(+t.dataset.pv);}
+  if(t.dataset.pv){imprimer(+t.dataset.pv,t);}
 }
 
 function soumettreOffre(f){
@@ -152,22 +152,25 @@ function soumettreOffre(f){
     .catch(function(e){b.disabled=false;etat("Envoi du document impossible : "+(e.message||e),"bad");});
 }
 
-function imprimer(id){
-  var s=(data.scrutins||[]).filter(function(x){return x.id===id;})[0];if(!s||!s.decision)return;var d=s.decision;
-  var rows=(s.electeurs||[]).map(function(e){var b=(s.bulletins||[]).filter(function(x){return x.ca_id===e.id;})[0];return "<tr><td>"+esc(e.nom)+"</td><td>"+esc(e.fonction||"")+"</td><td>"+esc(b?dt(b.vote_le):"")+"</td></tr>";}).join("");
-  var off=(s.offres||[]).map(function(o,i){return "<li>Offre "+(i+1)+" : "+esc(o.prestataire)+(o.montant_tvac!=null?" — "+esc(eur(o.montant_tvac))+" TVAC":"")+(o.montant_htva!=null?" ("+esc(eur(o.montant_htva))+" HTVA)":"")+"</li>";}).join("");
-  var w=window.open("","_blank");if(!w)return;
-  w.document.write('<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Décision du conseil — '+esc(s.titre)+'</title><style>body{font:15px/1.5 Arial,sans-serif;max-width:720px;margin:32px auto;padding:0 16px;color:#111}h1{font-size:20px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #bbb;padding:6px 8px;text-align:left}</style></head><body>'+
-    '<p>A.C.R.B. asbl — Association des Commerçants de la Rue de Brabant · 0468.701.030</p><h1>Décision du conseil d’administration</h1>'+
-    '<p><b>Objet :</b> '+esc(s.titre)+(s.objet?'<br>'+esc(s.objet):'')+'</p><p><b>Offres examinées :</b></p><ul>'+off+'</ul>'+
-    (s.effet&&s.effet.type==="fonction"?'<p><b>Décision :</b> le conseil d’administration décide, '+(d.mode&&d.mode!=='unanimite'?'à la majorité':'à l’unanimité')+', que <b>'+esc(s.effet.nom)+'</b> exerce désormais la fonction de <b>'+esc(s.effet.fonction_fr)+'</b> (auparavant '+esc(s.effet.avant||'')+').</p>':'<p><b>Décision :</b> le conseil d’administration décide, '+(d.mode&&d.mode!=='unanimite'?'à la majorité':'à l’unanimité')+', de passer commande à <b>'+esc(d.prestataire)+'</b>'+(d.objet?' ('+esc(d.objet)+')':'')+(d.montant_tvac!=null?' pour un montant de '+esc(eur(d.montant_tvac))+' TVAC':'')+'.</p>')+
-    '<p>Vote ouvert le '+esc(dt(s.cree_le))+', clos le '+esc(dt(d.le))+' sur la plateforme de l’association. '+esc(adopte(d))+(d.mode==='majorite'||d.mode==='voix_preponderante'?' (statuts, art. 21)':'')+'.</p>'+
-    '<table><tr><th>Administrateur</th><th>Fonction</th><th>Vote exprimé le</th></tr>'+rows+'</table>'+
-    ((s.conflits||[]).length?'<p><b>Conflits d’intérêts déclarés</b> (ces administrateurs se sont abstenus des débats et du vote) :</p><ul>'+s.conflits.map(function(c){return '<li>'+esc(c.nom)+' : '+esc(c.motif)+' ('+esc(dt(c.le))+')</li>';}).join("")+'</ul>':'')+
-    (Math.max(+d.montant_tvac||0,+d.montant_htva||0)>12500?'<p><b>Condition :</b> la dépense dépassant 12 500 €, son engagement est soumis à l’accord de l’assemblée générale aux deux tiers des voix exprimées (statuts, art. 15).</p>':'')+
-    '<p style="margin-top:24px;font-size:12px;color:#555">Chaque vote est enregistré avec l’adresse de connexion du votant et l’heure, dans le journal de preuve de l’association. Référence du vote : V'+s.id+'.</p>'+
-    '<script>window.print()<\/script></body></html>');
-  w.document.close();
+function imprimer(id,btn){
+  var s=(data.scrutins||[]).filter(function(x){return x.id===id;})[0];if(!s||!s.decision)return;var d=s.decision,maj=d.mode&&d.mode!=='unanimite';
+  var b=[{h:"Décision du conseil d’administration"},{kv:[["Référence","V"+s.id],["Objet",s.titre+(s.objet?" — "+s.objet:"")],["Vote ouvert le",dt(s.cree_le)],["Vote clos le",dt(d.le)],["Règle",maj?"Majorité absolue des voix, voix du président prépondérante (statuts, art. 21)":"Unanimité (choix du conseil)"]]}];
+  if((s.offres||[]).length){b.push({h2:"Offres examinées"});(s.offres||[]).forEach(function(o,i){b.push({li:"Offre "+(i+1)+" : "+o.prestataire+(o.montant_tvac!=null?" — "+eur(o.montant_tvac)+" TVAC":"")+(o.montant_htva!=null?" ("+eur(o.montant_htva)+" HTVA)":"")});});}
+  b.push({h2:"Décision"});
+  if(s.effet&&s.effet.type==="fonction")b.push({p:"Le conseil d’administration décide, "+(maj?"à la majorité":"à l’unanimité")+", que "+s.effet.nom+" exerce désormais la fonction de "+s.effet.fonction_fr+" (auparavant "+(s.effet.avant||"")+")."});
+  else b.push({p:"Le conseil d’administration décide, "+(maj?"à la majorité":"à l’unanimité")+", de passer commande à "+d.prestataire+(d.objet?" ("+d.objet+")":"")+(d.montant_tvac!=null?" pour un montant de "+eur(d.montant_tvac)+" TVAC":"")+"."});
+  b.push({p:adopte(d)+(d.mode==='majorite'||d.mode==='voix_preponderante'?" (statuts, art. 21)":"")+"."});
+  b.push({table:{titre:"Votants",cols:["Administrateur","Fonction","Vote exprimé le"],w:[3,2,2],rows:(s.electeurs||[]).map(function(e){var x=(s.bulletins||[]).filter(function(y){return y.ca_id===e.id;})[0];return [e.nom,e.fonction||"",x?dt(x.vote_le):""];})}});
+  if((s.conflits||[]).length){b.push({h2:"Conflits d’intérêts déclarés"});b.push({pi:"Charte du conseil, point 6 : ces administrateurs se sont abstenus des débats et du vote."});s.conflits.forEach(function(c){b.push({li:c.nom+" : "+c.motif+" ("+dt(c.le)+")"});});}
+  if(Math.max(+d.montant_tvac||0,+d.montant_htva||0)>12500)b.push({encadre:"La dépense dépassant 12 500 €, son engagement est soumis à l’accord de l’assemblée générale aux deux tiers des voix exprimées (statuts, art. 15)."});
+  b.push({pi:"Chaque vote est enregistré avec l’adresse de connexion du votant et l’heure, dans le journal de preuve de l’association."});
+  b.push({f:"Décision V"+s.id+" · vote tenu sur la plateforme de gestion de l’association."});
+  var z=btn&&btn.parentNode.querySelector(".vo_pdf");if(!z&&btn){z=document.createElement("div");z.className="vo_pdf";btn.insertAdjacentElement("afterend",z);}
+  if(!window.DOCACRB){etat("Le module de documents n’est pas chargé.","bad");return;}
+  btn.disabled=true;window.DOCACRB.pdf(b,"Décision du conseil V"+s.id,{reference:"V"+s.id}).then(function(blob){btn.disabled=false;window.DOCACRB.actions(z,blob,"Décision du conseil V"+s.id,{
+    enregistrer:function(bl,f){var p="decisions/V"+s.id+"/"+f;return sb.storage.from("acrb-actes").upload(p,bl,{upsert:true,contentType:"application/pdf"}).then(function(u){if(u.error)throw u.error;return "Déposée au registre ("+f+").";});},
+    lienPartage:function(){var p="decisions/V"+s.id+"/Decision-du-conseil-V"+s.id+".pdf";return sb.storage.from("acrb-actes").upload(p,blob,{upsert:true,contentType:"application/pdf"}).then(function(u){if(u.error)throw u.error;return sb.storage.from("acrb-actes").createSignedUrl(p,604800);}).then(function(u){if(u.error)throw u.error;return u.data.signedUrl;});}});})
+  .catch(function(e){btn.disabled=false;etat("Document impossible : "+(e.message||e),"bad");});
 }
 
 window.VOTES={recharger:function(){return sb&&charger();},init:function(_sb,_user){sb=_sb;user=_user;
