@@ -1,0 +1,62 @@
+/* Registre des membres de l'ACRB (CSA, art. 9:3 ; statuts, art. 6 à 11).
+   Membre effectif : personne physique indépendante (commerce, artisanat, profession libérale) dans la zone de l'art. 3, qui paie la cotisation annuelle (art. 7).
+   Admission par le conseil, à la majorité, après demande écrite affichée 8 jours (art. 8). Démission écrite ; réputé démissionnaire
+   après un rappel par recommandé resté impayé un mois (art. 9). Exclusion par l'AG aux deux tiers, après audition (art. 9 ; CSA 9:23).
+   Toute admission, démission ou exclusion est inscrite dans les huit jours (CSA, art. 9:3). Expose window.MEMBRES = { init(sb) }. */
+(function(){
+var sb,D=null,lie=false,edit=null;
+function $(i){return document.getElementById(i);}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function dc(s){if(!s)return "";var p=String(s).slice(0,10).split("-");return p[2]+"/"+p[1]+"/"+p[0];}
+var AN=new Date().getFullYear();
+var MOTIF={demission:"Démission écrite (art. 9)",reputee_demission:"Réputé démissionnaire : cotisation impayée un mois après rappel recommandé (art. 9)",exclusion:"Exclusion par l'AG aux deux tiers (art. 9)",deces:"Décès"};
+var CSS='.mb_k{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin:12px 0}.mb_k div{border:1px solid var(--line,#dfe3ea);border-left:4px solid #af4057;padding:10px 12px}.mb_k b{display:block;font:800 22px/1.1 "Libre Franklin",Arial,sans-serif;color:#14233c}.mb_k span{font-size:13px;color:#5f6675}'+
+'.mb_t{width:100%;border-collapse:collapse;font-size:14px}.mb_t th,.mb_t td{border-bottom:1px solid var(--line,#dfe3ea);padding:7px 5px;text-align:left;vertical-align:top}.mb_t th{font:700 12px "Libre Franklin",Arial,sans-serif;color:#5f6675;text-transform:uppercase;letter-spacing:.04em}.mb_t tr.out td{color:#8a8f99}.mb_t .st{font:700 11px "Libre Franklin",Arial,sans-serif;text-transform:uppercase;padding:2px 6px;background:#f0f2f6;color:#5f6675}.mb_t .st.ok{background:#e4f3ea;color:#1f8a4c}.mb_t .st.w{background:#fff3d6;color:#8a5a00}.mb_t button{font:700 12.5px "Libre Franklin",Arial,sans-serif;padding:6px 9px;border:1px solid #14233c;background:#fff;color:#14233c;cursor:pointer}'+
+'.mb_f{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;padding:12px;border:1px solid var(--line,#dfe3ea);background:#fafbfc}.mb_f label{display:grid;gap:3px;font-size:12.5px;color:#5f6675;min-width:0}.mb_f input,.mb_f select{padding:8px 10px;border:1px solid #c6ccd6;font:15px "Source Sans 3",sans-serif;min-width:0;background:#fff}.mb_f .w{grid-column:1/-1}.mb_f .btn{margin:0}.mb_msg{font-size:14px;font-weight:600;margin-top:6px}.mb_msg.ok{color:#1f8a4c}.mb_msg.bad{color:#b23a2b}.mb_q{width:100%;padding:10px 12px;border:1px solid #c6ccd6;font:15px "Source Sans 3",sans-serif;margin:8px 0}'+
+'@media(max-width:700px){.mb_f{grid-template-columns:1fr}.mb_t thead{display:none}.mb_t tr{display:grid;grid-template-columns:1fr 1fr;gap:2px;padding:6px 0;border-bottom:1px solid var(--line,#dfe3ea)}.mb_t td{border:0;padding:2px 0}.mb_t td:first-child{grid-column:1/-1;font-weight:700}}';
+function actif(m){return !m.sortie_le||m.sortie_le>new Date().toISOString().slice(0,10);}
+function cot(m,a){var c=(m.cotisations||{})[a];return c||"";}
+function msg(t,k){var e=$("mb_msg");if(e){e.className="mb_msg"+(k?" "+k:"");e.textContent=t;}}
+function rendre(){var L=D.membres||[],q=(($("mb_q")||{}).value||"").toLowerCase();
+  var eff=L.filter(function(m){return actif(m)&&m.qualite==="effectif";}),adh=L.filter(function(m){return actif(m)&&m.qualite==="adherent";});
+  var payes=eff.filter(function(m){return cot(m,AN)==="payee";}).length;
+  $("mb_k").innerHTML='<div><b>'+eff.length+'</b><span>membres effectifs (une voix chacun à l’AG, art. 12)</span></div><div><b>'+adh.length+'</b><span>membres adhérents (invités, sans voix)</span></div><div><b>'+payes+' / '+eff.length+'</b><span>cotisations '+AN+' payées</span></div><div><b>'+(eff.length>=3?"OK":"Alerte")+'</b><span>au moins 3 membres (statuts, art. 6)</span></div>';
+  var rows=L.filter(function(m){return !q||(m.nom+" "+(m.commerce||"")+" "+(m.email||"")).toLowerCase().indexOf(q)>=0;});
+  $("mb_list").innerHTML=rows.length?'<table class="mb_t"><thead><tr><th>Nom</th><th>Qualité</th><th>Commerce</th><th>Cotisation '+AN+'</th><th>Admis le</th><th>Statut</th>'+(D.peut_ecrire?'<th></th>':'')+'</tr></thead><tbody>'+rows.map(function(m){var a=actif(m),c=cot(m,AN);
+    return '<tr class="'+(a?"":"out")+'"><td>'+esc(m.nom)+(m.email?'<br><span class="soon" style="margin:0">'+esc(m.email)+'</span>':'')+'</td><td>'+(m.qualite==="effectif"?"Effectif":"Adhérent")+'</td><td>'+esc(m.commerce||"")+'</td><td>'+(m.qualite==="effectif"?'<span class="st '+(c==="payee"?"ok":c==="rappel"?"w":"")+'">'+(c==="payee"?"Payée":c==="rappel"?"Rappel recommandé envoyé":c==="due"?"Due":"—")+'</span>':'—')+'</td><td>'+esc(dc(m.admis_le))+'</td><td>'+(a?'<span class="st ok">Membre</span>':'<span class="st">Sorti le '+esc(dc(m.sortie_le))+'</span><br><span class="soon" style="margin:0">'+esc(MOTIF[m.sortie_motif]||"")+'</span>')+'</td>'+(D.peut_ecrire?'<td><button type="button" data-ed="'+m.id+'">Modifier</button></td>':'')+'</tr>';}).join("")+'</tbody></table>':'<p class="soon">Aucun membre inscrit. Ajoutez-les ci-dessous ou importez la liste des cotisants (CSV exporté d’Odoo).</p>';
+  form();}
+function form(){var z=$("mb_form");if(!z)return;if(!D.peut_ecrire){z.innerHTML="";return;}var m=edit?D.membres.filter(function(x){return x.id===edit;})[0]:{qualite:"effectif",cotisations:{}};
+  var o=function(l,v){return l.map(function(x){return '<option value="'+x[0]+'"'+(x[0]===(v||"")?" selected":"")+'>'+x[1]+'</option>';}).join("");};
+  z.innerHTML='<form class="mb_f" id="mb_ff"><label class="w"><b style="color:#14233c;font:800 14px \'Libre Franklin\',Arial,sans-serif">'+(edit?"Modifier : "+esc(m.nom):"Inscrire un membre")+'</b></label>'+
+    '<label>Prénom et nom (personne physique)<input name="nom" required value="'+esc(m.nom||"")+'"></label><label>Qualité<select name="qualite">'+o([["effectif","Membre effectif (indépendant de la zone, cotisant)"],["adherent","Membre adhérent (aide morale ou professionnelle)"]],m.qualite)+'</select></label><label>Activité indépendante<input name="activite" value="'+esc(m.activite||"")+'" placeholder="Commerce, artisanat, profession libérale"></label>'+
+    '<label>Commerce (enseigne)<input name="commerce" value="'+esc(m.commerce||"")+'"></label><label>Adresse<input name="adresse" value="'+esc(m.adresse||"")+'"></label><label>Courriel (convocations, CSA art. 2:32)<input name="email" type="email" value="'+esc(m.email||"")+'"></label>'+
+    '<label>Téléphone<input name="telephone" value="'+esc(m.telephone||"")+'"></label><label>Admis par le conseil le<input name="admis_le" type="date" value="'+esc(m.admis_le||"")+'"></label><label>Référence de la décision<input name="admis_par" value="'+esc(m.admis_par||"")+'" placeholder="PV CA-2026-01, point 3"></label>'+
+    '<label>Cotisation '+AN+'<select name="cot">'+o([["","—"],["due","Due"],["payee","Payée"],["rappel","Rappel recommandé envoyé"]],cot(m,AN))+'</select></label><label>Sortie le<input name="sortie_le" type="date" value="'+esc(m.sortie_le||"")+'"></label><label>Motif de sortie<select name="sortie_motif">'+o([["",""],["demission",MOTIF.demission],["reputee_demission","Réputé démissionnaire (art. 9)"],["exclusion","Exclusion par l’AG (art. 9)"],["deces","Décès"]],m.sortie_motif)+'</select></label>'+
+    '<label class="w" style="display:flex;gap:8px;flex-direction:row;flex-wrap:wrap"><button class="btn" type="submit">'+(edit?"Enregistrer":"Inscrire au registre")+'</button>'+(edit?'<button class="btn o" type="button" id="mb_new">Nouveau membre</button>':'')+'</label></form><div class="mb_msg" id="mb_msg"></div>';
+  $("mb_ff").onsubmit=function(e){e.preventDefault();var f=e.target,c=Object.assign({},m.cotisations||{});if(f.cot.value)c[AN]=f.cot.value;else delete c[AN];
+    var d={nom:f.nom.value,qualite:f.qualite.value,activite:f.activite.value,commerce:f.commerce.value,adresse:f.adresse.value,email:f.email.value,telephone:f.telephone.value,admis_le:f.admis_le.value,admis_par:f.admis_par.value,cotisations:c,sortie_le:f.sortie_le.value,sortie_motif:f.sortie_motif.value};
+    if(d.sortie_le&&!d.sortie_motif){msg("Indiquez le motif de la sortie.","bad");return;}
+    var b=f.querySelector("button[type=submit]");b.disabled=true;sb.rpc("acrb_membre_enregistrer",{p_id:edit,p_data:d}).then(function(x){b.disabled=false;if(x.error){msg("Non enregistré : "+x.error.message,"bad");return;}var nom=x.data.nom;edit=null;charger().then(function(){msg(nom+" : registre à jour. Rappel : toute admission, démission ou exclusion s’inscrit dans les huit jours (CSA, art. 9:3).","ok");});});};
+  var nb=$("mb_new");if(nb)nb.onclick=function(){edit=null;form();};}
+function importer(file){var r=new FileReader();r.onload=function(){var t=String(r.result).replace(/^﻿/,""),l=t.split(/\r?\n/).filter(function(x){return x.trim();});if(l.length<2){msg("Fichier vide.","bad");return;}
+  var sep=(l[0].match(/;/g)||[]).length>=(l[0].match(/,/g)||[]).length?";":",",h=l[0].split(sep).map(function(x){return x.trim().toLowerCase().replace(/^"|"$/g,"");});
+  var idx=function(n){for(var i=0;i<n.length;i++){var k=h.indexOf(n[i]);if(k>=0)return k;}return -1;},iN=idx(["nom","name","client","partenaire","partner"]),iE=idx(["email","courriel","e-mail"]),iT=idx(["telephone","téléphone","phone","gsm"]),iC=idx(["commerce","enseigne","societe","société","company"]),iA=idx(["adresse","address"]),iP=idx(["statut","paiement","payment_state","état du paiement"]);
+  if(iN<0){msg("Colonne « nom » introuvable dans le fichier.","bad");return;}
+  var exist=(D.membres||[]).map(function(m){return m.nom.toLowerCase();}),todo=[];
+  l.slice(1).forEach(function(line){var c=line.split(sep).map(function(x){return x.trim().replace(/^"|"$/g,"");}),nom=c[iN];if(!nom||exist.indexOf(nom.toLowerCase())>=0)return;exist.push(nom.toLowerCase());
+    var p=iP>=0?c[iP].toLowerCase():"",cs={};if(p)cs[AN]=/pay|réglé|regle|paid/.test(p)?"payee":"due";
+    todo.push({nom:nom,qualite:"effectif",email:iE>=0?c[iE]:"",telephone:iT>=0?c[iT]:"",commerce:iC>=0?c[iC]:"",adresse:iA>=0?c[iA]:"",cotisations:cs,note:"importé de la liste des cotisants"});});
+  if(!todo.length){msg("Aucun nouveau membre dans ce fichier.","");return;}
+  msg("Import de "+todo.length+" membre(s)…");var i=0;(function suite(){if(i>=todo.length){charger().then(function(){msg(todo.length+" membre(s) importé(s). Vérifiez pour chacun la date d’admission par le conseil (art. 8).","ok");});return;}
+    sb.rpc("acrb_membre_enregistrer",{p_id:null,p_data:todo[i++]}).then(function(x){if(x.error){msg("Arrêt à la ligne "+i+" : "+x.error.message,"bad");return;}suite();});})();};r.readAsText(file);}
+function exporter(){var L=D.membres||[],rows=[["nom","qualite","activite","commerce","adresse","email","telephone","admis_le","cotisation_"+AN,"sortie_le","sortie_motif"]].concat(L.map(function(m){return [m.nom,m.qualite,m.activite||"",m.commerce||"",m.adresse||"",m.email||"",m.telephone||"",m.admis_le||"",cot(m,AN),m.sortie_le||"",m.sortie_motif||""];}));
+  var csv=rows.map(function(r){return r.map(function(v){v=String(v);return /[;"\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}).join(";");}).join("\r\n"),a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["﻿"+csv],{type:"text/csv"}));a.download="registre-membres-ACRB-"+new Date().toISOString().slice(0,10)+".csv";a.click();}
+function charger(){return sb.rpc("acrb_membres_liste").then(function(x){if(x.error){$("mb_list").innerHTML='<p class="soon">'+esc(x.error.message)+'</p>';return;}D=x.data;rendre();});}
+window.MEMBRES={init:function(_sb){sb=_sb;$("c_membres").hidden=false;
+  if(!lie){lie=true;var st=document.createElement("style");st.textContent=CSS;document.head.appendChild(st);
+    $("mb_q").addEventListener("input",function(){if(D)rendre();});
+    $("c_membres").addEventListener("click",function(e){var b=e.target.closest("[data-ed]");if(b){edit=+b.dataset.ed;form();$("mb_form").scrollIntoView({block:"center"});}});
+    $("mb_csv").addEventListener("change",function(e){if(e.target.files[0])importer(e.target.files[0]);e.target.value="";});
+    $("mb_exp").addEventListener("click",function(){if(D)exporter();});}
+  charger();},recharger:function(){return sb&&charger();}};
+})();
