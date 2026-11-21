@@ -24,7 +24,7 @@ function chargerLogo(){if(logoBytes)return Promise.resolve(logoBytes);
 /* Helvetica (WinAnsi) : on remplace tout caractère qu'elle ne sait pas dessiner, au lieu de laisser le PDF échouer */
 var REMPL={" ":" "," ":" "," ":" ","​":"","⁠":"","‑":"-","‐":"-","−":"-","✓":"v","✔":"v","✗":"x","→":"->","←":"<-","≥":">=","≤":"<=","­":"","″":"\"","′":"'","ʼ":"'"};
 var WIN=new Set(Array.from("€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ").map(function(c){return c.charCodeAt(0);}));
-function propre(t){return String(t==null?"":t).replace(/\r/g,"").replace(/./gu,function(c){if(REMPL[c]!=null)return REMPL[c];var k=c.charCodeAt(0);if(c.length>1)return "";if(k===10||(k>=32&&k<=126)||(k>=160&&k<=255)||WIN.has(k))return c;
+function propre(t){return String(t==null?"":t).replace(/\r/g,"").replace(/« /g,"«\u00a0").replace(/ »/g,"\u00a0»").replace(/ ([:;!?])/g,"\u00a0$1").replace(/./gu,function(c){if(REMPL[c]!=null)return REMPL[c];var k=c.charCodeAt(0);if(c.length>1)return "";if(k===10||(k>=32&&k<=126)||(k>=160&&k<=255)||WIN.has(k))return c;
   var n=c.normalize("NFD").replace(/[̀-ͯ]/g,"");return /^[\x20-\x7e]$/.test(n)?n:"";});}
 
 async function pdf(blocs,titre,opt){opt=opt||{};var L=window.PDFLib,doc=await L.PDFDocument.create();
