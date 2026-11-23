@@ -815,5 +815,14 @@ err_req:"ایک لازمی خانہ (* والا) خالی ہے۔",err_photo:"ا�
 </script><script>(function(){function v(i){var e=document.getElementById(i);return e?((e.value!=null?e.value:e.textContent)||"").trim():"";}
 function up(){if(!window.UNCLIC)return;var ch=[["Commerce (enseigne et adresse)",v("picked")||v("lk")],["Votre nom",v("p_nom")],["Téléphone (GSM)",v("p_tel")],["E-mail",v("p_email")],["Horaires d’ouverture",""]];if(v("remarques"))ch.push(["Remarques",v("remarques")]);
 UNCLIC.rendre(document.getElementById("fiche_uc"),{sujet:"Ma fiche commerçant — Shopping Brabant",label:"Plus simple ? Envoyez vos informations en un toucher :",intro:"Je souhaite que l’association crée ou mette à jour ma fiche commerçant.",champs:ch});}
-var t;document.addEventListener("input",function(){clearTimeout(t);t=setTimeout(up,400);});document.addEventListener("click",function(){clearTimeout(t);t=setTimeout(up,300);});up();})();</script></body>
+var t;document.addEventListener("input",function(){clearTimeout(t);t=setTimeout(up,400);});document.addEventListener("click",function(){clearTimeout(t);t=setTimeout(up,300);});up();})();</script><script>/* Accessibilité : chaque champ annonce son libellé, et toucher le libellé place le curseur (certification du 23/11). */
+(function(){var n=0;function lier(){document.querySelectorAll("input,select,textarea").forEach(function(e){if(e.type==="hidden"||e.classList.contains("hp"))return;if((e.labels&&e.labels.length)||e.getAttribute("aria-label")||e.getAttribute("aria-labelledby"))return;
+var pr=e.previousElementSibling;while(pr&&pr.tagName!=="LABEL"&&pr.tagName!=="SPAN"&&pr.tagName!=="B")pr=pr.previousElementSibling;
+if(pr&&pr.tagName==="LABEL"&&!pr.htmlFor){if(!e.id)e.id="ch"+(++n);pr.htmlFor=e.id;return;}
+var t=pr?(pr.textContent||"").trim():"";if(!t){var lb=e.closest("div")&&e.closest("div").querySelector("label");t=lb?(lb.textContent||"").trim():"";}
+if(e.closest(".days")&&t){var pv=e.previousElementSibling;t+=(pv&&pv.tagName==="INPUT")?" – fermeture":" – ouverture";}
+t=t||e.getAttribute("placeholder")||e.getAttribute("title")||e.name||"";if(t)e.setAttribute("aria-label",t.replace(/\s+/g," ").slice(0,80));});}
+var tm;function plus(){clearTimeout(tm);tm=setTimeout(lier,120);}
+if(document.readyState!=="loading")lier();else document.addEventListener("DOMContentLoaded",lier);
+try{new MutationObserver(plus).observe(document.body,{childList:true,subtree:true});}catch(e){}})();</script></body>
 </html>
