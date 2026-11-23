@@ -40,6 +40,11 @@ jobs:
       - name: Valeur du jour
         run: node .porte/valeur.mjs sortie
         continue-on-error: true
+      - name: Fraîcheur des contenus (Quartier Nord, guide)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node .porte/fraicheur.mjs
+        continue-on-error: true
       - name: File de corrections
         env:
           GH_TOKEN: ${{ github.token }}

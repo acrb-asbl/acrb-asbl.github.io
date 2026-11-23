@@ -15,7 +15,7 @@ const DIR = path.dirname(new URL(import.meta.url).pathname)
 fs.mkdirSync(OUT, { recursive: true })
 const SB = 'https://blaehmatdmobhwlhqfjo.supabase.co', CLE = 'sb_publishable_c1ovcVD1pbOGPedrJfDU3g_jtS1bY73'
 const PAGES = ['index.html', 'acrb/index.html', 'acrb/index-nl.html', 'acrb/annuaire.html', 'acrb/fiche.html', 'acrb/valider.html', 'acrb/confidentialite.html', 'espace/ca.html',
-  'shopping/index.html', 'shopping/fiche.html', 'shopping/guide.html', 'quartier/index.html', 'espace/index.html', 'espace/commercant.html', 'espace/terrain.html', 'espace/signer.html']
+  'shopping/index.html', 'shopping/fiche.html', 'shopping/guide.html', 'quartier/index.html', 'stagiaires/index.html', 'espace/index.html', 'espace/commercant.html', 'espace/terrain.html', 'espace/signer.html']
 const PROFILS = { iphone13: [webkit, devices['iPhone 13']], android: [chromium, devices['Pixel 7']] }
 const DANGER = /envoyer|supprim|retir|valider|signer|payer|publier|enregistr|émettre|emettre|confirmer|google|déconnect|deconnect|inscri|ajouter|créer|creer|adhérer|adherer|commander|voter|demander|ouvrir le vote|relier|déposer|deposer|annuler|lien de connexion|invitation/i
 const ECRITURE = /\/rest\/v1\/rpc\/[a-z_]*(creer|ajout|maj|inscri|signal|adher|demande|soumet|enregistr|envoy|valid|retir|regler|import|bulk|utiliser|voter|annuler|pousser|rectifier|rappels)|\/rest\/v1\/(?!rpc)|\/storage\/v1\/object\/(?!sign|public)|\/functions\/v1\//i
