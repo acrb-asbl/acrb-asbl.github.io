@@ -676,7 +676,7 @@ err_req:"ایک لازمی خانہ (* والا) خالی ہے۔",err_photo:"ا�
     if(d.length>=6) parts="bce.ilike.*"+d.slice(0,4)+"*"+d.slice(4,7)+"*"+d.slice(7)+"*";
     else if(/^\d{1,4}[a-z]?$/i.test(q)) parts="numero.eq."+d;
     else {var t=q.replace(/[,()*]/g," ").replace(/\s+/g,"*");parts="enseigne.ilike.*"+t+"*,denomination.ilike.*"+t+"*";}
-    sbGet("select=ue,bce,rue,numero,cp,enseigne,denomination,forme,ue_depuis,tel,email,web,fonctions,activites&masque=not.is.true&or=("+parts+")&order=rue,numero&limit=12").then(function(rows){
+    sbGet("select=ue,bce,rue,numero,cp,enseigne,denomination,forme,ue_depuis,tel,email,web,activites&masque=not.is.true&or=("+parts+")&order=rue,numero&limit=12").then(function(rows){
       lkmsg.textContent=rows.length?"":T.s0_none;
       hits.innerHTML=rows.map(function(r){return '<button type="button" class="hit" data-ue="'+esc(r.ue)+'"><span><b>'+esc(r.enseigne||r.denomination)+'</b><small>'+esc(r.denomination)+' · '+esc((RUES[r.rue]||r.rue)+" "+r.numero+", "+r.cp)+'</small></span><span class="pick">'+T.s0_pick+' →</span></button>';}).join("");
       hits._rows=rows;
@@ -715,7 +715,7 @@ err_req:"ایک لازمی خانہ (* والا) خالی ہے۔",err_photo:"ا�
       list.insertAdjacentHTML("beforeend",rows.map(function(x){return '<label class="chk"><input type="checkbox" name="absent" value="'+esc(x.ue)+'" data-src="'+esc(uk)+'"> '+esc(x.enseigne||x.denomination)+' <small>('+esc(x.denomination)+')</small></label>';}).join(""));}).catch(function(){});
   }
   try{var ues=(new URLSearchParams(location.search).get("ue")||"").split(",").map(function(u){return u.replace(/\D/g,"");}).filter(Boolean);
-    if(ues.length){sbGet("select=ue,bce,rue,numero,cp,enseigne,denomination,forme,ue_depuis,tel,email,web,fonctions,activites&ue=in.("+ues.map(function(u){return '"'+dotUe(u)+'"';}).join(",")+")").then(function(rows){rows.forEach(prefill);}).catch(function(){lkmsg.textContent=T.s0_err;});}
+    if(ues.length){sbGet("select=ue,bce,rue,numero,cp,enseigne,denomination,forme,ue_depuis,tel,email,web,activites&ue=in.("+ues.map(function(u){return '"'+dotUe(u)+'"';}).join(",")+")").then(function(rows){rows.forEach(prefill);}).catch(function(){lkmsg.textContent=T.s0_err;});}
   }catch(e){}
 
   var initial="fr";
