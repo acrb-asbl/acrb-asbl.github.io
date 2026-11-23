@@ -61,16 +61,30 @@ textarea{width:100%;min-height:70px;border:1px solid var(--line);border-radius:1
 .gate input{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;margin:6px 0 12px;font-size:17px}
 .gate button{width:100%;border:0;border-radius:12px;padding:14px;background:var(--fg);color:#fff;font-weight:800;font-size:16px}
 .empty{text-align:center;padding:40px 10px;color:var(--muted)}
+[hidden]{display:none!important}
+.where{display:flex;gap:6px;margin-top:8px;align-items:stretch}.where>button{border:1px solid var(--line);background:#fff;border-radius:12px;font-weight:800}
+#trprev,#trnext{width:44px;font-size:24px;line-height:1;color:var(--fg)}#trprev:disabled,#trnext:disabled{opacity:.3}
+#where{flex:1;text-align:left;padding:8px 12px;background:var(--fg);color:#fff;border-color:var(--fg);min-width:0}#where small{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.7}#where b{display:block;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#where span{display:block;font-size:12.5px;font-weight:600;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.banner{margin-top:8px;background:#fff8e6;border:1px solid #f1d9a6;border-radius:12px;padding:10px 12px;font-weight:700;font-size:14px;display:flex;gap:10px;align-items:center;justify-content:space-between}.banner button{border:0;background:var(--fg);color:#fff;border-radius:999px;padding:8px 14px;font-weight:800}
+.sheet.full .in{max-height:92vh}.pkh{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.pkh h3{margin:0}.pkh button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font-weight:700}
+.pks{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:16px 2px 6px}
+.pk{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:8px}
+.pk[aria-current=true]{border:2px solid var(--fg)}.pk .n{flex:none;width:42px;height:42px;border-radius:12px;background:var(--fg);color:#fff;display:grid;place-items:center;font:800 18px "Libre Franklin",Arial,sans-serif}
+.pk.full .n{background:var(--green)}.pk .t{flex:1;min-width:0}.pk .t b{display:block;font-size:15px}.pk .t small{display:block;color:var(--muted);font-size:12.5px}
+.pk .pb{display:block;height:5px;background:var(--line);border-radius:3px;margin-top:6px;overflow:hidden}.pk .pb i{display:block;height:100%;background:var(--green)}
+.pk .c{flex:none;text-align:right;font-weight:800;font-size:14px}.pk .c small{display:block;font-weight:600;color:var(--muted);font-size:11.5px;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pk.lock{opacity:.45}.toast button{pointer-events:auto}
 </style></head><body>
 <div id="gate" class="gate" hidden>
-  <h2 style="margin:0 0 4px">Mode terrain ACRB</h2><p style="color:var(--muted);margin:0 0 14px;font-size:14px">Réservé aux administrateurs et aux bénévoles terrain de l'association, avec un compte Google autorisé.</p>
+  <h2 style="margin:0 0 4px">Mode terrain ACRB</h2><p style="color:var(--muted);margin:0 0 14px;font-size:14px">Réservé aux membres de l'équipe et aux personnes à qui le conseil a confié un tronçon, avec leur compte Google.</p>
   <button id="g_btn">Se connecter avec Google</button><p id="g_msg" style="color:var(--muted);font-size:14px;margin-top:10px"></p>
 </div>
 <div id="app" hidden>
-<div class="top"><div class="row"><h1>Mode terrain <small id="who"></small></h1><button class="chip" id="viewbtn" style="padding:6px 12px;font-size:12px">Liste</button><button class="chip" id="setbtn" style="padding:6px 12px;font-size:12px" title="Réglages">⚙</button></div>
+<div class="top"><div class="row"><h1>Mode terrain <small id="who"></small></h1><button class="chip" id="viewbtn" data-aide="Bascule entre une fiche à la fois (pour valider) et la liste complète du tronçon (pour retrouver un commerce)." style="padding:6px 12px;font-size:12px">Liste</button><button class="chip" id="setbtn" data-aide="Réglage du conseil : jusqu’où, autour de la rue de Brabant, les commerces apparaissent sur le site." style="padding:6px 12px;font-size:12px" title="Réglages">⚙</button><span id="aide-place"></span></div>
   <div class="prog"><i id="bar"></i></div>
-  <div class="ctl"><select id="street"></select><button id="todo" aria-pressed="true">À faire</button><button id="near">📍 Près de moi</button><input id="q" placeholder="Chercher…" style="flex:none;border:1px solid var(--line);border-radius:999px;padding:7px 12px;font-size:13px;width:130px"></div>
-  <div class="trs" id="trs" hidden></div>
+  <div class="where"><button id="trprev" aria-label="Tronçon précédent" data-aide="Passe au bout de rue précédent, sans repasser par la liste.">‹</button><button id="where" data-aide="Le bout de rue sur lequel vous travaillez, avec ce qui est déjà fait. Touchez pour en choisir un autre."><small>Vous travaillez sur</small><b id="w_t">Choisir mon tronçon</b><span id="w_s">Touchez ici</span></button><button id="trnext" aria-label="Tronçon suivant" data-aide="Passe au bout de rue suivant, dans l’ordre de la rue.">›</button></div>
+  <div class="ctl"><button id="gps" data-aide="Le téléphone trouve le bout de rue où vous êtes et l’ouvre directement.">📍 Où suis-je ?</button><button id="follow" aria-pressed="false" data-aide="Pendant que vous marchez, le téléphone vous propose de passer au tronçon suivant dès que vous y entrez, et range les commerces du plus proche au plus loin.">🧭 Me suivre</button><button id="todo" aria-pressed="true" data-aide="Allumé : seulement les commerces pas encore vus. Éteint : tous, pour revoir ou corriger.">À faire</button><input id="q" placeholder="Chercher…" data-aide="Tapez une partie du nom sur la vitrine, de la société, ou un numéro de rue exact (ex. 93)." style="flex:none;border:1px solid var(--line);border-radius:999px;padding:7px 12px;font-size:13px;width:120px"></div>
+  <div class="banner" id="banner" hidden></div>
 </div>
 <div class="wrap"><div id="main"></div></div>
 </div>
@@ -82,9 +96,12 @@ textarea{width:100%;min-height:70px;border:1px solid var(--line);border-radius:1
 <button class="big" id="raysave">Enregistrer le rayon</button></div></div>
 <div class="sheet" id="movesheet"><div class="in"><h3>Déménagement</h3><p style="font-size:14px;color:var(--muted);margin:0 0 10px" id="mv_from"></p>
 <label class="l">Nouvelle adresse</label><select id="mv_rue" style="width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;background:#fff;margin-bottom:8px"></select>
-<input id="mv_num" type="number" inputmode="numeric" placeholder="Nouveau numéro" style="width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;margin-bottom:12px">
+<input id="mv_num" type="text" inputmode="text" autocomplete="off" placeholder="Numéro sur la porte, ex. 93, 93A, 93 bis, 91-93" data-aide="Tapez le numéro tel qu’il est écrit sur la porte. Les lettres (A, bis), les doubles numéros (91-93) et les boîtes sont acceptés : le chiffre principal sert à placer le commerce, le reste est gardé en remarque." style="width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;margin-bottom:6px">
+<div id="mv_chk" class="hintt" style="margin:0 0 12px;min-height:18px"></div>
 <div class="hintt" style="margin:0 0 12px">Dans le quartier : le commerce apparaît au nouveau numéro sur le site. Hors du quartier : il est retiré du site.</div>
 <button class="big" id="mv_ok">Enregistrer le déménagement</button></div></div>
+<div class="sheet full" id="trsheet"><div class="in"><div class="pkh"><h3>Choisir mon tronçon</h3><button id="pk_x">Fermer</button></div>
+<button class="big" id="pk_gps">📍 Trouver le tronçon où je suis</button><p class="hintt" style="text-align:center;margin:6px 0 12px">Un tronçon = un bout de rue entre deux croisements. Les numéros affichés sont ceux que vous voyez sur les portes.</p><div id="pk_list"></div></div></div>
 <div class="toast" id="toast"></div>
 <script>
 var SB="https://blaehmatdmobhwlhqfjo.supabase.co",KEY="sb_publishable_c1ovcVD1pbOGPedrJfDU3g_jtS1bY73",JWT="";
@@ -97,11 +114,40 @@ function trOf(rk,i){return (TR[rk]||[]).filter(function(t){return t.i===i;})[0];
 function trLabel(t){return t?("Tronçon "+t.i+" · "+t.de+" → "+t.a):"";}
 function trNums(t){var a=[];if(t.odd)a.push("n° "+t.odd[0]+(t.odd[1]!==t.odd[0]?"–"+t.odd[1]:"")+" impairs");if(t.even)a.push("n° "+t.even[0]+(t.even[1]!==t.even[0]?"–"+t.even[1]:"")+" pairs");return a.join(" · ");}
 function trPool(rk,i){return SHOPS.filter(function(s){return s.rk===rk&&s.tr===i&&!(V[s.id]&&V[s.id].masque)&&inRay(s);});}
-function renderTroncons(){var el=document.getElementById("trs"),list=street?(TR[street]||[]):[];if(!list.length){el.hidden=true;el.innerHTML="";return;}el.hidden=false;
-  el.innerHTML='<button data-i="0" aria-pressed="'+(troncon===0?"true":"false")+'"><b>Toute la rue</b><small>'+list.length+' tronçons</small></button>'+list.map(function(t){var p=trPool(street,t.i),d=p.filter(isDone).length,full=p.length&&d===p.length;
-    return '<button data-i="'+t.i+'" aria-pressed="'+(troncon===t.i?"true":"false")+'" class="'+(full?"full":"")+'"><b>T'+t.i+' · '+esc(t.de.split(" / ")[0])+' → '+esc(t.a.split(" / ")[0])+'</b><small>'+(full?"✓ ":"")+d+' / '+p.length+' validés'+(trNums(t)?' · '+esc(trNums(t)):'')+'</small></button>';}).join("");
-  var on=el.querySelector("[aria-pressed=true]");if(on&&on.scrollIntoView)try{on.scrollIntoView({block:"nearest",inline:"center"});}catch(e){}
-  el.onclick=function(e){var b=e.target.closest("button");if(!b)return;troncon=+b.dataset.i;idx=0;render();};}
+var ETAT={troncons:[],equipe:true},STAFF=true,ALLOWED=null,FOLLOW=null,LASTSUG="";
+function short(x){return String(x||"").split(" / ")[0];}
+function trKey(rk,i){return rk+"#"+i;}
+function allowed(rk,i){return !ALLOWED||ALLOWED[trKey(rk,i)];}
+function etatOf(rk,i){return (ETAT.troncons||[]).filter(function(t){return t.rue===rk&&t.troncon===i;})[0];}
+function ORDER(){var o=[];STREETS.forEach(function(rk){(TR[rk]||[]).forEach(function(t){if(allowed(rk,t.i))o.push([rk,t.i]);});});return o;}
+function setTr(rk,i,silent){street=rk;troncon=i;idx=0;try{localStorage.setItem("acrb_tr",JSON.stringify([rk,i]));}catch(e){}document.getElementById("trsheet").classList.remove("on");document.getElementById("banner").hidden=true;render();window.scrollTo(0,0);if(!silent){var t=trOf(rk,i);toast(t?"Tronçon "+i+" · "+short(t.de)+" → "+short(t.a):streetLabel(rk));}}
+function renderTroncons(){var t=troncon?trOf(street,troncon):null,wt=document.getElementById("w_t"),ws=document.getElementById("w_s");
+  if(!street){wt.textContent="Choisir mon tronçon";ws.textContent="Touchez ici pour choisir où vous êtes";}
+  else{var p=troncon?trPool(street,troncon):SHOPS.filter(function(x){return x.rk===street&&inRay(x)&&!(V[x.id]&&V[x.id].masque);}),d=p.filter(isDone).length,e=troncon?etatOf(street,troncon):null,a=e&&e.attribution;
+    wt.textContent=streetLabel(street)+(troncon?" · Tronçon "+troncon:" · toute la rue");
+    ws.textContent=(t?short(t.de)+" → "+short(t.a)+" · ":"")+d+" / "+p.length+" faits"+(a?" · "+a.nom:"");}
+  var o=ORDER(),k=-1;o.forEach(function(x,n){if(x[0]===street&&x[1]===troncon)k=n;});
+  document.getElementById("trprev").disabled=k<=0;document.getElementById("trnext").disabled=k<0||k>=o.length-1;}
+function stepTr(d){var o=ORDER(),k=-1;o.forEach(function(x,n){if(x[0]===street&&x[1]===troncon)k=n;});var n=o[k+d];if(n)setTr(n[0],n[1]);}
+function openPicker(){var L=document.getElementById("pk_list"),h="",mine=(ETAT.troncons||[]).filter(function(e){return e.attribution&&e.attribution.moi;});
+  function row(rk,t){var p=trPool(rk,t.i),d=p.filter(isDone).length,full=p.length&&d===p.length,e=etatOf(rk,t.i),a=e&&e.attribution,ok=allowed(rk,t.i);
+    return '<button class="pk'+(full?" full":"")+(ok?"":" lock")+'" data-rk="'+esc(rk)+'" data-i="'+t.i+'"'+(rk===street&&t.i===troncon?' aria-current="true"':'')+(ok?'':' disabled')+' data-aide="Ouvre les commerces de ce bout de rue, dans l’ordre où vous les croisez en marchant."><span class="n">'+t.i+'</span><span class="t"><b>'+esc(short(t.de))+' → '+esc(short(t.a))+'</b><small>'+esc(trNums(t)||"")+'</small><i class="pb"><i style="width:'+(p.length?Math.round(100*d/p.length):0)+'%"></i></i></span><span class="c">'+(full?"✓ ":"")+d+' / '+p.length+(a?'<small>'+esc(a.nom)+(a.statut==="essai"?" · essai":"")+'</small>':(STAFF?'<small>libre</small>':''))+'</span></button>';}
+  if(mine.length){h+='<div class="pks">Mes tronçons</div>'+mine.map(function(e){var t=trOf(e.rue,e.troncon);return t?row(e.rue,t):"";}).join("");}
+  STREETS.forEach(function(rk){var list=(TR[rk]||[]).filter(function(t){return allowed(rk,t.i);});if(!list.length)return;
+    h+='<div class="pks">'+esc(streetLabel(rk))+'</div>'+list.map(function(t){return row(rk,t);}).join("")+(STAFF&&list.length>1?'<button class="pk" data-rk="'+esc(rk)+'" data-i="0" data-aide="Montre tous les commerces de la rue, tronçon après tronçon."><span class="n">∑</span><span class="t"><b>Toute la rue</b><small>'+list.length+' tronçons</small></span></button>':'');});
+  L.innerHTML=h||'<div class="empty">Aucun tronçon ne vous est confié pour le moment.</div>';
+  L.onclick=function(e){var b=e.target.closest(".pk");if(!b||b.disabled)return;setTr(b.dataset.rk,+b.dataset.i);};
+  document.getElementById("trsheet").classList.add("on");}
+function nearestTr(){if(!ME)return null;var best=null;SHOPS.forEach(function(x){if(!x.ll||!x.tr||!allowed(x.rk,x.tr)||!inRay(x))return;var d=dist(ME,x.ll);if(!best||d<best.d)best={rk:x.rk,i:x.tr,d:d};});return best;}
+function locate(cb){if(!navigator.geolocation){toast("Ce téléphone ne donne pas sa position",true);return;}toast("Recherche de votre position…");
+  navigator.geolocation.getCurrentPosition(function(p){ME=[p.coords.latitude,p.coords.longitude];cb(nearestTr());},function(){toast("Position refusée : autorisez la localisation pour ce site",true);},{enableHighAccuracy:true,timeout:12000});}
+function gpsGo(){locate(function(n){if(!n)return toast("Aucun tronçon à moins de 1 km",true);if(n.d>250)toast("Vous êtes à "+Math.round(n.d)+" m du tronçon le plus proche",true);near=true;setTr(n.rk,n.i);});}
+function followToggle(b){if(FOLLOW!=null){navigator.geolocation.clearWatch(FOLLOW);FOLLOW=null;near=false;b.setAttribute("aria-pressed","false");document.getElementById("banner").hidden=true;render();return;}
+  if(!navigator.geolocation)return toast("Ce téléphone ne donne pas sa position",true);
+  FOLLOW=navigator.geolocation.watchPosition(function(p){ME=[p.coords.latitude,p.coords.longitude];near=true;var n=nearestTr();if(!n)return;var k=trKey(n.rk,n.i);
+    if(!(n.rk===street&&n.i===troncon)&&n.d<120&&k!==LASTSUG){LASTSUG=k;var t=trOf(n.rk,n.i),bn=document.getElementById("banner");bn.innerHTML='<span>Vous êtes maintenant dans le <b>tronçon '+n.i+'</b> ('+esc(short(t.de))+' → '+esc(short(t.a))+')</span><button id="bn_go">Y passer</button>';bn.hidden=false;document.getElementById("bn_go").onclick=function(){setTr(n.rk,n.i);};}
+    if(n.rk===street&&n.i===troncon){document.getElementById("banner").hidden=true;}},function(){toast("Position refusée",true);followToggle(b);},{enableHighAccuracy:true,maximumAge:5000});
+  b.setAttribute("aria-pressed","true");toast("Suivi activé : le tronçon vous est proposé quand vous en changez");}
 function validerTroncon(){var t=trOf(street,troncon);if(!t)return;var rest=trPool(street,troncon).filter(function(s){return !isDone(s);});if(!rest.length)return toast("Tout le tronçon est déjà validé");
   if(!confirm("Vous avez parcouru le "+trLabel(t).toLowerCase()+" et tout est conforme ?\n\nLes "+rest.length+" établissements restants seront validés tels quels (ouverts, enseigne et rubrique inchangées), à votre nom."))return;
   var b=document.getElementById("trdone");if(b){b.disabled=true;b.textContent="…";}
@@ -114,7 +160,7 @@ function toast(t,err){var e=document.getElementById("toast");e.textContent=t;e.c
 function nameOf(s){var v=V[s.id];return (v&&v.enseigne_v)||s.n;}
 function catOf(s){var v=V[s.id];return (v&&v.cat_v&&CATS[v.cat_v])?v.cat_v:s.cat;}
 function vitOf(s){var v=V[s.id];return (v&&typeof v.vitrine_v==="boolean")?v.vitrine_v:s.v;}
-function isDone(s){var v=V[s.id];return !!(v&&v.valide_le);}
+function isDone(s){var v=V[s.id];return !!(v&&(v.valide_le||v.propose));}
 function statOf(s){var v=V[s.id];return (v&&v.statut_v)||"ouvert";}
 var STAT={ouvert:"Ouvert",ferme:"Fermé / parti",remplace:"Remplacé",demenage:"Déménagé",absent:"Plus à cette adresse (déclaré par l'exploitant)"};
 function sameAddr(s){return SHOPS.filter(function(x){return x.id!==s.id&&x.rk===s.rk&&x.num===s.num&&x.cp===s.cp;});}
@@ -131,22 +177,24 @@ function pool(){
 }
 function progress(){var tot=SHOPS.filter(function(s){return !(V[s.id]&&V[s.id].masque)&&inRay(s);}),d=tot.filter(isDone).length;document.getElementById("bar").style.width=(100*d/tot.length)+"%";document.getElementById("who").textContent=nom+" · "+d+" / "+tot.length+" validés";}
 function render(){
-  progress();renderTroncons();var arr=pool(),m=document.getElementById("main");
-  var doneBtn="";if(street&&troncon){var rest=trPool(street,troncon).filter(function(s){return !isDone(s);}).length;doneBtn=rest?'<button class="trdone" id="trdone">✓ Tronçon '+troncon+' parcouru : valider les '+rest+' restants tels quels</button>':'<div class="trdone" style="text-align:center">✓ Tronçon '+troncon+' entièrement validé</div>';}
+  progress();renderTroncons();var m=document.getElementById("main");
+  if(!street||(!STAFF&&!troncon)){m.innerHTML='<div class="empty"><h2>Où êtes-vous ?</h2><p>Choisissez le bout de rue que vous parcourez, ou laissez le téléphone le trouver.</p><p><button class="big" id="e_gps">📍 Trouver le tronçon où je suis</button></p><p><button class="chip" id="e_pick">Choisir dans la liste</button></p></div>';document.getElementById("e_gps").onclick=gpsGo;document.getElementById("e_pick").onclick=openPicker;return;}
+  var arr=pool();
+  var doneBtn="";if(STAFF&&street&&troncon){var rest=trPool(street,troncon).filter(function(s){return !isDone(s);}).length;doneBtn=rest?'<button class="trdone" id="trdone">✓ Tronçon '+troncon+' parcouru : valider les '+rest+' restants tels quels</button>':'<div class="trdone" style="text-align:center">✓ Tronçon '+troncon+' entièrement validé</div>';}
   if(view==="list"){var last=null;m.innerHTML=doneBtn+'<div class="list">'+arr.map(function(s,i){var h="";if(street&&!troncon&&s.tr!==last){last=s.tr;var t=trOf(street,s.tr);h='<div class="trh">'+esc(t?trLabel(t):"Tronçon ?")+'</div>';}return h+'<button class="li" data-i="'+i+'"><span style="width:10px;height:10px;border-radius:50%;background:'+COLORS[catOf(s)]+'"></span><b>'+esc(nameOf(s))+'<br><small>'+esc(s.rue)+' '+s.num+' · '+esc(CATS[catOf(s)])+'</small></b>'+(isDone(s)?'<span class="ok">✓</span>':'')+'</button>';}).join("")+(arr.length?"":'<div class="empty">Rien à afficher.</div>')+'</div>';var tb=document.getElementById("trdone");if(tb)tb.addEventListener("click",validerTroncon);return;}
   if(!arr.length){m.innerHTML=doneBtn+'<div class="empty"><h2>Tout est validé ici 🎉</h2><p>Changez de '+(troncon?"tronçon":"rue")+' ou désactivez « À faire ».</p></div>';var tb0=document.getElementById("trdone");if(tb0)tb0.addEventListener("click",validerTroncon);return;}
   if(idx>=arr.length)idx=0;if(idx<0)idx=arr.length-1;
   var s=arr[idx],v=V[s.id]||{},c=catOf(s);
   m.innerHTML=doneBtn+'<div class="card" id="card">'+
-   '<div class="addr">'+esc(s.rue)+' <b>'+s.num+'</b> · '+esc(s.cp)+(s.tr?'<span class="done" style="background:#eef0f6;color:#4a5570">'+esc(trLabel(trOf(s.rk,s.tr))||"Tronçon "+s.tr)+'</span>':'')+(isDone(s)?'<span class="done">✓ '+esc(v.valide_par||"")+' · '+esc(String(v.valide_le).slice(0,10).split("-").reverse().join("/"))+'</span>':'')+'</div>'+
-   '<label class="l" for="ens">Enseigne, telle qu\'écrite sur la façade</label><input class="ens" id="ens" value="'+esc(nameOf(s))+'" autocomplete="off" autocapitalize="characters" enterkeyhint="done">'+
+   '<div class="addr">'+esc(s.rue)+' <b>'+s.num+'</b> · '+esc(s.cp)+(isDone(s)?'<span class="done">✓ '+esc(v.valide_par||"")+' · '+esc(String(v.valide_le).slice(0,10).split("-").reverse().join("/"))+'</span>':'')+'</div>'+
+   '<label class="l" for="ens">Enseigne, telle qu\'écrite sur la façade</label><input class="ens" id="ens" data-aide="Recopiez exactement le nom écrit en grand sur la façade. Laissez tel quel s’il est juste." value="'+esc(nameOf(s))+'" autocomplete="off" autocapitalize="characters" enterkeyhint="done">'+
    '<div class="hintt">Corrigez directement si ce n\'est pas ce qui est écrit sur la vitrine.</div>'+
-   '<label class="l">Rubrique et vitrine</label><div class="chips"><button class="chip" id="catbtn"><i style="background:'+COLORS[c]+'"></i>'+esc(CATS[c])+' ▾</button><button class="chip" id="vit" aria-pressed="'+(vitOf(s)?"true":"false")+'">'+(vitOf(s)?"Vitrine ouverte au public":"Pas de vitrine (bureau, atelier…)")+'</button></div>'+
+   '<label class="l">Rubrique et vitrine</label><div class="chips"><button class="chip" id="catbtn" data-aide="Le type de commerce (boucherie, mode, téléphonie…). Il sert aux filtres du site."><i style="background:'+(COLORS[c]||"#ccc")+'"></i>'+esc(CATS[c]||"Choisir la rubrique")+' ▾</button><button class="chip" id="vit" data-aide="Allumé si on peut entrer comme client. Éteint pour un bureau, un atelier ou un dépôt, qui n’apparaît pas comme magasin." aria-pressed="'+(vitOf(s)?"true":"false")+'">'+(vitOf(s)?"Vitrine ouverte au public":"Pas de vitrine (bureau, atelier…)")+'</button></div>'+
    '<div class="kv"><span>Société : <b>'+esc(s.soc)+'</b>'+(s.y?' · depuis '+s.y:'')+'</span>'+(s.acts[0]?'<span>BCE : '+esc(s.acts[0])+'</span>':'')+(ME&&s.ll?'<span>À '+Math.round(dist(ME,s.ll))+' m</span>':'')+
    (statOf(s)!=="ouvert"?'<span style="color:var(--red)">Statut : <b>'+esc(STAT[statOf(s)]||statOf(s))+'</b>'+(v.numero_v?' → '+esc(streetLabel(v.rue_v)||v.rue_v)+' '+v.numero_v:'')+(v.note_v?' · '+esc(v.note_v):'')+'</span>':'')+'</div>'+
    (function(){var o=sameAddr(s);if(!o.length)return "";return '<label class="l">Autres établissements à ce numéro ('+o.length+')</label><div class="others">'+o.map(function(x){var st=statOf(x);return '<div class="oth"><span><b>'+esc(nameOf(x))+'</b><small>'+esc(x.soc)+(st!=="ouvert"?' · <i>'+esc(STAT[st]||st)+'</i>':'')+'</small></span>'+(st==="ouvert"?'<button type="button" class="gone" data-id="'+x.id+'">Plus ici</button>':'<button type="button" class="back" data-id="'+x.id+'">Rétablir</button>')+'</div>';}).join("")+'<div class="hintt">« Plus ici » retire du site un établissement qui n\'est plus à cette adresse. Les numéros avec deux commerces réels (ex. 93) restent possibles : ne retirez que ce qui a disparu.</div></div>';})()+
-   '<div class="acts"><button class="big" id="ok">✓ C\'est correct</button>'+
-   '<div class="sec"><button class="bad" id="closed">⛔ Fermé / parti</button><button class="bad" id="replaced">↻ Autre commerce ici</button><button class="bad" id="moved">➜ Déménagé</button>'+(statOf(s)!=="ouvert"?'<button id="reopen" style="color:var(--green);border-color:#bfe3cc">↺ Rétablir (ouvert ici)</button>':'')+'</div></div>'+
+   '<div class="acts"><button class="big" id="ok" data-aide="Tout ce qui est affiché correspond à ce que vous voyez : le commerce est confirmé et vous passez au suivant.">✓ C\'est correct</button>'+
+   '<div class="sec"><button class="bad" id="closed" data-aide="Le commerce n’existe plus à cette adresse. Il disparaît du site ; une erreur s’annule pendant 6 secondes.">⛔ Fermé / parti</button><button class="bad" id="replaced" data-aide="Un autre commerce occupe maintenant l’adresse : on vous demande son enseigne.">↻ Autre commerce ici</button><button class="bad" id="moved" data-aide="Le commerce a changé d’adresse, dans le quartier ou ailleurs.">➜ Déménagé</button>'+(statOf(s)!=="ouvert"?'<button id="reopen" style="color:var(--green);border-color:#bfe3cc">↺ Rétablir (ouvert ici)</button>':'')+'</div></div>'+
    '<details><summary>Remarque (facultatif)</summary><textarea id="note" placeholder="Ex. : horaires affichés 10h–19h, enseigne en travaux…"></textarea></details>'+
    '<div class="nav"><button id="prev">‹ Précédent</button><span>'+(idx+1)+' / '+arr.length+'</span><button id="next">Passer ›</button></div></div>';
   var ens=document.getElementById("ens"),ok=document.getElementById("ok");
@@ -155,7 +203,7 @@ function render(){
   document.getElementById("catbtn").addEventListener("click",function(){openSheet(s);});
   document.getElementById("vit").addEventListener("click",function(){var b=this,on=b.getAttribute("aria-pressed")!=="true";b.setAttribute("aria-pressed",on?"true":"false");b.textContent=on?"Vitrine ouverte au public":"Pas de vitrine (bureau, atelier…)";b.dataset.changed="1";});
   ok.addEventListener("click",function(){save(s,"ouvert");});
-  document.getElementById("closed").addEventListener("click",function(){if(confirm("Ce commerce est fermé ou parti ? Il sera retiré du site."))save(s,"ferme");});
+  document.getElementById("closed").addEventListener("click",function(){save(s,"ferme");});
   document.getElementById("replaced").addEventListener("click",function(){var n=prompt("Enseigne du commerce qui occupe l'adresse maintenant :");if(n&&n.trim()){document.getElementById("note").value=("Remplacé par : "+n.trim()+"\n"+document.getElementById("note").value).trim();save(s,"remplace");}});
   document.getElementById("moved").addEventListener("click",function(){openMove(s);});
   var ro=document.getElementById("reopen");if(ro)ro.addEventListener("click",function(){save(s,"ouvert");});
@@ -171,7 +219,27 @@ document.getElementById("sheet").addEventListener("click",function(e){if(e.targe
 var MOVE=null;
 function saveOther(x,statut,note){fetch(SB+"/rest/v1/rpc/acrb_valider2",{method:"POST",headers:H(),body:JSON.stringify({p_code:code,p_ue:x.id,p_par:nom,p_statut:statut,p_note:note})}).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.message||r.status);return j;});}).then(function(j){var v=V[x.id]=V[x.id]||{};v.statut_v=statut;v.valide_le=j.valide_le;v.valide_par=nom;v.note_v=note;toast(statut==="ouvert"?"Rétabli":"Retiré du site");render();}).catch(function(e){toast("Échec : "+e.message,true);});}
 function openMove(s){var sh=document.getElementById("movesheet");document.getElementById("mv_from").textContent=nameOf(s)+" · "+s.rue+" "+s.num;var st=document.getElementById("mv_rue");st.innerHTML=STREETS.map(function(k){var f=SHOPS.filter(function(x){return x.rk===k;})[0];return f?'<option value="'+k+'" data-cp="'+f.cp+'">'+esc(f.rue)+'</option>':"";}).join("")+'<option value="">Hors du quartier / inconnu</option>';st.value=s.rk;document.getElementById("mv_num").value="";sh.classList.add("on");
-  document.getElementById("mv_ok").onclick=function(){var rk=st.value,num=parseInt(document.getElementById("mv_num").value,10);if(rk&&!(num>0))return toast("Indiquez le nouveau numéro",true);var cp=rk?st.selectedOptions[0].dataset.cp:null;MOVE={rue:rk||null,numero:rk?num:null,cp:cp};document.getElementById("note").value=("Déménagé vers "+(rk?streetLabel(rk)+" "+num:"hors du quartier")+"\n"+document.getElementById("note").value).trim();sh.classList.remove("on");save(s,"demenage");};}
+  var mvNum=document.getElementById("mv_num"),mvChk=document.getElementById("mv_chk"),mvOk=document.getElementById("mv_ok"),force=false;
+  function parseNum(t){t=String(t||"").trim();var m=t.match(/^(\d{1,4})\s*(.*)$/);return m?{n:+m[1],reste:m[2].replace(/^[\s,\/-]+/,"").trim()}:null;}
+  function check(){force=false;mvOk.textContent="Enregistrer le déménagement";var rk=st.value,v=parseNum(mvNum.value);mvChk.style.color="";
+    if(!rk){mvChk.textContent="Le commerce sera retiré du site (parti hors du quartier).";return true;}
+    if(!mvNum.value.trim()){mvChk.textContent="";return false;}
+    if(!v){mvChk.style.color="var(--red)";mvChk.textContent="Commencez par le chiffre écrit sur la porte (ex. 93 ou 93A).";return false;}
+    if(rk===s.rk&&v.n===s.num&&!v.reste){mvChk.style.color="var(--red)";mvChk.textContent="C’est l’adresse actuelle : choisissez « C’est correct » plutôt qu’un déménagement.";return false;}
+    var nums=SHOPS.filter(function(x){return x.rk===rk;}).map(function(x){return x.num;}),lo=Math.min.apply(null,nums),hi=Math.max.apply(null,nums),here=SHOPS.filter(function(x){return x.rk===rk&&x.num===v.n&&statOf(x)==="ouvert";});
+    var tr=(TR[rk]||[]).filter(function(t){var r=v.n%2?t.odd:t.even;return r&&v.n>=r[0]&&v.n<=r[1];})[0];
+    var msg=streetLabel(rk)+" "+v.n+(v.reste?" ("+v.reste+")":"")+(tr?" · tronçon "+tr.i+", côté "+(v.n%2?"impair":"pair"):"");
+    if(nums.length&&(v.n<lo-10||v.n>hi+10)){mvChk.style.color="var(--amber)";mvChk.textContent=msg+" · numéro inhabituel pour cette rue (connus : "+lo+" à "+hi+"). Vérifiez la porte.";return "doute";}
+    mvChk.textContent=msg+(here.length?" · déjà à ce numéro : "+here.map(nameOf).slice(0,2).join(", "):"");return true;}
+  mvNum.oninput=check;st.onchange=check;check();
+  mvOk.onclick=function(){var rk=st.value,v=parseNum(mvNum.value),c=check();if(c===false)return toast(rk?"Indiquez le numéro écrit sur la porte":"",true);
+    if(c==="doute"&&!force){force=true;mvOk.textContent="Le numéro est bon : enregistrer quand même";return;}
+    var num=rk?v.n:null,cp=rk?st.selectedOptions[0].dataset.cp:null;MOVE={rue:rk||null,numero:num,cp:cp};
+    document.getElementById("note").value=("Déménagé vers "+(rk?streetLabel(rk)+" "+mvNum.value.trim():"hors du quartier")+"\n"+document.getElementById("note").value).trim();sh.classList.remove("on");save(s,"demenage");};}
+function undo(t,fn){var e=document.getElementById("toast");e.innerHTML="";e.appendChild(document.createTextNode(t+" "));var b=document.createElement("button");b.textContent="Annuler";b.style.cssText="margin-left:8px;border:0;background:#fff;color:#1d1a16;border-radius:999px;padding:5px 12px;font-weight:800";b.onclick=function(){e.className="toast";fn();};e.appendChild(b);e.className="toast on";e.style.pointerEvents="auto";clearTimeout(e._t);e._t=setTimeout(function(){e.className="toast";e.style.pointerEvents="none";},6000);}
+function post(s,extra,msg){var body={p_code:code,p_ue:s.id,p_par:nom};for(var k in extra)body[k]=extra[k];
+  fetch(SB+"/rest/v1/rpc/acrb_valider2",{method:"POST",headers:H(),body:JSON.stringify(body)}).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.message||r.status);return j;});})
+  .then(function(j){var v=V[s.id]=V[s.id]||{};if(extra.p_statut)v.statut_v=extra.p_statut;v.valide_le=j.valide_le;v.valide_par=nom;if(extra.p_statut==="ouvert"){v.rue_v=null;v.numero_v=null;}toast(msg||"✓ Enregistré");render();}).catch(function(e){toast("Échec : "+e.message,true);});}
 function save(s,statut){
   var ens=document.getElementById("ens").value.trim()||nameOf(s),vitb=document.getElementById("vit"),note=document.getElementById("note").value.trim()||null;
   var body={p_code:code,p_ue:s.id,p_par:nom,p_enseigne:ens,p_statut:statut,p_note:note};
@@ -180,7 +248,10 @@ function save(s,statut){
   var ok=document.getElementById("ok");ok.disabled=true;ok.textContent="…";
   fetch(SB+"/rest/v1/rpc/acrb_valider2",{method:"POST",headers:H(),body:JSON.stringify(body)}).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.message||r.status);return j;});})
   .then(function(j){var v=V[s.id]=V[s.id]||{};v.enseigne_v=ens;if(body.p_cat)v.cat_v=body.p_cat;if("p_vitrine" in body)v.vitrine_v=body.p_vitrine;v.statut_v=statut;v.valide_le=j.valide_le;v.valide_par=nom;v.note_v=note;if(statut==="demenage"&&MOVE){v.rue_v=MOVE.rue;v.numero_v=MOVE.numero;}if(statut==="ouvert"){v.rue_v=null;v.numero_v=null;}MOVE=null;pendingCat=null;
-    toast(statut==="ouvert"?"✓ Enregistré":"Enregistré · retiré du site");if(!todoOnly)idx++;render();})
+    if(j.propose){v.valide_le=null;v.propose=true;toast("✓ Envoyé au conseil, qui confirmera le changement");}
+    else if(statut==="ouvert")toast("✓ Enregistré");
+    else undo("Enregistré · retiré du site",function(){post(s,{p_statut:"ouvert",p_note:"Annulé juste après la saisie"},"Annulé : le commerce reste en ligne");});
+    if(!todoOnly)idx++;render();})
   .catch(function(e){ok.disabled=false;ok.textContent="Réessayer";toast("Échec : "+e.message,true);});
 }
 function loadSettings(){return fetch(SB+"/rest/v1/acrb_reglages?select=cle,valeur",{headers:H()}).then(function(r){return r.json();}).then(function(rows){rows.forEach(function(x){if(x.cle==="rayon_m")RAYON=+x.valeur||RAYON;if(x.cle==="centre"&&x.valeur.length===2)CENTER=x.valeur;});});}
@@ -191,20 +262,25 @@ function load(){
 }
 function start(){
   document.getElementById("gate").hidden=true;document.getElementById("app").hidden=false;
-  var st=document.getElementById("street");st.innerHTML='<option value="">Toutes les rues</option>'+STREETS.map(function(k){var f=SHOPS.filter(function(s){return s.rk===k;})[0];return f?'<option value="'+k+'">'+esc(f.rue)+'</option>':"";}).join("");
-  st.addEventListener("change",function(){street=st.value;troncon=0;idx=0;render();});
+  document.getElementById("where").addEventListener("click",openPicker);document.getElementById("pk_x").addEventListener("click",function(){document.getElementById("trsheet").classList.remove("on");});
+  document.getElementById("trprev").addEventListener("click",function(){stepTr(-1);});document.getElementById("trnext").addEventListener("click",function(){stepTr(1);});
+  document.getElementById("pk_gps").addEventListener("click",gpsGo);document.getElementById("gps").addEventListener("click",gpsGo);
+  document.getElementById("follow").addEventListener("click",function(){followToggle(this);});
   document.getElementById("todo").addEventListener("click",function(){todoOnly=!todoOnly;this.setAttribute("aria-pressed",todoOnly);idx=0;render();});
   document.getElementById("q").addEventListener("input",function(){q=this.value;idx=0;render();});
   document.getElementById("viewbtn").addEventListener("click",function(){view=view==="card"?"list":"card";this.textContent=view==="card"?"Liste":"Fiche";render();});
   document.getElementById("main").addEventListener("click",function(e){var b=e.target.closest(".li");if(b){idx=+b.dataset.i;view="card";document.getElementById("viewbtn").textContent="Liste";render();window.scrollTo(0,0);}});
-  var nb=document.getElementById("near");nb.addEventListener("click",function(){if(near){near=false;nb.setAttribute("aria-pressed","false");render();return;}if(!navigator.geolocation)return toast("Pas de GPS",true);nb.textContent="📍 …";
-    navigator.geolocation.getCurrentPosition(function(p){ME=[p.coords.latitude,p.coords.longitude];near=true;nb.setAttribute("aria-pressed","true");nb.textContent="📍 Près de moi";idx=0;render();},function(){nb.textContent="📍 Près de moi";toast("Position refusée",true);},{enableHighAccuracy:true,timeout:10000});});
   var ray=document.getElementById("ray");ray.addEventListener("input",function(){rayInfo(+ray.value);});
   document.getElementById("setbtn").addEventListener("click",function(){ray.value=RAYON;rayInfo(RAYON);document.getElementById("setsheet").classList.add("on");});
   document.getElementById("setsheet").addEventListener("click",function(e){if(e.target===this)this.classList.remove("on");});
   document.getElementById("raysave").addEventListener("click",function(){var r=+ray.value,b=this;b.disabled=true;
     fetch(SB+"/rest/v1/rpc/acrb_regler",{method:"POST",headers:H(),body:JSON.stringify({p_code:code,p_cle:"rayon_m",p_valeur:r,p_par:nom})}).then(function(x){if(!x.ok)throw new Error(x.status);RAYON=r;idx=0;document.getElementById("setsheet").classList.remove("on");toast("Rayon : "+r+" m, appliqué au site");render();}).catch(function(e){toast("Échec : "+e.message,true);}).then(function(){b.disabled=false;});});
-  Promise.all([loadSettings().catch(function(){}),load()]).then(render).catch(function(){render();toast("Chargement partiel",true);});
+  var etat=fetch(SB+"/rest/v1/rpc/acrb_troncons_etat",{method:"POST",headers:H(),body:"{}"}).then(function(r){return r.ok?r.json():null;}).then(function(e){if(!e)return;ETAT=e;STAFF=!!e.equipe;
+    if(!STAFF){ALLOWED={};(e.troncons||[]).forEach(function(t){ALLOWED[trKey(t.rue,t.troncon)]=1;});document.getElementById("setbtn").hidden=true;}}).catch(function(){});
+  Promise.all([loadSettings().catch(function(){}),load(),etat]).then(function(){var last=null;try{last=JSON.parse(localStorage.getItem("acrb_tr")||"null");}catch(e){}
+    var mine=(ETAT.troncons||[]).filter(function(e){return e.attribution&&e.attribution.moi;});
+    if(last&&TR[last[0]]&&(last[1]===0?STAFF:allowed(last[0],last[1]))){street=last[0];troncon=last[1];}else if(mine.length===1){street=mine[0].rue;troncon=mine[0].troncon;}
+    render();if(!street)openPicker();}).catch(function(){render();toast("Chargement partiel",true);});
 }
 (function(){
   try{code=new URLSearchParams(location.search).get("code")||localStorage.getItem("acrb_code")||"";nom=localStorage.getItem("acrb_nom")||"";}catch(e){}
@@ -212,7 +288,47 @@ function start(){
   var g=document.getElementById("gate");g.hidden=false;code="";
   try{var raw=null;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(/^sb-.*-auth-token$/.test(k))raw=localStorage.getItem(k);}
     if(raw){var sess=JSON.parse(raw);if(sess&&sess.access_token&&sess.expires_at*1000>Date.now()){JWT=sess.access_token;var u=sess.user||{};
-      fetch(SB+"/rest/v1/rpc/acrb_mes_roles",{method:"POST",headers:H(),body:"{}"}).then(function(r){return r.json();}).then(function(roles){if(roles&&(roles.indexOf("ca")>=0||roles.indexOf("admin")>=0||roles.indexOf("benevole_terrain")>=0)){nom=(u.user_metadata&&u.user_metadata.full_name)||u.email||"";start();}else{document.getElementById("g_msg").textContent="Compte "+(u.email||"")+" reconnu, mais sans accès au mode terrain. Demandez-le au conseil d'administration.";document.getElementById("g_btn").textContent="Changer de compte";}});}}}catch(e){}
+      fetch(SB+"/rest/v1/rpc/acrb_mes_roles",{method:"POST",headers:H(),body:"{}"}).then(function(r){return r.json();}).then(function(roles){if(roles&&(roles.indexOf("ca")>=0||roles.indexOf("admin")>=0||roles.indexOf("benevole_terrain")>=0||roles.indexOf("benevole_admin")>=0||roles.indexOf("fondateur")>=0||roles.indexOf("terrain_troncon")>=0)){nom=(u.user_metadata&&u.user_metadata.full_name)||u.email||"";start();}else{document.getElementById("g_msg").textContent="Compte "+(u.email||"")+" reconnu, mais sans accès au mode terrain. Demandez-le au conseil d'administration.";document.getElementById("g_btn").textContent="Changer de compte";}});}}}catch(e){}
   document.getElementById("g_btn").addEventListener("click",function(){location.href="./?suite=terrain";});
+})();
+</script><script>/* Aide intégrée ACRB (demande 18) : discrète, commune à tous les écrans.
+   - Tout élément porteur de data-aide="…" a une explication en langage simple.
+   - Un petit bouton « ? » en bas à droite active le mode aide : chaque élément expliqué est souligné,
+     et un toucher montre son explication au lieu d'agir. Un second toucher sur « ? » referme le mode aide.
+   - Sur ordinateur, survoler un élément expliqué pendant une seconde montre aussi l'explication.
+   - Les champs de saisie montrent leur explication sous le champ dès qu'on y entre. */
+(function(){
+  if(window.AIDE)return;
+  var on=false,bulle,btn,st=document.createElement("style");
+  st.textContent='.aide-btn{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:60;width:38px;height:38px;border-radius:50%;border:1px solid rgba(0,0,0,.12);background:#fff;color:#1d1a16;font:800 17px/1 "Libre Franklin",Arial,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.12);cursor:pointer}'+
+    '.aide-btn[aria-pressed=true]{background:#1d1a16;color:#fff}'+
+    '.aide-btn.aide-dock{position:static;width:34px;height:34px;font-size:15px;box-shadow:none;flex:none}'+
+    'body.aide-on [data-aide]{outline:2px dashed #c99a3a;outline-offset:2px;cursor:help}'+
+    '.aide-bulle{position:fixed;z-index:61;max-width:min(320px,calc(100vw - 24px));background:#1d1a16;color:#fff;border-radius:12px;padding:10px 12px;font:500 14px/1.4 "Source Sans 3","Segoe UI",Arial,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.25)}'+
+    '.aide-bulle b{display:block;font-weight:800;margin-bottom:2px}.aide-bulle[hidden]{display:none}'+
+    '.aide-sous{font-size:12.5px;color:#6f6a62;margin:4px 2px 0}';
+  document.head.appendChild(st);
+  function titre(el){var t=el.getAttribute("aria-label")||el.getAttribute("placeholder")||(el.textContent||"").trim();return t.length>60?t.slice(0,57)+"…":t;}
+  function montrer(el){var r=el.getBoundingClientRect();bulle.innerHTML="";var b=document.createElement("b");b.textContent=titre(el);var p=document.createElement("div");p.textContent=el.getAttribute("data-aide");if(b.textContent)bulle.appendChild(b);bulle.appendChild(p);bulle.hidden=false;
+    var w=bulle.offsetWidth,h=bulle.offsetHeight,x=Math.min(Math.max(12,r.left),innerWidth-w-12),y=r.bottom+8;if(y+h>innerHeight-60)y=Math.max(12,r.top-h-8);bulle.style.left=x+"px";bulle.style.top=y+"px";}
+  function cacher(){if(bulle)bulle.hidden=true;}
+  function basculer(v){on=v;document.body.classList.toggle("aide-on",on);btn.setAttribute("aria-pressed",on?"true":"false");btn.title=on?"Quitter l'aide":"Aide : à quoi sert chaque bouton";if(!on)cacher();
+    try{localStorage.setItem("acrb_aide_vue","1");}catch(e){}}
+  function init(){
+    if(!document.body)return document.addEventListener("DOMContentLoaded",init);
+    bulle=document.createElement("div");bulle.className="aide-bulle";bulle.hidden=true;bulle.setAttribute("role","tooltip");document.body.appendChild(bulle);
+    btn=document.createElement("button");btn.className="aide-btn";btn.type="button";btn.textContent="?";btn.setAttribute("aria-pressed","false");btn.setAttribute("aria-label","Aide");btn.title="Aide : à quoi sert chaque bouton";
+    btn.onclick=function(e){e.stopPropagation();basculer(!on);if(on){bulle.innerHTML="<b>Mode aide</b><div>Touchez n'importe quel élément souligné pour savoir à quoi il sert. Touchez à nouveau « ? » pour reprendre.</div>";bulle.hidden=false;var r=btn.getBoundingClientRect();bulle.style.left=Math.max(12,Math.min(r.right-bulle.offsetWidth,innerWidth-bulle.offsetWidth-12))+"px";bulle.style.top=(r.top>innerHeight/2?r.top-bulle.offsetHeight-8:r.bottom+8)+"px";}};
+    var place=document.getElementById("aide-place");
+    if(place){btn.classList.add("aide-dock");place.appendChild(btn);}else document.body.appendChild(btn);
+    document.addEventListener("click",function(e){if(!on)return;var el=e.target.closest&&e.target.closest("[data-aide]");if(e.target===btn)return;e.preventDefault();e.stopPropagation();if(el)montrer(el);else cacher();},true);
+    var tm;document.addEventListener("mouseover",function(e){var el=e.target.closest&&e.target.closest("[data-aide]");clearTimeout(tm);if(!el||on){return;}tm=setTimeout(function(){montrer(el);},1000);});
+    document.addEventListener("mouseout",function(e){clearTimeout(tm);if(!on)cacher();});
+    document.addEventListener("focusin",function(e){var el=e.target;if(!el.matches||!el.matches("input[data-aide],textarea[data-aide],select[data-aide]"))return;var n=el.nextElementSibling;if(n&&n.classList&&n.classList.contains("aide-sous"))return;var d=document.createElement("div");d.className="aide-sous";d.textContent=el.getAttribute("data-aide");el.insertAdjacentElement("afterend",d);});
+    document.addEventListener("focusout",function(e){var n=e.target.nextElementSibling;if(n&&n.classList&&n.classList.contains("aide-sous"))n.remove();});
+    window.addEventListener("scroll",function(){if(!on)cacher();},{passive:true});
+  }
+  window.AIDE={basculer:basculer,montrer:montrer};
+  init();
 })();
 </script></body></html>
