@@ -82,7 +82,11 @@ document.getElementById("nf_help").onclick=function(e){e.preventDefault();var u=
 function start(){sb.auth.getSession().then(function(r){var sess=r.data.session;var g=document.getElementById("gbtn"),o=document.getElementById("out");
   if(!sess){g.hidden=false;o.hidden=true;document.getElementById("alt").hidden=false;return;}user=sess.user;g.hidden=true;o.hidden=false;document.getElementById("alt").hidden=true;
   document.getElementById("who_b").textContent=user.user_metadata&&user.user_metadata.full_name||user.email;document.getElementById("topwho").textContent=user.email;document.getElementById("who_s").textContent="Connecté. Vos données sont chargées à partir de votre fiche.";
-  load();});}
+  pouvoir();load();});}
+/* Code QR « pleins pouvoirs » montré en boutique par l’agent de terrain (décision du conseil de l’IA, 23/11/2026) */
+function pouvoir(){var c=null;try{c=new URLSearchParams(location.search).get("pouvoir")||sessionStorage.getItem("acrb_pouvoir");}catch(e){}if(!c)return;try{sessionStorage.removeItem("acrb_pouvoir");}catch(e){}
+  sb.rpc("acrb_pouvoir_confirmer",{p_code:c}).then(function(r){var w=document.getElementById("who_s");if(w)w.textContent=r.error?("Code QR : "+r.error.message):r.data.message;try{history.replaceState(null,"",location.pathname);}catch(e){}});}
+try{var _pq=new URLSearchParams(location.search).get("pouvoir");if(_pq)sessionStorage.setItem("acrb_pouvoir",_pq);}catch(e){}
 function load(){sb.rpc("acrb_sync_bce_moi").then(function(sy){return Promise.all([sb.rpc("acrb_mon_espace"),sb.rpc("acrb_mes_suggestions")]).then(function(rs){var x=rs[0];D=x.data||{};D.sync=(sy&&sy.data)||{};D.suggestions=(rs[1]&&rs[1].data)||[];return rs;});}).then(function(){var ps=D.personnes||[];
   if(!ps.length){document.getElementById("nofiche").hidden=false;document.getElementById("nf_mail").textContent=user.email;if(window.UNCLIC)UNCLIC.rendre(document.getElementById("nf_uc"),{sujet:"Relier ma fiche commerçant à mon adresse",label:"Déjà une fiche ? Demandez de la relier en un toucher :",intro:"J’ai déjà une fiche Shopping Brabant enregistrée avec une autre adresse. Merci de la relier à mon adresse de connexion.",champs:[["Adresse de connexion",user.email],["Enseigne",""],["Adresse du commerce",""],["Adresse e-mail utilisée pour la fiche",""],["Téléphone (GSM)",""]]});return;}
   P=ps[0];document.getElementById("app").hidden=false;renderCom();renderPhotos();renderFac();renderCharte();renderAvis();renderProfil();renderHist();
