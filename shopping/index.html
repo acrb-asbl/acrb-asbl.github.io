@@ -1,10 +1,11 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<script>(function(){var K=["classique","vitrine","souk","nuit"],q=null,t=null;try{q=new URLSearchParams(location.search).get("theme");}catch(e){}
-if(q&&K.indexOf(q)>=0){document.documentElement.setAttribute("data-theme",q);document.documentElement.setAttribute("data-apercu",q);return;}
-try{t=localStorage.getItem("sb_theme");}catch(e){}if(t&&K.indexOf(t)>=0)document.documentElement.setAttribute("data-theme",t);
-fetch("https://blaehmatdmobhwlhqfjo.supabase.co/rest/v1/acrb_reglages?select=valeur&cle=eq.annuaire_theme",{headers:{apikey:"sb_publishable_c1ovcVD1pbOGPedrJfDU3g_jtS1bY73"}}).then(function(r){return r.json();}).then(function(r){var v=r&&r[0]&&r[0].valeur;if(typeof v==="string"&&K.indexOf(v)>=0){document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("sb_theme",v);}catch(e){}}}).catch(function(){});})();</script>
+<script>(function(){var K=["classique", "marche", "rue", "magazine", "explorer"],S=["braderie", "aid", "ramadan", "fetes", "paques", "soldes", "vacances", "rentree"],q=null,t=null,z=null,h=document.documentElement;try{var u=new URLSearchParams(location.search);q=u.get("theme");z=u.get("saison");}catch(e){}
+if(z&&S.indexOf(z)>=0){h.setAttribute("data-saison",z);h.setAttribute("data-saison-apercu",z);}
+if(q&&K.indexOf(q)>=0){h.setAttribute("data-theme",q);h.setAttribute("data-apercu",q);return;}
+try{t=localStorage.getItem("sb_theme2");}catch(e){}if(t&&K.indexOf(t)>=0)h.setAttribute("data-theme",t);
+fetch("https://blaehmatdmobhwlhqfjo.supabase.co/rest/v1/acrb_reglages?select=valeur&cle=eq.annuaire_theme",{headers:{apikey:"sb_publishable_c1ovcVD1pbOGPedrJfDU3g_jtS1bY73"}}).then(function(r){return r.json();}).then(function(r){var v=r&&r[0]&&r[0].valeur;if(typeof v==="string"&&K.indexOf(v)>=0&&!h.getAttribute("data-apercu")){h.setAttribute("data-theme",v);try{localStorage.setItem("sb_theme2",v);}catch(e){}if(window.VX)window.VX.draw();}}).catch(function(){});})();</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Shopping Brabant — Les commerces de la rue de Brabant, Bruxelles</title>
@@ -186,62 +187,117 @@ footer{padding-block:24px 60px;font-size:13px;color:var(--muted);display:grid;ga
 #fmap{height:220px;overflow:hidden;border:1px solid var(--line)}
 .rep{display:none;gap:10px}.rep.open{display:grid}.rep select,.rep textarea,.rep input{width:100%;padding:10px 12px;border:1px solid var(--line);font:inherit;background:#fff}.rep textarea{min-height:70px}
 
-.apercu{position:sticky;top:0;z-index:60;background:#c99a3a;color:#111;font:600 14px/1.3 var(--body);padding:8px 16px;text-align:center}.apercu a{color:#111;font-weight:800;margin-left:8px}
-/* ---------- VITRINE : grande place de marché ---------- */
-html[data-theme=vitrine]{--bg:#fff;--bg2:#f5f6f8;--fg:#14171f;--muted:#5d6470;--line:#e7e9ee;--accent:#e4572e;--accent-d:#c2431f;--ink:#14171f;--display:"Inter","Segoe UI",Arial,sans-serif;--body:"Inter","Segoe UI",Arial,sans-serif;--r:12px}
-html[data-theme=vitrine] nav{border-bottom:1px solid var(--line);box-shadow:0 2px 12px rgba(20,23,31,.06)}
-html[data-theme=vitrine] h1,html[data-theme=vitrine] h2,html[data-theme=vitrine] h3,html[data-theme=vitrine] .card h4{text-transform:none;letter-spacing:-.01em}
-html[data-theme=vitrine] .grid{grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
-html[data-theme=vitrine] .card{grid-template-columns:1fr;padding:0;border:0;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(20,23,31,.08),0 6px 20px rgba(20,23,31,.06);transition:transform .15s,box-shadow .15s}
-html[data-theme=vitrine] .card:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(20,23,31,.14)}
-html[data-theme=vitrine] .av{width:100%;height:132px;font:800 56px var(--display);background:linear-gradient(135deg,var(--c),#14171f 160%)}
-html[data-theme=vitrine] .av b{left:auto;right:8px;bottom:8px;border-radius:999px;padding:2px 9px;background:rgba(255,255,255,.92);color:#14171f}
-html[data-theme=vitrine] .card>div:last-child{padding:10px 12px 14px}
-html[data-theme=vitrine] .card h4{font:700 15.5px/1.25 var(--display)}
-html[data-theme=vitrine] .card .cat{font:600 12px var(--display);text-transform:none;letter-spacing:0}
-html[data-theme=vitrine] .tile,html[data-theme=vitrine] .btn,html[data-theme=vitrine] .box,html[data-theme=vitrine] .pcard{border-radius:12px}
-html[data-theme=vitrine] .btn.p{background:var(--accent);border-color:var(--accent)}
-html[data-theme=vitrine] .sub2{background:#14171f}
-@media(max-width:560px){html[data-theme=vitrine] .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}html[data-theme=vitrine] .av{height:104px;font-size:44px}}
-/* ---------- SOUK : chaleureux ---------- */
-html[data-theme=souk]{--bg:#fbf6ee;--bg2:#f3e9da;--card:#fffdf8;--fg:#2b1d14;--muted:#7a6656;--line:#e8dccb;--accent:#b5532f;--accent-d:#913f22;--ink:#2b1d14;--green:#4f7a3a;--display:"DM Serif Display",Georgia,serif;--body:"Inter","Segoe UI",Arial,sans-serif;--r:10px}
-html[data-theme=souk] body{background:var(--bg)}
-html[data-theme=souk] nav,html[data-theme=souk] .hero{background:var(--bg)}
-html[data-theme=souk] h1,html[data-theme=souk] h2,html[data-theme=souk] h3,html[data-theme=souk] .card h4{text-transform:none;font-weight:400}
-html[data-theme=souk] .grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-html[data-theme=souk] .card{grid-template-columns:76px 1fr;border-radius:14px;border-color:var(--line);background:var(--card);padding:12px}
-html[data-theme=souk] .av{width:76px;height:76px;border-radius:50%;font:400 32px var(--display)}
-html[data-theme=souk] .av b{border-radius:0 0 50% 50%}
-html[data-theme=souk] .card h4{font:400 20px/1.1 var(--display)}
-html[data-theme=souk] .card .cat{text-transform:none;letter-spacing:0;font:600 13px var(--body)}
-html[data-theme=souk] .tile,html[data-theme=souk] .btn,html[data-theme=souk] .box,html[data-theme=souk] .pcard{border-radius:10px}
-html[data-theme=souk] .btn.p{background:var(--accent);border-color:var(--accent)}
-html[data-theme=souk] .sub2{background:#3a2719}
-html[data-theme=souk] .filters,html[data-theme=souk] nav{background:var(--bg)}
-/* ---------- NUIT : premium ---------- */
-html[data-theme=nuit]{--bg:#0f0f12;--bg2:#17171c;--card:#18181e;--fg:#f4efe6;--muted:#a59f94;--line:#2b2b33;--accent:#c9a45c;--accent-d:#a98840;--ink:#0b0b0d;--green:#7fc49a;--green-l:#1d2a22;--display:"DM Serif Display",Georgia,serif;--body:"Inter","Segoe UI",Arial,sans-serif;--r:6px}
-html[data-theme=nuit] body{background:var(--bg);color:var(--fg)}
-html[data-theme=nuit] a{color:var(--fg)}
-html[data-theme=nuit] nav,html[data-theme=nuit] .hero,html[data-theme=nuit] .top{background:#0b0b0d;color:var(--fg);border-color:var(--line)}
-html[data-theme=nuit] h1,html[data-theme=nuit] h2,html[data-theme=nuit] h3,html[data-theme=nuit] .card h4{text-transform:none;font-weight:400}
-html[data-theme=nuit] .grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
-html[data-theme=nuit] .card{grid-template-columns:1fr;padding:0;background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden}
-html[data-theme=nuit] .card:hover{border-color:var(--accent)}
-html[data-theme=nuit] .av{width:100%;height:150px;font:400 64px var(--display);background:radial-gradient(circle at 30% 20%,var(--c),#0b0b0d 120%)}
-html[data-theme=nuit] .av b{left:auto;right:10px;bottom:10px;background:var(--accent);color:#111;border-radius:2px;padding:2px 8px}
-html[data-theme=nuit] .card>div:last-child{padding:12px 14px 16px}
-html[data-theme=nuit] .card h4{font:400 21px/1.15 var(--display);color:#fff}
-html[data-theme=nuit] .card .cat{color:var(--accent);text-transform:uppercase;letter-spacing:.14em;font:600 11px var(--body)}
-html[data-theme=nuit] .tile,html[data-theme=nuit] .box,html[data-theme=nuit] .pcard,html[data-theme=nuit] .fiche{background:var(--card);border-color:var(--line);color:var(--fg)}
-html[data-theme=nuit] input,html[data-theme=nuit] select,html[data-theme=nuit] textarea{background:#111116;color:var(--fg);border-color:var(--line)}
-html[data-theme=nuit] .btn{background:transparent;color:var(--fg);border-color:var(--line)}html[data-theme=nuit] .btn.p{background:var(--accent);color:#111;border-color:var(--accent)}
-html[data-theme=nuit] .sub2{background:#000}
-html[data-theme=nuit] .filters,html[data-theme=nuit] .nl,html[data-theme=nuit] .quick button,html[data-theme=nuit] .hsel,html[data-theme=nuit] .badge,html[data-theme=nuit] .gal button,html[data-theme=nuit] .rep select,html[data-theme=nuit] .rep textarea,html[data-theme=nuit] .rep input{background:var(--bg);color:var(--fg);border-color:var(--line)}
-html[data-theme=nuit] .search{background:#111116;border-color:var(--accent)}html[data-theme=nuit] .search input{background:transparent;color:var(--fg)}html[data-theme=nuit] .search button{background:var(--accent);color:#111}
-html[data-theme=nuit] .cats button{color:var(--muted)}html[data-theme=nuit] .cats button[aria-pressed=true]{color:var(--accent);border-bottom-color:var(--accent)}
-@media(max-width:560px){html[data-theme=nuit] .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}html[data-theme=nuit] .av{height:110px;font-size:46px}}
+.apercu{position:sticky;top:0;z-index:60;background:#c99a3a;color:#111;font:600 14px/1.3 Inter,Arial,sans-serif;padding:8px 16px;text-align:center}.apercu a{color:#111;font-weight:800;margin-left:8px}
+#vx{display:none}
+html[data-vx] #vx{display:block}
+html[data-vx] #accueil,html[data-vx] #univers,html[data-vx] #vitrine,html[data-vx] #featured,html[data-vx] #carte{display:none!important}
+html[data-vx] body{font-family:Inter,"Segoe UI",Arial,sans-serif}
+.vx-w{max-width:1240px;margin:0 auto;padding:0 16px}
+.vx-h2{font:800 22px/1.2 Inter,Arial,sans-serif;margin:0;letter-spacing:-.01em}
+.vx-row{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 16px 14px;margin:0 -16px;scrollbar-width:none}.vx-row::-webkit-scrollbar{display:none}
+.vx-row>*{scroll-snap-align:start;flex:none}
+.vx-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:26px 0 10px}
+.vx-head a,.vx-head button{font:600 14px Inter,Arial,sans-serif;color:#0a66c2;background:none;border:0;cursor:pointer;text-decoration:none;padding:4px 0}
+.vx-img{position:relative;overflow:hidden;background:#e9e4da}
+.vx-img svg,.vx-img img{display:block;width:100%;height:100%;object-fit:cover}
+.vx-tag{position:absolute;right:5px;top:5px;background:rgba(17,17,17,.5);color:#fff;font:600 9px/1 Inter,Arial,sans-serif;padding:3px 5px;border-radius:3px;letter-spacing:.02em}
+.vx-st{font:600 13px Inter,Arial,sans-serif}.vx-st.ok{color:#0a7a3f}.vx-st.ko{color:#b42318}
+.vx-meta{font:500 13px/1.35 Inter,Arial,sans-serif;color:#5f6368}
+.vx-chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0 6px}.vx-chips::-webkit-scrollbar{display:none}
+.vx-chips button{flex:none;border:1px solid #dadce0;background:#fff;color:#202124;border-radius:999px;padding:8px 14px;font:600 14px Inter,Arial,sans-serif;cursor:pointer}
+.vx-chips button[aria-pressed=true]{background:#202124;color:#fff;border-color:#202124}
+.vx-more{display:block;margin:18px auto 0;border:1px solid #dadce0;background:#fff;border-radius:999px;padding:11px 22px;font:600 15px Inter,Arial,sans-serif;cursor:pointer}
+.vx-res{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.vx-res a{color:inherit;text-decoration:none}.vx-res .vx-img{aspect-ratio:5/6;border-radius:10px}
+.vx-res b{display:block;font:700 15px/1.25 Inter,Arial,sans-serif;margin-top:8px}
+/* bandeau de saison (toutes présentations, y compris l'actuelle) */
+.sz{display:none;position:relative;overflow:hidden;color:#fff;background:var(--szc,#111)}
+html[data-saison] .sz{display:block}html[data-theme=marche] .sz,html[data-theme=magazine] .sz,html[data-theme=explorer] .sz{display:none!important}
+.sz .vx-w{display:flex;align-items:center;gap:14px;min-height:56px;padding-top:10px;padding-bottom:10px}
+.sz b{font:800 17px/1.2 Inter,Arial,sans-serif}.sz span{font:500 14px/1.35 Inter,Arial,sans-serif;opacity:.92}
+.sz i{font-style:normal;font-size:26px;line-height:1}
+.sz:after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.22;background-repeat:repeat-x;background-size:auto 100%}
+html[data-saison=fetes] .sz:after{background-image:radial-gradient(circle at 10px 8px,#ffd166 3px,transparent 4px),radial-gradient(circle at 30px 14px,#06d6a0 3px,transparent 4px),radial-gradient(circle at 50px 8px,#fff 3px,transparent 4px);background-size:60px 100%;opacity:.7}
+html[data-saison=ramadan] .sz:after,html[data-saison=aid] .sz:after{background-image:radial-gradient(circle at 20px 12px,#f4d35e 3px,transparent 4px),linear-gradient(#f4d35e,#f4d35e);background-size:80px 100%,1px 12px;background-position:0 0,20px 0;opacity:.6}
+html[data-saison=braderie] .sz:after{background-image:linear-gradient(135deg,#ffd166 25%,transparent 25%),linear-gradient(225deg,#06d6a0 25%,transparent 25%);background-size:28px 14px;opacity:.85}
+/* ===================== GRAND MARCHÉ (Amazon / eBay) ===================== */
+html[data-theme=marche] nav{background:#131921;border-bottom:0}html[data-theme=marche] .brand,html[data-theme=marche] nav .links a{color:#fff}html[data-theme=marche] .brand i{background:#febd69;color:#131921}
+html[data-theme=marche] .sub2{background:#232f3e}html[data-theme=marche] .search{border:0;border-radius:8px;overflow:hidden}html[data-theme=marche] .search button{background:#febd69;color:#131921;border:0}
+html[data-theme=marche] .top{background:#131921}
+html[data-theme=marche] #vx{background:#e3e6e6;padding-bottom:30px}
+.mk-hero{position:relative;height:250px;overflow:hidden;background:linear-gradient(180deg,var(--szc,#37475a),#e3e6e6)}
+.mk-hero .vx-w{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;justify-content:center;color:#fff}
+.mk-hero h1{font:800 30px/1.1 Inter,Arial,sans-serif;margin:0 0 6px;max-width:560px;text-shadow:0 1px 8px rgba(0,0,0,.35)}.mk-hero p{margin:0;font:500 16px Inter,Arial,sans-serif;max-width:520px;text-shadow:0 1px 6px rgba(0,0,0,.35)}
+.mk-hero .fr{position:absolute;right:0;bottom:0;display:flex;gap:8px;opacity:.95}.mk-hero .fr .vx-img{width:120px;height:150px;border-radius:6px 6px 0 0}
+@media(max-width:700px){.mk-hero{height:220px}.mk-hero .fr .vx-img{width:84px;height:110px}.mk-hero .fr{display:none}.mk-hero h1{font-size:25px}}
+.mk-quads{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:-60px;position:relative}
+@media(max-width:1000px){.mk-quads{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}}
+.mk-quad{background:#fff;padding:12px;border-radius:4px;min-width:0}.mk-quad h3{font:700 17px/1.2 Inter,Arial,sans-serif;margin:0 0 10px;min-height:2.4em}
+.mk-quad .g{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}.mk-quad .g a{color:#0f1111;text-decoration:none;font:500 12px/1.25 Inter,Arial,sans-serif}.mk-quad .g .vx-img{aspect-ratio:1;border-radius:3px;margin-bottom:4px}
+.mk-quad .g a span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mk-quad>button{margin-top:10px;background:none;border:0;padding:0;color:#007185;font:600 13px Inter,Arial,sans-serif;cursor:pointer}
+.mk-band{background:#fff;padding:4px 16px 4px;margin-top:16px;border-radius:4px}
+.mk-band .vx-head{margin:14px 0 8px}
+.mk-card{width:168px;color:#0f1111;text-decoration:none}.mk-card .vx-img{height:190px;border-radius:4px;background:#f7f7f7}
+.mk-card b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font:600 14px/1.3 Inter,Arial,sans-serif;margin:8px 0 3px;min-height:2.6em}
+.mk-card .pill{display:inline-block;background:#cc0c39;color:#fff;font:700 11px Inter,Arial,sans-serif;padding:3px 6px;border-radius:3px;margin-bottom:4px}
+.mk-card .pill.v{background:#067d62}
+/* ===================== LA RUE EN VITRINE (Street View) ===================== */
+html[data-theme=rue] nav{background:#fff;border-bottom:1px solid #e5e5e5}html[data-theme=rue] .sub2{background:#fff;border-bottom:1px solid #eee}html[data-theme=rue] nav .links a{color:#202124}
+html[data-theme=rue] #vx{background:linear-gradient(#cfe3f2 0,#e9f1f6 300px,#f3f1ec 300px);padding-bottom:30px}
+.ru-top{padding:18px 0 6px}.ru-top h1{font:800 26px/1.15 Inter,Arial,sans-serif;margin:0 0 4px;color:#0b2540}.ru-top p{margin:0;color:#3c4a57;font:500 14px Inter,Arial,sans-serif}
+.ru-sw{display:inline-flex;background:#fff;border-radius:999px;padding:4px;margin:12px 0 0;box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.ru-sw button{border:0;background:none;border-radius:999px;padding:8px 16px;font:600 14px Inter,Arial,sans-serif;color:#3c4a57;cursor:pointer}.ru-sw button[aria-pressed=true]{background:#0b57d0;color:#fff}
+.ru-street{position:relative;margin-top:12px}
+.ru-row{display:flex;align-items:flex-end;gap:0;overflow-x:auto;scroll-snap-type:x proximity;padding:0 16px;scrollbar-width:thin;background:linear-gradient(transparent 92%,#8f8a80 92%,#8f8a80 94%,#b8b2a6 94%)}
+.ru-f{flex:none;width:220px;scroll-snap-align:center;color:inherit;text-decoration:none;display:flex;flex-direction:column}
+.ru-f .vx-img{height:280px;background:none}.ru-f:nth-child(3n) .vx-img{height:300px}.ru-f:nth-child(4n+1) .vx-img{height:262px}
+.ru-f .cap{background:#fff;margin:0 6px;padding:8px 10px;border-radius:0 0 10px 10px;box-shadow:0 4px 10px rgba(0,0,0,.08);min-height:74px}
+.ru-f .cap b{display:block;font:700 14px/1.2 Inter,Arial,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ru-nav{position:absolute;top:120px;width:44px;height:44px;border-radius:50%;border:0;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.25);font:700 22px/1 Inter,Arial,sans-serif;cursor:pointer;z-index:2}.ru-nav.l{left:8px}.ru-nav.r{right:8px}
+.ru-ruler{display:flex;gap:6px;overflow-x:auto;padding:10px 0;scrollbar-width:none}.ru-ruler::-webkit-scrollbar{display:none}
+.ru-ruler button{flex:none;border:1px solid #c9d3dc;background:#fff;border-radius:6px;padding:5px 8px;font:600 12px Inter,Arial,sans-serif;cursor:pointer}
+.ru-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:10px}
+.ru-list a{display:flex;gap:10px;align-items:center;background:#fff;border-radius:10px;padding:8px;color:inherit;text-decoration:none;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.ru-list .vx-img{width:62px;height:62px;border-radius:8px;flex:none}.ru-list b{display:block;font:700 14px Inter,Arial,sans-serif}
+/* ===================== DÉCOUVERTE (Airbnb / Etsy) ===================== */
+html[data-theme=magazine] nav{background:#fff;border-bottom:1px solid #ebebeb}html[data-theme=magazine] .sub2{background:#fff}html[data-theme=magazine] nav .links a{color:#222}
+html[data-theme=magazine] .search{border:1px solid #ddd;border-radius:999px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)}html[data-theme=magazine] .search button{background:#ff385c;border:0;color:#fff;border-radius:999px;margin:4px}
+html[data-theme=magazine] .brand i{background:#ff385c;border-radius:10px}
+.mg-hero{position:relative;margin:16px 0 0;border-radius:24px;overflow:hidden;height:340px;color:#fff;background:#222}
+.mg-hero .bg{position:absolute;inset:0;display:grid;grid-template-columns:repeat(4,1fr)}.mg-hero .bg .vx-img{height:100%}
+.mg-hero:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.78) 75%)}
+.mg-hero .t{position:absolute;left:24px;right:24px;bottom:22px;z-index:1}.mg-hero h1{font:700 34px/1.08 Fraunces,Georgia,serif;margin:0 0 6px}.mg-hero p{margin:0;font:500 16px Inter,Arial,sans-serif;max-width:560px}
+@media(max-width:700px){.mg-hero{height:300px;border-radius:18px}.mg-hero .bg{grid-template-columns:repeat(2,1fr)}.mg-hero h1{font-size:28px}}
+.mg-stories{display:flex;gap:14px;overflow-x:auto;padding:16px 0 4px;scrollbar-width:none}.mg-stories::-webkit-scrollbar{display:none}
+.mg-stories button{flex:none;width:76px;border:0;background:none;cursor:pointer;font:600 12px/1.2 Inter,Arial,sans-serif;color:#222;text-align:center}
+.mg-stories .ring{width:70px;height:70px;border-radius:50%;padding:3px;background:conic-gradient(#f58529,#dd2a7b,#8134af,#515bd4,#f58529);margin:0 auto 6px}
+.mg-stories .ring .vx-img{width:100%;height:100%;border-radius:50%;border:3px solid #fff}
+.mg-card{width:250px;color:#222;text-decoration:none}.mg-card .vx-img{aspect-ratio:1;border-radius:16px}
+.mg-card b{display:block;font:600 15px/1.25 Inter,Arial,sans-serif;margin-top:9px}
+.mg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(240px,100%),1fr));gap:22px 18px}.mg-grid .mg-card{width:auto}
+.mg-col h2{font:700 24px/1.15 Fraunces,Georgia,serif;margin:0}
+@media(max-width:700px){.mg-card{width:72vw}.mg-grid .mg-card{width:auto}}
+/* ===================== MUR D'IMAGES (Pinterest / Instagram) ===================== */
+html[data-theme=explorer] nav{background:#fff;border-bottom:0}html[data-theme=explorer] .sub2{background:#fff}html[data-theme=explorer] nav .links a{color:#111}
+html[data-theme=explorer] .brand i{background:#e60023;border-radius:50%}html[data-theme=explorer] .search{background:#efefef;border:0;border-radius:999px;overflow:hidden}html[data-theme=explorer] .search input{background:transparent}html[data-theme=explorer] .search button{background:#e60023;color:#fff;border:0;border-radius:999px;margin:4px}
+.ex-bar{position:sticky;top:var(--navh,64px);z-index:30;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);padding:10px 0 4px}
+.ex-bar .vx-chips button{background:#efefef;border:0}.ex-bar .vx-chips button[aria-pressed=true]{background:#111;color:#fff}
+.ex-wall{columns:5 220px;column-gap:14px;margin-top:8px}
+@media(max-width:700px){.ex-wall{columns:2;column-gap:8px}}
+.ex-pin{display:block;break-inside:avoid;margin:0 0 14px;color:#111;text-decoration:none}
+@media(max-width:700px){.ex-pin{margin-bottom:8px}}
+.ex-pin .vx-img{border-radius:16px}.ex-pin .vx-img:after{content:"";position:absolute;inset:auto 0 0 0;height:45%;background:linear-gradient(transparent,rgba(0,0,0,.55))}
+.ex-pin .ov{position:absolute;left:10px;right:10px;bottom:9px;color:#fff;z-index:1;font:700 14px/1.2 Inter,Arial,sans-serif;text-shadow:0 1px 3px rgba(0,0,0,.4)}
+.ex-pin .ov small{display:block;font:500 12px Inter,Arial,sans-serif;opacity:.9}
+.ex-pin .vx-tag{top:auto;bottom:auto;top:8px;left:auto;right:8px}
+.mg-stories .vx-tag,.mk-quad .vx-tag,.ru-list .vx-tag,.mk-hero .vx-tag,.mg-hero .vx-tag{display:none}
+.mk-sug{position:relative;z-index:2;margin:-70px 0 76px}.mk-sug .vx-chips button{background:rgba(255,255,255,.95);border:0}
+.vx-sug{justify-content:flex-start;margin-top:8px}.ex-hello .vx-sug{justify-content:center}
+.vx-note{font:500 12px Inter,Arial,sans-serif;color:#6b6b6b;text-align:center;margin:18px 0 0}
+.ex-hello{text-align:center;padding:22px 0 6px}.ex-hello h1{font:700 28px/1.1 Inter,Arial,sans-serif;margin:0 0 4px}.ex-hello p{margin:0;color:#5f5f5f}
 </style>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap" media="print" onload="this.media='all'">
 </head>
 <body>
 <div class="top"><div class="wrap"><span><b>Bruxelles-Nord</b> 5 min</span><span class="hide-m">·</span><span class="hide-m" id="topstatus"></span><div class="sp" id="lang"><a href="#" data-l="fr">FR</a><a href="#" data-l="nl">NL</a><a href="#" data-l="en">EN</a></div></div></div>
@@ -253,7 +309,9 @@ html[data-theme=nuit] .cats button{color:var(--muted)}html[data-theme=nuit] .cat
 <div class="sub2"><div class="wrap links" id="navlinks"><a href="#liste" data-v="home" data-p="home" data-t="nav_shops"></a><a href="#plan" data-p="plan" data-t="nav_map"></a><a href="#balade" data-p="balade" data-t="nav_walk"></a><a href="#pratique" data-p="pratique" data-t="practical"></a><a href="guide.html" data-t="nav_guide"></a><a href="../quartier/" data-t="nav_qn"></a><a href="#association" data-p="association" data-t="nav_asso"></a><a href="../stagiaires/" data-t="nav_stag"></a></div></div>
 </nav>
 
+<div class="sz" id="sz"></div>
 <div id="v-home">
+<div id="vx"></div>
   <header class="hero" id="accueil" data-page="home"><div class="wrap">
     <div>
       <div class="eyebrow" data-t="eyebrow"></div>
@@ -666,5 +724,135 @@ function navH(){var nv=document.querySelector("nav");if(nv)document.documentElem
 var l0="fr";try{l0=new URLSearchParams(location.search).get("lang")||localStorage.getItem("acrb_site_lang")||(navigator.language||"fr").slice(0,2);}catch(e){}
 if(!I18N[l0])l0="fr";L_=l0;T=I18N[L_];applyLang();render();walk();initMap();route();loadForm();
 </script>
-<script>(function(){var a=document.documentElement.getAttribute("data-apercu");if(!a)return;var N={classique:"Classique",vitrine:"Vitrine",souk:"Souk chaleureux",nuit:"Nuit premium"};
-var d=document.createElement("div");d.className="apercu";d.innerHTML='Aperçu de la présentation <b>« '+N[a]+' »</b>, soumise au vote du conseil. <a href="'+location.pathname+'">Revenir au site</a>';document.body.insertBefore(d,document.body.firstChild);})();</script></body></html>
+<script>
+(function(){
+var SUG={"fr": {"braderie": ["caftan", "chaussures", "snack"], "aid": ["caftan", "bijoux", "parfum", "pâtisserie"], "ramadan": ["dattes", "pâtisserie", "boucherie", "restaurant"], "fetes": ["parfum", "bijoux", "jouets", "décoration"], "paques": ["chocolat", "pâtisserie", "cadeau"], "soldes": ["robes", "chaussures", "maison"], "vacances": ["restaurant", "café", "glace"], "rentree": ["cartable", "chaussures", "téléphone"]}, "nl": {"braderie": ["kaftan", "schoenen", "snack"], "aid": ["kaftan", "juwelen", "parfum", "gebak"], "ramadan": ["dadels", "gebak", "slager", "restaurant"], "fetes": ["parfum", "juwelen", "speelgoed", "decoratie"], "paques": ["chocolade", "gebak", "cadeau"], "soldes": ["jurken", "schoenen", "huis"], "vacances": ["restaurant", "café", "ijs"], "rentree": ["boekentas", "schoenen", "telefoon"]}, "en": {"braderie": ["kaftan", "shoes", "snack"], "aid": ["kaftan", "jewellery", "perfume", "pastry"], "ramadan": ["dates", "pastry", "butcher", "restaurant"], "fetes": ["perfume", "jewellery", "toys", "decoration"], "paques": ["chocolate", "pastry", "gift"], "soldes": ["dresses", "shoes", "home"], "vacances": ["restaurant", "café", "ice cream"], "rentree": ["school bag", "shoes", "phone"]}},CLES=["classique", "marche", "rue", "magazine", "explorer"],SZ={"braderie": {"prio": 1, "couleur": "#e63946", "cats": ["mode", "chaussures", "bazar", "alim", "resto", "maison"]}, "aid": {"prio": 2, "couleur": "#0f766e", "cats": ["mode", "bijoux", "chaussures", "beaute", "parfum", "alim"]}, "ramadan": {"prio": 3, "couleur": "#1e3a5f", "cats": ["alim", "epicerie", "resto", "cafe", "mode", "tissus"]}, "fetes": {"prio": 4, "couleur": "#9b1c1c", "cats": ["bijoux", "parfum", "culture", "maison", "mode", "electro"]}, "paques": {"prio": 5, "couleur": "#8a6bbf", "cats": ["alim", "culture", "mode", "cafe", "maison"]}, "soldes": {"prio": 6, "couleur": "#111111", "cats": ["mode", "chaussures", "maison", "electro", "bijoux"]}, "vacances": {"prio": 7, "couleur": "#0077b6", "cats": ["resto", "cafe", "culture", "mode", "beaute"]}, "rentree": {"prio": 8, "couleur": "#e76f51", "cats": ["mode", "chaussures", "culture", "electro", "beaute"]}},PER=[["ramadan", "2027-02-08", "2027-03-08"], ["aid", "2027-03-09", "2027-03-12"], ["aid", "2027-05-15", "2027-05-18"], ["ramadan", "2028-01-28", "2028-02-25"], ["aid", "2028-02-26", "2028-02-29"], ["aid", "2028-05-04", "2028-05-07"], ["vacances", "2026-10-19", "2026-11-01"], ["vacances", "2026-12-21", "2027-01-03"], ["vacances", "2027-02-22", "2027-03-07"], ["vacances", "2027-04-26", "2027-05-09"], ["vacances", "2027-07-03", "2027-08-29"]],TX={"fr": {"illus": "Illustration", "note": "Les façades marquées « Illustration » sont des dessins de démonstration : elles ne représentent pas la vraie devanture et seront remplacées par la photo du commerçant.", "open": "Ouvert", "closed": "Fermé", "no": "n°", "all": "Tout", "seeall": "Voir tout", "more": "Voir plus", "verified": "Fiches complétées par les commerçants", "opennow": "Ouverts maintenant", "new": "Installés récemment", "bycat": "Parcourir par rayon", "results": "résultats", "clear": "Effacer", "odd": "Côté impair", "even": "Côté pair", "walk": "Longez la rue : glissez, puis touchez une vitrine pour entrer.", "street": "La rue de Brabant, façade par façade", "others": "Dans les rues voisines", "stories": "Rubriques", "collections": "Collections", "everything": "Toute la rue", "wall": "Faites défiler, touchez une façade", "hello": "Le marché de la rue de Brabant", "hello_sub": "commerces à deux pas de la gare du Nord", "for_season": "Pour la saison", "near": "Près de vous", "col_mariage": "Préparer un mariage", "col_table": "À table", "col_cadeaux": "Idées cadeaux", "col_maison": "Pour la maison", "col_beaute": "Prendre soin de soi", "s": {"braderie": ["Braderie de la rue de Brabant", "Toute la rue sort ses étals : venez flâner."], "aid": ["Aïd Moubarak", "Tenues, bijoux, pâtisseries : tout pour la fête."], "ramadan": ["Ramadan Moubarak", "Courses de l'iftar, tables du soir et tenues de l'Aïd. Horaires du soir sur chaque fiche."], "fetes": ["Les fêtes de fin d'année", "Cadeaux, parfums, bijoux et décoration, à deux pas de la gare du Nord."], "paques": ["Joyeuses Pâques", "Douceurs, cadeaux et sorties en famille."], "soldes": ["C'est la période des soldes", "Renseignez-vous en boutique sur les articles concernés."], "vacances": ["Bonnes vacances", "Une pause, un thé, une balade : la rue vous attend."], "rentree": ["C'est la rentrée", "Vêtements, chaussures, fournitures et téléphones."]}}, "nl": {"illus": "Illustratie", "note": "Gevels met « Illustratie » zijn demotekeningen: ze tonen niet de echte gevel en worden vervangen door een foto van de handelaar.", "open": "Open", "closed": "Gesloten", "no": "nr.", "all": "Alles", "seeall": "Alles zien", "more": "Meer zien", "verified": "Fiches ingevuld door de handelaars", "opennow": "Nu open", "new": "Pas geopend", "bycat": "Per afdeling", "results": "resultaten", "clear": "Wissen", "odd": "Oneven kant", "even": "Even kant", "walk": "Wandel door de straat: veeg en tik op een etalage.", "street": "De Brabantstraat, gevel na gevel", "others": "In de straten rondom", "stories": "Rubrieken", "collections": "Collecties", "everything": "De hele straat", "wall": "Scroll en tik op een gevel", "hello": "De markt van de Brabantstraat", "hello_sub": "winkels vlak bij het Noordstation", "for_season": "Voor het seizoen", "near": "Dichtbij", "col_mariage": "Een huwelijk voorbereiden", "col_table": "Aan tafel", "col_cadeaux": "Cadeau-ideeën", "col_maison": "Voor thuis", "col_beaute": "Verzorging", "s": {"braderie": ["Braderie in de Brabantstraat", "De hele straat staat buiten: kom kuieren."], "aid": ["Eid Moebarak", "Kleding, juwelen, gebak: alles voor het feest."], "ramadan": ["Ramadan Moebarak", "Boodschappen voor de iftar en avondtafels. Avonduren op elke fiche."], "fetes": ["De eindejaarsfeesten", "Cadeaus, parfums, juwelen en decoratie."], "paques": ["Vrolijk Pasen", "Lekkers, cadeaus en uitstapjes met het gezin."], "soldes": ["Het is soldenperiode", "Vraag in de winkel welke artikelen in solden zijn."], "vacances": ["Fijne vakantie", "Een pauze, een thee, een wandeling."], "rentree": ["Terug naar school", "Kleding, schoenen, schoolgerief en telefoons."]}}, "en": {"illus": "Illustration", "note": "Shopfronts marked “Illustration” are demo drawings: they do not show the real shopfront and will be replaced by the shop's photo.", "open": "Open", "closed": "Closed", "no": "No.", "all": "All", "seeall": "See all", "more": "See more", "verified": "Listings completed by the shops", "opennow": "Open now", "new": "Recently opened", "bycat": "Shop by department", "results": "results", "clear": "Clear", "odd": "Odd side", "even": "Even side", "walk": "Walk the street: swipe, then tap a shop window.", "street": "Rue de Brabant, shopfront by shopfront", "others": "On nearby streets", "stories": "Categories", "collections": "Collections", "everything": "The whole street", "wall": "Scroll and tap a shopfront", "hello": "The Rue de Brabant market", "hello_sub": "shops a short walk from Brussels-North", "for_season": "For the season", "near": "Near you", "col_mariage": "Planning a wedding", "col_table": "Food and dining", "col_cadeaux": "Gift ideas", "col_maison": "For the home", "col_beaute": "Self-care", "s": {"braderie": ["Rue de Brabant street fair", "The whole street is out: come and stroll."], "aid": ["Eid Mubarak", "Outfits, jewellery, pastries: everything for the celebration."], "ramadan": ["Ramadan Mubarak", "Iftar shopping and evening dining. Evening hours on each listing."], "fetes": ["The holiday season", "Gifts, perfume, jewellery and decoration."], "paques": ["Happy Easter", "Treats, gifts and family outings."], "soldes": ["It's sales season", "Ask in store which items are included."], "vacances": ["Happy holidays", "A break, a tea, a stroll: the street awaits."], "rentree": ["Back to school", "Clothes, shoes, supplies and phones."]}}},h=document.documentElement;
+function L(){return TX[(typeof L_!=="undefined"&&TX[L_])?L_:"fr"];}
+function ymd(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2);}
+function add(d,n){var x=new Date(d);x.setDate(x.getDate()+n);return x;}
+function easter(y){var a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),hh=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-hh-k)%7,m=Math.floor((a+11*hh+22*l)/451),mo=Math.floor((hh+l-7*m+114)/31),da=((hh+l-7*m+114)%31)+1;return new Date(y,mo-1,da);}
+/* toutes les périodes de l'année courante et de la suivante, y compris celles calculées */
+function periodes(cfg){var out=PER.slice(),y=new Date().getFullYear();
+  [y-1,y,y+1].forEach(function(Y){out.push(["fetes",Y+"-12-01",(Y+1)+"-01-02"]);out.push(["soldes",(Y)+"-01-03",Y+"-01-31"]);out.push(["soldes",Y+"-07-01",Y+"-07-31"]);
+    var e=easter(Y);out.push(["paques",ymd(add(e,-13)),ymd(add(e,1))]);out.push(["rentree",Y+"-08-20",Y+"-09-06"]);});
+  (cfg&&cfg.periodes||[]).forEach(function(p){if(p&&SZ[p.cle]&&p.du&&p.au)out.push([p.cle,p.du,p.au]);});
+  var off=(cfg&&cfg.desactives)||[];return out.filter(function(p){return off.indexOf(p[0])<0;});}
+function active(cfg){var d=ymd(new Date()),best=null;periodes(cfg).forEach(function(p){if(p[1]<=d&&d<=p[2]&&(!best||SZ[p[0]].prio<SZ[best].prio))best=p[0];});return best;}
+window.SAISONS_ACRB={periodes:periodes,active:active};
+function setSaison(k){if(h.getAttribute("data-saison-apercu"))k=h.getAttribute("data-saison-apercu");if(k){h.setAttribute("data-saison",k);h.style.setProperty("--szc",SZ[k].couleur);}else{h.removeAttribute("data-saison");}banner();draw();}
+var ICON={braderie:"🎪",aid:"🌙",ramadan:"🏮",fetes:"🎁",paques:"🌷",soldes:"🏷️",vacances:"☀️",rentree:"🎒"};
+function banner(){var k=h.getAttribute("data-saison"),el=document.getElementById("sz");if(!el)return;if(!k){el.innerHTML="";return;}var s=L().s[k];el.innerHTML='<div class="vx-w"><i aria-hidden="true">'+ICON[k]+'</i><div><b>'+s[0]+'</b><br><span>'+s[1]+'</span></div></div>';}
+/* ---------- façade illustrée (déterministe : même commerce, même façade) ---------- */
+function hc(s){s=String(s);var x=2166136261;for(var i=0;i<s.length;i++){x^=s.charCodeAt(i);x=Math.imul(x,16777619);}return x>>>0;}
+var WALLS=["#d9c7ad","#c98f6b","#e8e1d3","#b9c3c9","#d6b88f","#a7745a","#efe6d6","#c4b6a2","#8f9aa3","#e2cfc0"],TRIM=["#f4efe6","#ffffff","#3d3a36","#efe3cf"];
+function goods(c,x,y,w,hh,k){var g="",i,cl=["#c0392b","#2e86ab","#f6c85f","#6f4e7c","#9fd356","#ca472f","#0b84a5","#ffa056"];
+  if(/mode|tissus|chaussures/.test(c)){for(i=0;i<3;i++){var cx=x+w*(i+1)/4,co=cl[(k+i)%8];g+='<path d="M'+(cx-7)+' '+(y+10)+'h14l6 '+(hh-18)+'h-26z" fill="'+co+'"/><circle cx="'+cx+'" cy="'+(y+7)+'" r="4" fill="#3b2f2a"/>';}}
+  else if(/bijoux/.test(c)){for(i=0;i<5;i++){g+='<path d="M'+(x+8+i*(w-16)/5)+' '+(y+12)+'q'+((w-16)/10)+' 18 '+((w-16)/5)+' 0" stroke="#d4a017" stroke-width="2.5" fill="none"/><circle cx="'+(x+8+i*(w-16)/5+(w-16)/10)+'" cy="'+(y+22)+'" r="3" fill="#e9c46a"/>';}g+='<rect x="'+(x+6)+'" y="'+(y+hh-14)+'" width="'+(w-12)+'" height="8" fill="#5a3e2b"/>';}
+  else if(/alim|epicerie|bazar|tabac/.test(c)){for(var r=0;r<3;r++){g+='<rect x="'+(x+4)+'" y="'+(y+8+r*(hh-10)/3+((hh-10)/3-6))+'" width="'+(w-8)+'" height="4" fill="#7a5c3e"/>';for(i=0;i<7;i++)g+='<circle cx="'+(x+10+i*(w-20)/6)+'" cy="'+(y+8+r*(hh-10)/3+((hh-10)/3-11))+'" r="4.5" fill="'+cl[(k+i+r)%8]+'"/>';}}
+  else if(/resto|cafe/.test(c)){g+='<rect x="'+(x+10)+'" y="'+(y+hh-24)+'" width="'+(w-20)+'" height="5" fill="#5a3e2b"/><rect x="'+(x+w/2-2)+'" y="'+(y+hh-20)+'" width="4" height="20" fill="#5a3e2b"/>';for(i=0;i<3;i++)g+='<circle cx="'+(x+w*(i+1)/4)+'" cy="'+(y+12)+'" r="7" fill="#ffd166" opacity=".9"/><path d="M'+(x+w*(i+1)/4)+' '+y+'v5" stroke="#333"/>';g+='<rect x="'+(x+w/2-10)+'" y="'+(y+hh-34)+'" width="20" height="10" rx="3" fill="#fff"/>';}
+  else if(/beaute|parfum|pharma/.test(c)){for(i=0;i<6;i++){var bx=x+8+i*(w-16)/6,bh=14+((k>>i)&7)*2;g+='<rect x="'+bx+'" y="'+(y+hh-8-bh)+'" width="'+((w-16)/6-4)+'" height="'+bh+'" rx="3" fill="'+cl[(k+i)%8]+'" opacity=".85"/>';}g+='<ellipse cx="'+(x+w/2)+'" cy="'+(y+16)+'" rx="12" ry="9" fill="none" stroke="#c9a227" stroke-width="2"/>';}
+  else{for(var r2=0;r2<2;r2++){g+='<rect x="'+(x+4)+'" y="'+(y+(r2+1)*hh/2-3)+'" width="'+(w-8)+'" height="3" fill="#6b5a48"/>';for(i=0;i<4;i++)g+='<rect x="'+(x+8+i*(w-16)/4)+'" y="'+(y+(r2+1)*hh/2-3-14-((k>>(i+r2))&3)*3)+'" width="'+((w-16)/4-6)+'" height="'+(14+((k>>(i+r2))&3)*3)+'" fill="'+cl[(k+i*3+r2)%8]+'"/>';}}
+  return g;}
+function deco(k,W){var g="",i;if(k==="fetes"){for(i=0;i<12;i++)g+='<circle cx="'+(14+i*(W-28)/11)+'" cy="'+(180+(i%2)*4)+'" r="3.5" fill="'+["#ffd166","#ef476f","#06d6a0","#fff"][i%4]+'"/>';g='<path d="M14 178Q'+(W/2)+' 190 '+(W-14)+' 178" stroke="#2d6a4f" stroke-width="3" fill="none"/>'+g;}
+  else if(k==="ramadan"||k==="aid"){[34,186].forEach(function(x){g+='<path d="M'+x+' 262v8" stroke="#8a6d1a" stroke-width="2"/><path d="M'+(x-8)+' 270h16l-3 22h-10z" fill="#e9b949" stroke="#8a6d1a"/><rect x="'+(x-4)+'" y="275" width="8" height="11" fill="#fff4c2"/>';});g+='<path d="M'+(W/2+40)+' 30a16 16 0 1 0 0 30a12 12 0 1 1 0-30z" fill="#f4d35e"/>';}
+  else if(k==="braderie"){for(i=0;i<10;i++){var x0=i*W/10;g+='<path d="M'+x0+' 190l'+(W/20)+' 16l'+(W/20)+' -16z" fill="'+["#e63946","#ffd166","#06d6a0","#118ab2"][i%4]+'"/>';}}
+  else if(k==="paques"){for(i=0;i<5;i++)g+='<ellipse cx="'+(60+i*36)+'" cy="338" rx="7" ry="9" fill="'+["#cdb4db","#ffc8dd","#bde0fe","#fdffb6","#caffbf"][i]+'"/>';}
+  else if(k==="vacances"){for(i=0;i<3;i++)g+='<rect x="'+(26+i*95)+'" y="150" width="56" height="8" fill="#6b4f3a"/><circle cx="'+(36+i*95)+'" cy="146" r="6" fill="#e63946"/><circle cx="'+(54+i*95)+'" cy="145" r="6" fill="#ffd166"/><circle cx="'+(70+i*95)+'" cy="146" r="6" fill="#e63946"/>';}
+  return g;}
+function facade(s){var k=hc(s.id),W=300,Hh=360,wall=WALLS[k%WALLS.length],trim=TRIM[(k>>4)%TRIM.length],c=col(s),name=String(s.n||"").toUpperCase();if(name.length>22)name=name.slice(0,21)+"…";
+  var fs=name.length>16?14:name.length>11?17:20,cols=2+((k>>7)%2),g='<svg viewBox="0 0 300 360" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">';
+  g+='<rect width="300" height="360" fill="'+wall+'"/>';
+  if((k>>9)%3===0)for(var b=0;b<18;b++)g+='<rect x="0" y="'+(b*11)+'" width="300" height="1" fill="#000" opacity=".06"/>';
+  for(var r=0;r<2;r++)for(var i=0;i<cols;i++){var ww=cols===2?78:58,gap=(300-cols*ww)/(cols+1),x=gap+i*(ww+gap),y=26+r*82;
+    g+='<rect x="'+(x-5)+'" y="'+(y-5)+'" width="'+(ww+10)+'" height="66" fill="'+trim+'"/><rect x="'+x+'" y="'+y+'" width="'+ww+'" height="56" fill="#6f8aa3"/><path d="M'+x+' '+(y+56)+'l'+ww+' -56v18l-'+(ww-18)+' 38z" fill="#fff" opacity=".18"/><rect x="'+(x+ww/2-1)+'" y="'+y+'" width="2" height="56" fill="'+trim+'"/>';
+    if(((k>>(r*3+i))&3)===1)g+='<rect x="'+x+'" y="'+y+'" width="'+ww+'" height="22" fill="#f1e3c8" opacity=".9"/>';
+    g+='<rect x="'+(x-8)+'" y="'+(y+60)+'" width="'+(ww+16)+'" height="4" fill="'+trim+'"/>';}
+  g+='<rect x="0" y="186" width="300" height="6" fill="'+trim+'"/>';
+  g+='<rect x="0" y="192" width="300" height="36" fill="#1d1a16"/><rect x="0" y="192" width="300" height="3" fill="'+c+'"/>';
+  g+='<text x="150" y="217" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-weight="800" font-size="'+fs+'" fill="#fff" letter-spacing="1">'+esc(name)+'</text>';
+  for(var st=0;st<8;st++)g+='<path d="M'+(st*37.5)+' 228h37.5l-4 26h-37.5z" fill="'+(st%2?"#fff":c)+'"/>';
+  g+='<path d="M-4 254h308" stroke="'+c+'" stroke-width="3"/>';
+  g+='<rect x="12" y="258" width="196" height="92" fill="#2b2b2b"/><rect x="18" y="262" width="184" height="84" fill="#dce8ee"/>'+goods(s.cat,22,266,176,74,k)+'<path d="M18 262l70 0l-70 64z" fill="#fff" opacity=".22"/>';
+  g+='<rect x="220" y="258" width="68" height="92" fill="#2b2b2b"/><rect x="226" y="264" width="56" height="86" fill="'+["#5b4636","#24476b","#3f5b3a","#6b2d2d"][k%4]+'"/><rect x="232" y="270" width="44" height="38" fill="#cfdde5" opacity=".8"/><circle cx="273" cy="312" r="2.5" fill="#d9c27a"/>';
+  g+='<rect x="236" y="236" width="36" height="16" rx="3" fill="#1f4e79"/><text x="254" y="248" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-weight="700" font-size="11" fill="#fff">'+esc(String(s.num))+'</text>';
+  g+='<rect x="0" y="350" width="300" height="10" fill="#9b958a"/>';
+  g+=deco(h.getAttribute("data-saison"),W);
+  return g+'</svg>';}
+function sugg(){var k=h.getAttribute("data-saison");if(!k)return "";var lg=(typeof L_!=="undefined"&&SUG[L_])?L_:"fr";return '<div class="vx-chips vx-sug">'+SUG[lg][k].map(function(w){return '<button type="button" data-vx-q="'+esc(w)+'">🔎 '+esc(w)+'</button>';}).join("")+'</div>';}
+function img(s,cls){var f=s.f,p=(f&&f.photo_url)||(typeof cover==="function"&&cover(s));return '<div class="vx-img'+(cls?" "+cls:"")+'">'+(p?'<img src="'+esc(p)+'" alt="" loading="lazy">':facade(s)+'<span class="vx-tag">'+L().illus+'</span>')+'</div>';}
+function stt(s){var x=typeof status==="function"?status(s):null;return x?'<div class="vx-st '+(x.open?"ok":"ko")+'">'+esc(x.txt)+'</div>':"";}
+function addr(s){return esc(s.rue)+" "+s.num;}
+/* ---------- données ---------- */
+var VXC="",VXLIM=24,VXSIDE="odd";
+function base(){return SHOPS.filter(function(x){return !HIDDEN[x.id]&&x.v;});}
+function seasonCats(){var k=h.getAttribute("data-saison");var pr=k?SZ[k].cats:[];return pr.filter(function(c){return VCATS.indexOf(c)>=0;}).concat(VCATS.filter(function(c){return pr.indexOf(c)<0;}));}
+function byCat(c){return base().filter(function(x){return x.cat===c;});}
+function rich(a){return a.slice().sort(function(x,y){return ((y.f?2:0)+(y.f&&y.f.photo_url?1:0))-((x.f?2:0)+(x.f&&x.f.photo_url?1:0));});}
+function query(){var k=norm((document.getElementById("q")||{}).value||"").trim();return k;}
+function filtered(){var k=query(),arr=base();if(VXC)arr=arr.filter(function(x){return x.cat===VXC;});if(k)arr=arr.filter(function(x){return norm(x.n+" "+x.soc+" "+x.num+" "+x.acts.join(" ")+" "+T.cats[x.cat]+" "+(x.f?(x.f.articles||"")+" "+(x.f.description||""):"")).indexOf(k)>=0;});return arr;}
+function results(){var arr=filtered(),n=arr.length,LM=arr.slice(0,VXLIM);return '<div class="vx-head"><h2 class="vx-h2">'+(VXC?esc(T.cats[VXC]):"«"+esc((document.getElementById("q")||{}).value)+"»")+' · '+n+' '+L().results+'</h2><button type="button" data-vx-clear>'+L().clear+'</button></div><div class="vx-res">'+LM.map(function(s){return '<a href="#c-'+s.id+'">'+img(s)+'<b>'+esc(s.n)+'</b><div class="vx-meta">'+esc(T.cats[s.cat])+' · '+L().no+' '+s.num+'</div>'+stt(s)+'</a>';}).join("")+'</div>'+(n>VXLIM?'<button class="vx-more" type="button" data-vx-more>'+L().more+'</button>':"");}
+/* ---------- 1. Grand marché ---------- */
+function marche(){var t=L(),k=h.getAttribute("data-saison"),hero=k?t.s[k]:[t.hello,base().length+" "+t.hello_sub],cats=seasonCats(),o=[];
+  var sample=rich(base()).slice(0,3);
+  o.push('<div class="mk-hero"><div class="vx-w"><h1>'+esc(hero[0])+'</h1><p>'+esc(hero[1])+'</p></div><div class="fr">'+sample.map(function(s){return img(s);}).join("")+'</div></div>');
+  o.push('<div class="vx-w">'+(sugg()?'<div class="mk-sug">'+sugg()+'</div>':''));
+  if(VXC||query()){o.push('<div class="mk-band">'+results()+'</div></div>');return o.join("");}
+  o.push('<div class="mk-quads">'+cats.slice(0,8).map(function(c){var a=rich(byCat(c)).slice(0,4);return '<div class="mk-quad"><h3>'+esc(T.cats[c])+'</h3><div class="g">'+a.map(function(s){return '<a href="#c-'+s.id+'">'+img(s)+'<span>'+esc(s.n)+'</span></a>';}).join("")+'</div><button type="button" data-vx-cat="'+c+'">'+t.seeall+' ('+byCat(c).length+')</button></div>';}).join("")+'</div>');
+  function band(title,arr,c){if(!arr.length)return "";return '<div class="mk-band"><div class="vx-head"><h2 class="vx-h2">'+esc(title)+'</h2>'+(c?'<button type="button" data-vx-cat="'+c+'">'+t.seeall+'</button>':"")+'</div><div class="vx-row">'+arr.slice(0,14).map(function(s){var x=typeof status==="function"?status(s):null;return '<a class="mk-card" href="#c-'+s.id+'">'+img(s)+'<b>'+esc(s.n)+'</b>'+(x&&x.open?'<span class="pill v">'+t.open+'</span> ':'')+(s.f?'<span class="pill v">✓</span>':'')+'<div class="vx-meta">'+esc(T.cats[s.cat])+'<br>'+addr(s)+'</div></a>';}).join("")+'</div></div>';}
+  var op=base().filter(function(s){var x=typeof status==="function"?status(s):null;return x&&x.open;});
+  o.push(band(t.opennow,op));o.push(band(t.verified,base().filter(function(s){return s.f;})));
+  o.push(band(t.new,base().filter(function(s){return s.y;}).sort(function(a,b){return (b.y||0)-(a.y||0);})));
+  cats.forEach(function(c){o.push(band((k&&SZ[k].cats.indexOf(c)>=0?t.for_season+" · ":"")+T.cats[c],rich(byCat(c)),c));});
+  o.push('</div>');return o.join("");}
+/* ---------- 2. La rue en vitrine ---------- */
+function rue(){var t=L(),o=[],main=base().filter(function(s){return s.rk==="RUE DE BRABANT";}),side=main.filter(function(s){return VXSIDE==="odd"?s.num%2===1:s.num%2===0;}).sort(function(a,b){return a.num-b.num;});
+  o.push('<div class="vx-w ru-top"><h1>'+t.street+'</h1><p>'+t.walk+'</p><div class="ru-sw" role="group"><button type="button" data-vx-side="odd" aria-pressed="'+(VXSIDE==="odd")+'">'+t.odd+' · '+main.filter(function(s){return s.num%2;}).length+'</button><button type="button" data-vx-side="even" aria-pressed="'+(VXSIDE==="even")+'">'+t.even+' · '+main.filter(function(s){return !(s.num%2);}).length+'</button></div>'+sugg()+'</div>');
+  if(VXC||query()){o.push('<div class="vx-w">'+results()+'</div>');return o.join("");}
+  o.push('<div class="ru-street"><button class="ru-nav l" type="button" data-vx-step="-1" aria-label="Reculer">‹</button><button class="ru-nav r" type="button" data-vx-step="1" aria-label="Avancer">›</button><div class="ru-row" id="ru-row">'+side.map(function(s){return '<a class="ru-f" id="ru-'+s.num+'-'+s.id+'" href="#c-'+s.id+'">'+img(s)+'<div class="cap"><b>'+esc(s.n)+'</b><div class="vx-meta">'+L().no+' '+s.num+' · '+esc(T.cats[s.cat])+'</div>'+stt(s)+'</div></a>';}).join("")+'</div></div>');
+  var seen={};o.push('<div class="vx-w"><div class="ru-ruler">'+side.filter(function(s){if(seen[s.num])return false;seen[s.num]=1;return true;}).map(function(s){return '<button type="button" data-vx-go="'+s.num+'">'+s.num+'</button>';}).join("")+'</div>');
+  var oth=base().filter(function(s){return s.rk!=="RUE DE BRABANT";});
+  if(oth.length)o.push('<div class="vx-head"><h2 class="vx-h2">'+t.others+'</h2></div><div class="ru-list">'+oth.slice(0,VXLIM).map(function(s){return '<a href="#c-'+s.id+'">'+img(s)+'<div><b>'+esc(s.n)+'</b><div class="vx-meta">'+addr(s)+' · '+esc(T.cats[s.cat])+'</div>'+stt(s)+'</div></a>';}).join("")+'</div>'+(oth.length>VXLIM?'<button class="vx-more" type="button" data-vx-more>'+t.more+'</button>':""));
+  o.push('</div>');return o.join("");}
+/* ---------- 3. Découverte ---------- */
+var COLS=[["col_mariage",["mode","bijoux","tissus","beaute","chaussures"]],["col_table",["resto","cafe","alim","epicerie"]],["col_cadeaux",["parfum","bijoux","culture","maison"]],["col_beaute",["beaute","parfum","pharma"]],["col_maison",["maison","electro","bazar"]]];
+function magazine(){var t=L(),k=h.getAttribute("data-saison"),hero=k?t.s[k]:[t.hello,base().length+" "+t.hello_sub],o=[],cats=seasonCats();
+  o.push('<div class="vx-w"><div class="mg-hero"><div class="bg">'+rich(base()).slice(0,4).map(function(s){return img(s);}).join("")+'</div><div class="t"><h1>'+esc(hero[0])+'</h1><p>'+esc(hero[1])+'</p></div></div>');
+  o.push('<div class="mg-stories">'+cats.map(function(c){var a=rich(byCat(c))[0];return '<button type="button" data-vx-cat="'+c+'"><div class="ring">'+(a?img(a):"")+'</div>'+esc(T.cats[c])+'</button>';}).join("")+'</div>'+sugg());
+  if(VXC||query()){o.push(results()+'</div>');return o.join("");}
+  var cols=COLS.slice();if(k){cols.unshift(["for_season",SZ[k].cats]);}
+  cols.forEach(function(cl){var a=rich(base().filter(function(s){return cl[1].indexOf(s.cat)>=0;}));if(!a.length)return;o.push('<div class="mg-col"><div class="vx-head"><h2>'+(cl[0]==="for_season"?esc(t.s[k][0]):t[cl[0]])+'</h2></div><div class="vx-row">'+a.slice(0,12).map(function(s){return '<a class="mg-card" href="#c-'+s.id+'">'+img(s)+'<b>'+esc(s.n)+'</b><div class="vx-meta">'+esc(T.cats[s.cat])+' · '+addr(s)+'</div>'+stt(s)+'</a>';}).join("")+'</div></div>');});
+  var all=rich(base());o.push('<div class="mg-col"><div class="vx-head"><h2>'+t.everything+'</h2></div><div class="mg-grid">'+all.slice(0,VXLIM).map(function(s){return '<a class="mg-card" href="#c-'+s.id+'">'+img(s)+'<b>'+esc(s.n)+'</b><div class="vx-meta">'+esc(T.cats[s.cat])+' · '+addr(s)+'</div>'+stt(s)+'</a>';}).join("")+'</div>'+(all.length>VXLIM?'<button class="vx-more" type="button" data-vx-more>'+t.more+'</button>':"")+'</div></div>');
+  return o.join("");}
+/* ---------- 4. Mur d'images ---------- */
+var RATIO=["4/5","3/4","1/1","2/3","4/5","5/6"];
+function explorer(){var t=L(),o=[],cats=seasonCats(),k=h.getAttribute("data-saison");
+  o.push('<div class="vx-w ex-hello"><h1>'+esc(k?t.s[k][0]:t.hello)+'</h1><p>'+t.wall+'</p>'+sugg()+'</div>');
+  o.push('<div class="ex-bar"><div class="vx-w"><div class="vx-chips"><button type="button" data-vx-cat="" aria-pressed="'+(!VXC)+'">'+t.all+'</button>'+cats.map(function(c){return '<button type="button" data-vx-cat="'+c+'" aria-pressed="'+(VXC===c)+'">'+esc(T.cats[c])+'</button>';}).join("")+'</div></div></div>');
+  var arr=query()||VXC?filtered():rich(base());
+  o.push('<div class="vx-w"><div class="ex-wall">'+arr.slice(0,VXLIM*2).map(function(s){return '<a class="ex-pin" href="#c-'+s.id+'"><div class="vx-img" style="aspect-ratio:'+RATIO[hc(s.id)%RATIO.length]+'">'+(((s.f&&s.f.photo_url)||(typeof cover==="function"&&cover(s)))?'<img src="'+esc((s.f&&s.f.photo_url)||cover(s))+'" alt="" loading="lazy">':facade(s)+'<span class="vx-tag">'+t.illus+'</span>')+'<div class="ov">'+esc(s.n)+'<small>'+esc(T.cats[s.cat])+' · '+L().no+' '+s.num+'</small></div></div></a>';}).join("")+'</div>'+(arr.length>VXLIM*2?'<button class="vx-more" type="button" data-vx-more>'+t.more+'</button>':"")+'</div>');
+  return o.join("");}
+/* ---------- moteur ---------- */
+var R={marche:marche,rue:rue,magazine:magazine,explorer:explorer};
+function draw(){var th=h.getAttribute("data-theme"),el=document.getElementById("vx");if(!el||typeof SHOPS==="undefined")return;
+  if(!R[th]){h.removeAttribute("data-vx");el.innerHTML="";return;}h.setAttribute("data-vx","1");
+  var sc=document.getElementById("ru-row"),keep=sc?sc.scrollLeft:0;el.innerHTML=R[th]()+'<p class="vx-note">'+L().note+'</p>';var sc2=document.getElementById("ru-row");if(sc2&&keep)sc2.scrollLeft=keep;}
+window.VX={draw:draw,facade:facade,setSaison:setSaison};
+document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest("[data-vx-q],[data-vx-cat],[data-vx-clear],[data-vx-more],[data-vx-side],[data-vx-step],[data-vx-go]");if(!b||!document.getElementById("vx").contains(b))return;
+  if(b.hasAttribute("data-vx-q")){var qq=document.getElementById("q");if(qq){qq.value=b.getAttribute("data-vx-q");}VXC="";VXLIM=24;draw();}
+  else if(b.hasAttribute("data-vx-cat")){VXC=b.getAttribute("data-vx-cat");VXLIM=24;draw();var v=document.getElementById("vx");if(VXC&&v.getBoundingClientRect().top<0)v.scrollIntoView({block:"start"});}
+  else if(b.hasAttribute("data-vx-clear")){VXC="";var q=document.getElementById("q");if(q)q.value="";draw();}
+  else if(b.hasAttribute("data-vx-more")){VXLIM+=48;draw();}
+  else if(b.hasAttribute("data-vx-side")){VXSIDE=b.getAttribute("data-vx-side");draw();var r=document.getElementById("ru-row");if(r)r.scrollLeft=0;}
+  else if(b.hasAttribute("data-vx-step")){var r2=document.getElementById("ru-row");if(r2)r2.scrollBy({left:(+b.getAttribute("data-vx-step"))*r2.clientWidth*0.8,behavior:"smooth"});}
+  else if(b.hasAttribute("data-vx-go")){var f=document.querySelector("[id^='ru-"+b.getAttribute("data-vx-go")+"-']"),r3=document.getElementById("ru-row");if(f&&r3)r3.scrollTo({left:f.offsetLeft-r3.clientWidth/2+f.clientWidth/2,behavior:"smooth"});}
+});
+/* le moteur existant redessine après chaque chargement de données : on redessine avec lui */
+if(typeof render==="function"){var _r=render;render=function(){_r.apply(this,arguments);draw();};}
+if(typeof applyLang==="function"){var _a=applyLang;applyLang=function(){_a.apply(this,arguments);banner();draw();};}
+var qi=document.getElementById("q");if(qi)qi.addEventListener("input",function(){VXLIM=24;});
+/* saison : calendrier préprogrammé + réglages de l'association */
+setSaison(active(null));
+fetch(SB+"/rest/v1/acrb_reglages?select=valeur&cle=eq.annuaire_saisons",{headers:{"apikey":KEY,"Authorization":"Bearer "+KEY}}).then(function(r){return r.ok?r.json():[];}).then(function(r){var cfg=r&&r[0]&&r[0].valeur;if(cfg)setSaison(active(cfg));}).catch(function(){});
+})();
+</script><script>(function(){var a=document.documentElement.getAttribute("data-apercu"),z=document.documentElement.getAttribute("data-saison-apercu");if(!a&&!z)return;var N={"classique": "Actuelle", "marche": "Grand marché", "rue": "La rue en vitrine", "magazine": "Découverte", "explorer": "Mur d'images"};
+var d=document.createElement("div");d.className="apercu";d.innerHTML='Aperçu'+(a?' de la présentation <b>« '+N[a]+' »</b>':'')+(z?' · mode de saison <b>'+z+'</b>':'')+', soumis au conseil. <a href="'+location.pathname+'">Revenir au site</a>';document.body.insertBefore(d,document.body.firstChild);})();</script></body></html>
