@@ -543,8 +543,8 @@ err_req:"ایک لازمی خانہ (* والا) خالی ہے۔",err_photo:"ا�
 </script>
 <script>
 (function(){
-  var SB="https://blaehmatdmobhwlhqfjo.supabase.co";
-  var KEY="sb_publishable_c1ovcVD1pbOGPedrJfDU3g_jtS1bY73";
+  var SB="https://movoukcjirtjnqjgwndw.supabase.co";
+  var KEY="sb_publishable_jVXX4nAfC5F0wzj_FedaAQ_WhzzN_O6";
   var DAYS=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
   var f=document.getElementById("f"), btn=document.getElementById("btn"), msg=document.getElementById("msg");
   var socBox=document.getElementById("societes"), magBox=document.getElementById("magasins");
@@ -817,7 +817,7 @@ err_req:"ایک لازمی خانہ (* والا) خالی ہے۔",err_photo:"ا�
 /* Fiche commerçant (23/11) : étapes et progression, brouillon automatique, contrôles non bloquants,
    et mode « Ma fiche » pour un compte connecté qui a déjà une fiche (lecture acrb_ma_fiche, écriture acrb_ma_fiche_maj, liste blanche). */
 (function(){
-var SB="https://blaehmatdmobhwlhqfjo.supabase.co",KEY="sb_publishable_c1ovcVD1pbOGPedrJfDU3g_jtS1bY73";
+var SB="https://movoukcjirtjnqjgwndw.supabase.co",KEY="sb_publishable_jVXX4nAfC5F0wzj_FedaAQ_WhzzN_O6";
 var DAYS=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"],LANGS=["Français","Néerlandais","Anglais","Arabe","Turc","Ourdou","Espagnol"];
 var WL=["enseigne","tel","email","site_web","instagram","facebook","tiktok","google_maps","description","articles","langues","horaires_json","jours_ouverture","horaires",
   "priere_vendredi","priere_fermeture","priere_reouverture","priere_ete_decalage","ferme_aid_fitr","ferme_aid_adha","fermetures_autres","logo_url","photo_url",
@@ -1125,7 +1125,7 @@ tr();progress();
   function rafraichir(){vus=vus.filter(function(el){return document.documentElement.contains(el);});vus.forEach(function(el){el.innerHTML=html(el.__uc);});}
   window.UNCLIC={lien:lien,corps:corps,html:html,rendre:rendre,lier:lier,rafraichir:rafraichir,cfg:CFG,MARQUE:MARQUE};
   function init(){lier();
-    try{fetch("https://blaehmatdmobhwlhqfjo.supabase.co/rest/v1/acrb_reglages?select=valeur&cle=eq.contact_association",{headers:{apikey:"sb_publishable_c1ovcVD1pbOGPedrJfDU3g_jtS1bY73"}})
+    try{fetch("https://movoukcjirtjnqjgwndw.supabase.co/rest/v1/acrb_reglages?select=valeur&cle=eq.contact_association",{headers:{apikey:"sb_publishable_jVXX4nAfC5F0wzj_FedaAQ_WhzzN_O6"}})
       .then(function(r){return r.ok?r.json():[];}).then(function(r){var v=r&&r[0]&&r[0].valeur;if(v&&typeof v==="object"){if(v.email)CFG.email=v.email;CFG.whatsapp=v.whatsapp||null;rafraichir();}}).catch(function(){});}catch(e){}}
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
 })();

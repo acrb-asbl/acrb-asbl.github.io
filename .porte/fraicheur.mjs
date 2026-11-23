@@ -2,7 +2,7 @@
 // Rouge si le site Quartier Nord a publié moins de MIN brèves sur 7 jours, ou si le guide a moins de MIN_GUIDE adresses.
 // Un rouge ouvre un ticket « correction » (une seule fois tant qu'il est ouvert) et sort en code 1.
 import { etiquette, titresOuverts, ticket } from './github.mjs'
-const URL = 'https://blaehmatdmobhwlhqfjo.supabase.co/rest/v1/', KEY = 'sb_publishable_c1ovcVD1pbOGPedrJfDU3g_jtS1bY73'
+const URL = 'https://movoukcjirtjnqjgwndw.supabase.co/rest/v1/', KEY = 'sb_publishable_jVXX4nAfC5F0wzj_FedaAQ_WhzzN_O6'
 const MIN = +(process.env.FRAICHEUR_MIN || 5), MIN_GUIDE = +(process.env.FRAICHEUR_GUIDE || 40)
 const get = async q => { const r = await fetch(URL + q, { headers: { apikey: KEY, prefer: 'count=exact', range: '0-0' } }); return +((r.headers.get('content-range') || '/0').split('/')[1] || 0) }
 const depuis = new Date(Date.now() - 7 * 864e5).toISOString()

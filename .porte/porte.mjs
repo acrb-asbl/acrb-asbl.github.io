@@ -13,7 +13,7 @@ const [BASE0 = 'https://acrb-asbl.github.io', OUT = 'porte-sortie'] = process.ar
 const BASE = BASE0.replace(/\/$/, '')
 const DIR = path.dirname(new URL(import.meta.url).pathname)
 fs.mkdirSync(OUT, { recursive: true })
-const SB = 'https://blaehmatdmobhwlhqfjo.supabase.co', CLE = 'sb_publishable_c1ovcVD1pbOGPedrJfDU3g_jtS1bY73'
+const SB = 'https://movoukcjirtjnqjgwndw.supabase.co', CLE = 'sb_publishable_jVXX4nAfC5F0wzj_FedaAQ_WhzzN_O6'
 const PAGES = ['index.html', 'acrb/index.html', 'acrb/index-nl.html', 'acrb/annuaire.html', 'acrb/fiche.html', 'acrb/valider.html', 'acrb/confidentialite.html', 'espace/ca.html',
   'shopping/index.html', 'shopping/fiche.html', 'shopping/guide.html', 'quartier/index.html', 'stagiaires/index.html', 'espace/index.html', 'espace/commercant.html', 'espace/terrain.html', 'espace/signer.html']
 const PROFILS = { iphone13: [webkit, devices['iPhone 13']], android: [chromium, devices['Pixel 7']] }
@@ -79,7 +79,7 @@ async function tresorier(moteur, prof) {
   const user = { id: '00000000-0000-4000-8000-000000000001', aud: 'authenticated', role: 'authenticated', email: 'robot-tresorier@example.invalid', app_metadata: { provider: 'google' }, user_metadata: {}, created_at: '2026-01-01T00:00:00Z' }
   const now = Math.floor(Date.now() / 1000)
   const sess = { access_token: 'robot.' + now, token_type: 'bearer', expires_in: 3600, expires_at: now + 3600, refresh_token: 'robot', user }
-  await ctx.addInitScript(s => { try { localStorage.setItem('sb-blaehmatdmobhwlhqfjo-auth-token', s) } catch (e) {} }, JSON.stringify(sess))
+  await ctx.addInitScript(s => { try { localStorage.setItem('sb-movoukcjirtjnqjgwndw-auth-token', s) } catch (e) {} }, JSON.stringify(sess))
   await ctx.route(SB + '/**', r => {
     const u = r.request().url()
     if (/\/auth\/v1\/user/.test(u)) return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(user) })

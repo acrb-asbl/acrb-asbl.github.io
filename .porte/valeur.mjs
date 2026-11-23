@@ -2,7 +2,7 @@
 // Si hier < 50 % de la moyenne des 7 jours précédents, la publication d'hier est désignée pour retour arrière (fichier alerte-valeur.md).
 import fs from 'fs'
 import { execSync } from 'child_process'
-const SB = 'https://blaehmatdmobhwlhqfjo.supabase.co', CLE = 'sb_publishable_c1ovcVD1pbOGPedrJfDU3g_jtS1bY73'
+const SB = 'https://movoukcjirtjnqjgwndw.supabase.co', CLE = 'sb_publishable_jVXX4nAfC5F0wzj_FedaAQ_WhzzN_O6'
 const OUT = process.argv[2] || 'sortie-nuit'; fs.mkdirSync(OUT, { recursive: true })
 const r = await fetch(SB + '/rest/v1/rpc/acrb_valeur', { method: 'POST', headers: { apikey: CLE, Authorization: 'Bearer ' + CLE, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_jours: 8 }) })
 const jours = await r.json()

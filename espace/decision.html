@@ -11,7 +11,7 @@
 <div class="wrap"><h1 id="titre">Décision écrite</h1><p class="lead" id="lead">Chargement…</p><div id="pts"></div><div id="zone"></div>
 <p class="law" id="law"></p></div>
 <script>
-(function(){var SB="https://blaehmatdmobhwlhqfjo.supabase.co",KEY="sb_publishable_c1ovcVD1pbOGPedrJfDU3g_jtS1bY73",t=new URLSearchParams(location.search).get("t")||"";
+(function(){var SB="https://movoukcjirtjnqjgwndw.supabase.co",KEY="sb_publishable_jVXX4nAfC5F0wzj_FedaAQ_WhzzN_O6",t=new URLSearchParams(location.search).get("t")||"";
 function rpc(n,b){return fetch(SB+"/rest/v1/rpc/"+n,{method:"POST",headers:{"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":"application/json"},body:JSON.stringify(b)}).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.message||d.hint||"erreur");return d;});});}
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
 function dl(s){if(!s)return "";var p=String(s).slice(0,10).split("-");return (+p[2])+" "+["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"][+p[1]-1]+" "+p[0];}
