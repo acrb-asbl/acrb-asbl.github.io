@@ -675,10 +675,15 @@ err_req:"ایک لازمی خانہ (* والا) خالی ہے۔",err_photo:"ا�
     var d=q.replace(/\D/g,""), parts;
     if(d.length>=6) parts="bce.ilike.*"+d.slice(0,4)+"*"+d.slice(4,7)+"*"+d.slice(7)+"*";
     else if(/^\d{1,4}[a-z]?$/i.test(q)) parts="numero.eq."+d;
-    else {var t=q.replace(/[,()*]/g," ").replace(/\s+/g,"*");parts="enseigne.ilike.*"+t+"*,denomination.ilike.*"+t+"*";}
-    sbGet("select=ue,bce,rue,numero,cp,enseigne,denomination,forme,ue_depuis,tel,email,web,activites&masque=not.is.true&or=("+parts+")&order=rue,numero&limit=12").then(function(rows){
+    else {
+      /* 23/11/2026 : « 224 rue de Brabant », « Caftan 224 » : le numéro filtre exactement, les autres mots cherchent dans l'enseigne, la dénomination ou la rue */
+      var num=(q.match(/(^|\s)(\d{1,4})[a-z]?(?=\s|$)/i)||[])[2], mots=q.replace(/(^|\s)\d{1,4}[a-z]?(?=\s|$)/ig," ").replace(/[,()*.]/g," ").split(/\s+/).filter(function(w){return w&&!/^(rue|de|du|des|la|le|les|l|d|place|pl|chaussee|chaussée|avenue|av|bd|n|no)$/i.test(w);});
+      var t=mots.length?mots.join("*"):"";
+      parts=t?"enseigne.ilike.*"+t+"*,enseigne_v.ilike.*"+t+"*,denomination.ilike.*"+t+"*,rue.ilike.*"+t+"*":"";
+      if(num)parts=(parts?parts:"numero.eq."+num)+")&numero=eq."+num+"&or=(numero.eq."+num;}
+    sbGet("select=ue,bce,rue,numero,cp,enseigne,enseigne_v,denomination,forme,ue_depuis,tel,email,web,activites&masque=not.is.true&or=("+parts+")&order=rue,numero&limit=12").then(function(rows){
       lkmsg.textContent=rows.length?"":T.s0_none;
-      hits.innerHTML=rows.map(function(r){return '<button type="button" class="hit" data-ue="'+esc(r.ue)+'"><span><b>'+esc(r.enseigne||r.denomination)+'</b><small>'+esc(r.denomination)+' · '+esc((RUES[r.rue]||r.rue)+" "+r.numero+", "+r.cp)+'</small></span><span class="pick">'+T.s0_pick+' →</span></button>';}).join("");
+      hits.innerHTML=rows.map(function(r){return '<button type="button" class="hit" data-ue="'+esc(r.ue)+'"><span><b>'+esc(r.enseigne_v||r.enseigne||r.denomination)+'</b><small>'+(r.enseigne_v?'':esc(r.denomination)+' · ')+esc((RUES[r.rue]||r.rue)+" "+r.numero+", "+r.cp)+'</small></span><span class="pick">'+T.s0_pick+' →</span></button>';}).join("");
       hits._rows=rows;
     }).catch(function(){lkmsg.textContent=T.s0_err;});
   }
@@ -701,21 +706,21 @@ err_req:"ایک لازمی خانہ (* والا) خالی ہے۔",err_photo:"ا�
     }
     var mag=(!USED.mag&&!val(magBox.firstElementChild.querySelector('[data-k="enseigne"]')))?magBox.firstElementChild:addItem(magBox,"t_mag");
     USED.mag=true;mag.dataset.ue=String(r.ue).replace(/\D/g,"");
-    setK(mag,"enseigne",r.enseigne||r.denomination);
+    setK(mag,"enseigne",r.enseigne_v||r.enseigne||r.denomination);
     var rs=mag.querySelector(".rue_sel");if(RUES[r.rue])rs.value=RUES[r.rue];else{rs.value="Autre";setK(mag,"rue_autre",r.rue);mag.querySelector(".rue_autre").hidden=false;}
     setK(mag,"numero",r.numero);
     var cm=mag.querySelector('[data-k="commune"]');if(r.cp==="1210")cm.value="Saint-Josse (1210)";else if(r.cp==="1000")cm.value="Bruxelles (1000)";
     mag.querySelector(".soc_sel").value=soc.dataset.id;
     setK(mag,"tel",r.tel);setK(mag,"email",r.email);setK(mag,"site_web",r.web);
     var y=(String(r.ue_depuis||"").match(/\d{4}/)||[])[0];setK(mag,"debut_activite",y);
-    picked.insertAdjacentHTML("beforeend",'<div data-ue="'+esc(r.ue)+'"><span>✓ '+esc(r.enseigne||r.denomination)+' · '+esc((RUES[r.rue]||r.rue)+" "+r.numero)+'</span></div>');
+    picked.insertAdjacentHTML("beforeend",'<div data-ue="'+esc(r.ue)+'"><span>✓ '+esc(r.enseigne_v||r.enseigne||r.denomination)+' · '+esc((RUES[r.rue]||r.rue)+" "+r.numero)+'</span></div>');
     lkmsg.textContent=T.s0_done;
     sbGet("select=ue,enseigne,denomination,statut_v&masque=not.is.true&rue=eq."+encodeURIComponent(r.rue)+"&numero=eq."+r.numero+"&cp=eq."+r.cp+"&ue=neq."+encodeURIComponent(r.ue)).then(function(rows){rows=rows.filter(function(x){return !x.statut_v||x.statut_v==="ouvert";});if(!rows.length)return;
       var box=document.getElementById("absents");box.hidden=false;var list=document.getElementById("absents_list");
       list.insertAdjacentHTML("beforeend",rows.map(function(x){return '<label class="chk"><input type="checkbox" name="absent" value="'+esc(x.ue)+'" data-src="'+esc(uk)+'"> '+esc(x.enseigne||x.denomination)+' <small>('+esc(x.denomination)+')</small></label>';}).join(""));}).catch(function(){});
   }
   try{var ues=(new URLSearchParams(location.search).get("ue")||"").split(",").map(function(u){return u.replace(/\D/g,"");}).filter(Boolean);
-    if(ues.length){sbGet("select=ue,bce,rue,numero,cp,enseigne,denomination,forme,ue_depuis,tel,email,web,activites&ue=in.("+ues.map(function(u){return '"'+dotUe(u)+'"';}).join(",")+")").then(function(rows){rows.forEach(prefill);}).catch(function(){lkmsg.textContent=T.s0_err;});}
+    if(ues.length){sbGet("select=ue,bce,rue,numero,cp,enseigne,enseigne_v,denomination,forme,ue_depuis,tel,email,web,activites&ue=in.("+ues.map(function(u){return '"'+dotUe(u)+'"';}).join(",")+")").then(function(rows){rows.forEach(prefill);}).catch(function(){lkmsg.textContent=T.s0_err;});}
   }catch(e){}
 
   var initial="fr";
