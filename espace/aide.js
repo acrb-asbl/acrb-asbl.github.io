@@ -32,7 +32,8 @@
     var tm;document.addEventListener("mouseover",function(e){var el=e.target.closest&&e.target.closest("[data-aide]");clearTimeout(tm);if(!el||on){return;}tm=setTimeout(function(){montrer(el);},1000);});
     document.addEventListener("mouseout",function(e){clearTimeout(tm);if(!on)cacher();});
     document.addEventListener("focusin",function(e){var el=e.target;if(!el.matches||!el.matches("input[data-aide],textarea[data-aide],select[data-aide]"))return;var n=el.nextElementSibling;if(n&&n.classList&&n.classList.contains("aide-sous"))return;var d=document.createElement("div");d.className="aide-sous";d.textContent=el.getAttribute("data-aide");el.insertAdjacentElement("afterend",d);});
-    document.addEventListener("focusout",function(e){var n=e.target.nextElementSibling;if(n&&n.classList&&n.classList.contains("aide-sous"))n.remove();});
+    /* retrait différé : sinon la page remonte entre l’appui et le relâchement, et le toucher tombe à côté du bouton visé */
+    document.addEventListener("focusout",function(e){var n=e.target.nextElementSibling;if(n&&n.classList&&n.classList.contains("aide-sous"))setTimeout(function(){if(n.parentNode&&document.activeElement!==e.target)n.remove();},300);});
     window.addEventListener("scroll",function(){if(!on)cacher();},{passive:true});
   }
   window.AIDE={basculer:basculer,montrer:montrer};
