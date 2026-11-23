@@ -75,6 +75,8 @@ footer{background:var(--navy-d);color:#aeb8c8;font-size:13.5px;padding:34px 0}fo
 .dm input,.dm select,.dm textarea{width:100%;padding:11px 12px;border:1px solid #c6ccd6;font:16px/1.45 "Source Sans 3","Segoe UI",Arial,sans-serif;background:#fff;box-sizing:border-box}.dm textarea{min-height:220px;resize:vertical}
 .dm .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.dm .acts{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}.dm .msg{font-size:14px;margin-top:10px}.dm .msg.ok{color:#1f8a4c;font-weight:700}.dm .msg.err{color:#b23a2b}
 .dm .btn{display:inline-block;padding:12px 20px;background:#14233c;color:#fff;border:1px solid #14233c;font:700 15px "Libre Franklin",Arial,sans-serif;cursor:pointer}.dm .btn.o{background:#fff;color:#14233c}.dm .btn[disabled]{opacity:.6}
+
+.dm .dm_uc{margin-top:14px;padding-top:12px;border-top:1px solid #e3e6ec;font-size:14px;color:#5f6675}
 @media(max-width:600px){.dm .row{grid-template-columns:1fr}.dm .in{padding:18px}}
 </style></head><body>
 <div class="topbar"><div class="wrap"><span>Vereniging van Handelaars van de Brabantstraat · vzw · Schaarbeek &amp; Sint-Joost-ten-Node · sinds 1999</span><span class="r"><a href="mailto:info@shoppingbrabant.be">info@shoppingbrabant.be</a><a href="index.html" lang="fr">Français</a></span></div></div>
@@ -136,7 +138,7 @@ footer{background:var(--navy-d);color:#aeb8c8;font-size:13.5px;padding:34px 0}fo
 
 <section class="s alt" id="outils" data-page="outils"><div class="wrap"><div class="k">Instrumenten</div><h2>Digitale instrumenten ten dienste van de buurt</h2><div class="tools"><div class="tool"><h3>Shopping Brabant</h3><p>De openbare winkelgids: interactieve kaart, rubrieken, openingsuren, verantwoordelijken, wandeling nummer per nummer, in het Frans, Nederlands en Engels.</p><a class=btn href=../shopping/>De gids openen</a></div><div class="tool"><h3>Handelaarsfiche</h3><p>Elke handelaar werkt zijn fiche in vijf minuten bij, in zes talen: vennootschappen, winkels, verantwoordelijken, uren, sluitingen, foto's.</p><a class=btn href=../shopping/fiche.html>Mijn fiche aanvullen</a></div><div class="tool"><h3>Gids van de Noordwijk</h3><p>Noodnummers, ziekenhuizen, politie, gemeenten, station, vervoer, parking: de nuttige adressen van de buurt, aan de bron gecontroleerd en bijgehouden door de vereniging, in drie talen.</p><a class=btn href=../shopping/guide.html>Gids openen</a></div><div class="tool"><h3>Controle ter plaatse</h3><p>De bestuurders valideren elke handelsnaam, rubriek en status op het terrein, zaak per zaak: gegevens die niemand anders bezit.</p></div></div></div></section>
 
-<section class="s contact" id="contact" data-page="contact"><div class="wrap"><div class="cols"><div><div class="k">Contact</div><h2>ACRB vzw</h2><dl><dt>Maatschappelijke zetel</dt><dd>Werkhuizenkaai 160 · 1000 Brussel</dd><dt>E-mail</dt><dd><a href=mailto:info@shoppingbrabant.be>info@shoppingbrabant.be</a></dd><dt>Facebook</dt><dd><a href=https://www.facebook.com/BrabantShopping target=_blank rel=noopener>facebook.com/BrabantShopping</a></dd><dt>Ondernemingsnummer</dt><dd>0468.701.030</dd></dl><p style="margin-top:18px"><a class="btn" href="#contact" data-demande="contact">De vereniging schrijven</a></p></div>
+<section class="s contact" id="contact" data-page="contact"><div class="wrap"><div class="cols"><div><div class="k">Contact</div><h2>ACRB vzw</h2><dl><dt>Maatschappelijke zetel</dt><dd>Werkhuizenkaai 160 · 1000 Brussel</dd><dt>E-mail</dt><dd><a href=mailto:info@shoppingbrabant.be>info@shoppingbrabant.be</a></dd><dt>Facebook</dt><dd><a href=https://www.facebook.com/BrabantShopping target=_blank rel=noopener>facebook.com/BrabantShopping</a></dd><dt>Ondernemingsnummer</dt><dd>0468.701.030</dd></dl><p style="margin-top:18px"><a class="btn" href="#contact" data-demande="contact">De vereniging schrijven</a></p><p style="margin-top:12px"><span data-unclic="Vraag aan ACRB" data-uc-label="Of met één tik:" data-uc-champs="[[&quot;Uw naam&quot;, &quot;&quot;], [&quot;Uw vraag&quot;, &quot;&quot;], [&quot;Telefoon (gsm)&quot;, &quot;&quot;]]"></span></p></div>
 <div class="card"><h3>Nieuwsbrief</h3><p>Nieuws van de vereniging, evenementen, lopende dossiers: één brief per maand, in het Nederlands of het Frans.</p><form id="nlform" style="margin-top:14px;display:grid;gap:8px"><input type="email" id="nl_email" required placeholder="Uw e-mailadres" style="padding:11px 12px;border:1px solid var(--line);font:inherit"><select id="nl_profil" style="padding:11px 12px;border:1px solid var(--line);font:inherit;background:#fff"><option value="client">Klant of bezoeker</option><option value="commercant">Handelaar uit de buurt</option><option value="membre">Lid van ACRB</option><option value="partenaire">Partner, administratie, vereniging</option><option value="presse">Pers</option></select><button class="btn" type="submit">Inschrijven</button><div id="nlmsg" style="font-size:14px;color:var(--muted)"></div></form></div></div></div></section>
 <script>
 (function(){var SB="https://blaehmatdmobhwlhqfjo.supabase.co",KEY="sb_publishable_c1ovcVD1pbOGPedrJfDU3g_jtS1bY73";
@@ -152,19 +154,71 @@ fetch(SB+"/rest/v1/acrb_abonnes",{method:"POST",headers:{"apikey":KEY,"Authoriza
 <div class="row" id="dm_shop"><div><label for="dm_ens">Handelsnaam / zaak</label><input id="dm_ens"></div><div><label for="dm_adr">Adres van de zaak</label><input id="dm_adr" placeholder="Rue de Brabant 00, 1030"></div></div>
 <label for="dm_msg">Uw bericht</label><textarea id="dm_msg" required></textarea>
 <div class="acts"><button class="btn" type="submit" id="dm_send">Aanvraag verzenden</button><button class="btn o" type="button" id="dm_cancel">Annuleren</button></div><div class="msg" id="dm_status"></div>
-</form></div><script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script><script>
+<div class="dm_uc"><span>Of met één tik, vanuit uw mailbox:</span> <span id="dm_uc"></span></div>
+</form></div><script>/* Liens « un clic » ACRB (demande de Karim du 23/11/2026) : sur chaque écran où quelqu'un doit agir,
+   un toucher ouvre un courriel (ou un WhatsApp) déjà rédigé pour l'association. Tout ce qu'on sait déjà
+   est rempli ; seul ce qui manque porte la marque « 🔴 À COMPLÉTER ».
+   Adresse et numéro : réglage public acrb_reglages « contact_association » (repli : info@shoppingbrabant.be).
+   Le lien WhatsApp n'apparaît que si un numéro officiel est renseigné.
+   Usage :
+     <span data-unclic="Sujet" data-uc-intro="Phrase" data-uc-champs='[["Nom",""],["Enseigne","X"]]' data-uc-label="Libellé"></span>
+     ou UNCLIC.rendre(element, {sujet, intro, champs, label}) ; UNCLIC.lien(...) rend juste les URL. */
+(function(){
+  if(window.UNCLIC)return;
+  var CFG={email:"info@shoppingbrabant.be",whatsapp:null},MARQUE="🔴 À COMPLÉTER",vus=[];
+  var st=document.createElement("style");
+  st.textContent='.uc{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px 8px;font-size:14px;line-height:1.35}'+
+    '.uc b{font-weight:700}.uc a{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border-radius:999px;text-decoration:none;font-weight:700;font-size:14px;border:1px solid currentColor}'+
+    '.uc a.uc-m{color:#14233c;background:#fff}.uc a.uc-w{color:#fff;background:#1f9d55;border-color:#1f9d55}';
+  (document.head||document.documentElement).appendChild(st);
+  function enc(s){return encodeURIComponent(s).replace(/%20/g,"%20");}
+  function corps(o){
+    var l=[o.salut||"Bonjour,",""];if(o.intro)l.push(o.intro,"");
+    (o.champs||[]).forEach(function(c){var v=c[1];l.push(c[0]+" : "+((v==null||String(v).trim()==="")?MARQUE:v));});
+    if(o.texte){l.push("",o.texte);}
+    l.push("","Page : "+(o.page||location.href.split("#")[0]),"","Merci.");
+    return l.join("\n");
+  }
+  function lien(o){
+    var b=o.corps||corps(o),r={mail:"mailto:"+CFG.email+"?subject="+enc(o.sujet||"Demande à l'association")+"&body="+enc(b),wa:null,corps:b};
+    var n=(CFG.whatsapp||"").replace(/\D/g,"");if(n)r.wa="https://wa.me/"+n+"?text="+enc((o.sujet?o.sujet+"\n\n":"")+b);
+    return r;
+  }
+  function html(o){
+    var r=lien(o);
+    return '<span class="uc">'+(o.label?'<b>'+o.label+'</b>':'')+
+      '<a class="uc-m" href="'+r.mail+'" data-aide="Ouvre votre messagerie avec un courriel déjà rédigé pour l’association. Complétez seulement ce qui est marqué 🔴, puis envoyez.">✉ Courriel</a>'+
+      (r.wa?'<a class="uc-w" href="'+r.wa+'" target="_blank" rel="noopener" data-aide="Ouvre WhatsApp avec le message déjà rédigé pour l’association. Complétez ce qui est marqué 🔴, puis envoyez.">WhatsApp</a>':'')+'</span>';
+  }
+  function rendre(el,o){if(!el)return;el.__uc=o;if(vus.indexOf(el)<0)vus.push(el);el.innerHTML=html(o);}
+  function depuis(el){var ch=[];try{ch=JSON.parse(el.getAttribute("data-uc-champs")||"[]");}catch(e){}
+    return {sujet:el.getAttribute("data-unclic"),intro:el.getAttribute("data-uc-intro")||"",champs:ch,label:el.getAttribute("data-uc-label")||""};}
+  function lier(racine){Array.prototype.forEach.call((racine||document).querySelectorAll("[data-unclic]"),function(el){rendre(el,el.__uc||depuis(el));});}
+  function rafraichir(){vus=vus.filter(function(el){return document.documentElement.contains(el);});vus.forEach(function(el){el.innerHTML=html(el.__uc);});}
+  window.UNCLIC={lien:lien,corps:corps,html:html,rendre:rendre,lier:lier,rafraichir:rafraichir,cfg:CFG,MARQUE:MARQUE};
+  function init(){lier();
+    try{fetch("https://blaehmatdmobhwlhqfjo.supabase.co/rest/v1/acrb_reglages?select=valeur&cle=eq.contact_association",{headers:{apikey:"sb_publishable_c1ovcVD1pbOGPedrJfDU3g_jtS1bY73"}})
+      .then(function(r){return r.ok?r.json():[];}).then(function(r){var v=r&&r[0]&&r[0].valeur;if(v&&typeof v==="object"){if(v.email)CFG.email=v.email;CFG.whatsapp=v.whatsapp||null;rafraichir();}}).catch(function(){});}catch(e){}}
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
+})();
+</script><script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script><script>
 (function(){var SB="https://blaehmatdmobhwlhqfjo.supabase.co",KEY="sb_publishable_c1ovcVD1pbOGPedrJfDU3g_jtS1bY73";
 var LANG="nl";var TPL={"adhesion": "Goedendag,\n\nIk wens lid te worden van ACRB met de formule {formule} voor mijn zaak {enseigne}, {adresse}.\n\nGraag ontvang ik de betalingsmodaliteiten van de bijdrage en de datum van de volgende ledenvergadering.\n\nMet vriendelijke groeten,\n{nom}", "partenariat": "Goedendag,\n\n{organisation} wenst ACRB een partnerschap voor te stellen rond: [onderwerp].\n\nWat wij aanbrengen: [diensten, middelen, zichtbaarheid].\nWat wij van de vereniging verwachten: [doorgeven aan handelaars, deelname aan een evenement, buurtgegevens].\n\nWij stellen een ontmoeting voor in de week van [datum] of een terreinbezoek in de Brabantstraat.\n\nMet vriendelijke groeten,\n{nom}", "projet": "Goedendag,\n\nWij bieden de handelaars van de Brabantstraat de volgende oplossing aan: [naam en beschrijving in twee zinnen].\n\nVoordeel voor de handelaars: [tijdwinst, besparingen, klanten].\nVoorwaarden: [gratis / tarief, proefperiode].\nReferenties: [andere buurten of verenigingen].\n\nWij wensen een voorstelling aan de raad van bestuur of een proef met enkele vrijwillige zaken.\n\nMet vriendelijke groeten,\n{nom}", "administration": "Goedendag,\n\n{organisation} wenst ACRB te ontmoeten over: [dossier, initiatief of project].\n\nGewenste vorm: [vergadering / terreinbezoek / schriftelijke bijdrage].\nBeschikbaarheden: [data].\n\nMet vriendelijke groeten,\n{nom}", "presse": "Goedendag,\n\nIk bereid [artikel / reportage / uitzending] voor over [onderwerp] voor {organisation} en wens met ACRB te spreken: [interview met de voorzitter, buurtcijfers, bezoek aan zaken].\n\nDeadline: [datum].\n\nMet vriendelijke groeten,\n{nom}", "benevolat": "Goedendag,\n\nIk wens mij als vrijwilliger bij ACRB aan te sluiten.\n\nBeschikbaarheden: [avonden / weekends / dagen, frequentie].\nWat ik kan bijdragen: [onthaal op evenementen, terreinbezoeken, communicatie en sociale media, vertaling (talen), fotografie, secretariaat, andere].\nBand met de buurt: [bewoner, handelaar, student, vereniging].\n\nMet vriendelijke groeten,\n{nom}", "stage": "Goedendag,\n\nIk wens een stage te lopen bij ACRB.\n\nInstelling en opleiding: {organisation} — [naam van de opleiding, jaar].\nPeriode en duur: [data, aantal weken, voltijds of deeltijds].\nDomeinen: [communicatie, projectbeheer, commerciële stedenbouw, recht, grafisch ontwerp, andere].\nOvereenkomst: [de instelling levert de stageovereenkomst / te bepalen].\n\nMet vriendelijke groeten,\n{nom}", "implantation": "Goedendag,\n\n{organisation} onderzoekt een vestiging in de Noordwijk / Brabantstraat.\n\nActiviteit: [sector, concept].\nGezochte oppervlakte: [m², gelijkvloers / verdiepingen, opslag].\nTiming: [gewenste opening].\nWat wij van ACRB verwachten: [buurtgegevens, bezoek, beschikbare panden, contact met gemeenten en Gewest, steun].\n\nWij zijn beschikbaar voor een eerste gesprek in de week van [datum].\n\nMet vriendelijke groeten,\n{nom}", "investissement": "Goedendag,\n\n{organisation} wenst te investeren in de Noordwijk / Brabantstraat.\n\nAard van het project: [aankoop of renovatie van gebouwen, overname van handelszaken, mecenaat voor een actie van het plan 2026-2030, andere].\nBeoogd budget: [grootteorde].\nHorizon: [timing].\nWat wij van ACRB verwachten: [gegevens, terreinbezoek, contact met eigenaars en overheden, opvolging].\n\nMet vriendelijke groeten,\n{nom}", "contact": "Goedendag,\n\n[Uw aanvraag in enkele regels.]\n\nMet vriendelijke groeten,\n{nom}"},FORM={"Complète": "Volledig (250 € / jaar)", "Essentielle": "Essentieel (150 € / jaar)", "Membre adhérent": "Toegetreden lid (50 € / jaar)"},OKT="Aanvraag verzonden. Referentie: ",ERRT="Verzenden momenteel niet mogelijk: ";
+var LBL={"adhesion": "Lid worden van ACRB", "partenariat": "Een partnerschap voorstellen", "projet": "Een project of oplossing voorstellen", "administration": "Administratie, kabinet, instelling", "presse": "Pers en media", "benevolat": "Vrijwilliger worden", "stage": "Een stage voorstellen", "implantation": "Vestigingsproject (handelszaak, keten, bedrijf)", "investissement": "Investeren in de buurt (vastgoed, fondsen, mecenaat)", "contact": "Andere aanvraag"};
 var $=function(i){return document.getElementById(i);},edited=false,PRE={};
+function uc(){if(!window.UNCLIC)return;var M=UNCLIC.MARQUE,o=$("dm_objet").value,msg=$("dm_msg").value.replace(/\[([^\]]+)\]/g,function(x,y){return M+" : "+y;});
+  var z=function(v){return v&&v.trim()?v.trim():M;};
+  var c=msg+"\n\n—\nNom : "+z($("dm_nom").value)+($("dm_email").value.trim()?"\nE-mail : "+$("dm_email").value.trim():"")+"\nTéléphone (GSM) : "+z($("dm_tel").value)+"\nPage : "+location.href.split("#")[0];
+  var sj=LBL[o]||"Demande";UNCLIC.rendre($("dm_uc"),{sujet:sj.indexOf("ACRB")>=0?sj:sj+" — ACRB",corps:c});}
 function session(){try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(/^sb-.*-auth-token$/.test(k)){var s=JSON.parse(localStorage.getItem(k));if(s&&s.user)return s.user;}}}catch(e){}return null;}
 function fill(k,v){if(v&&!$(k).value)$(k).value=v;}
 function compose(){var o=$("dm_objet").value,t=TPL[o]||TPL.contact;var m=t.replace("{formule}",FORM[$("dm_formule").value]||$("dm_formule").value).replace("{enseigne}",$("dm_ens").value||"[enseigne]").replace("{adresse}",$("dm_adr").value||"[adresse]").replace(/\{organisation\}/g,$("dm_org").value||"[organisation]").replace("{nom}",$("dm_nom").value||"");
-  $("dm_msg").value=m;$("dm_fwrap").style.display=o==="adhesion"?"":"none";$("dm_shop").style.display=(o==="adhesion")?"":"none";}
+  $("dm_msg").value=m;$("dm_fwrap").style.display=o==="adhesion"?"":"none";$("dm_shop").style.display=(o==="adhesion")?"":"none";uc();}
 window.openDemande=function(objet,opt){opt=opt||{};PRE=opt;var u=session();$("dm_objet").value=objet||"contact";if(opt.formule)$("dm_formule").value=opt.formule;
   fill("dm_nom",opt.nom||(u&&(u.user_metadata&&u.user_metadata.full_name)));fill("dm_email",opt.email||(u&&u.email));fill("dm_org",opt.organisation);fill("dm_ens",opt.enseigne);fill("dm_adr",opt.adresse);
   edited=false;compose();$("dm_status").textContent="";$("dm_status").className="msg";$("demande").classList.add("on");setTimeout(function(){($("dm_nom").value?$("dm_msg"):$("dm_nom")).focus();},50);};
 ["dm_objet","dm_formule","dm_nom","dm_org","dm_ens","dm_adr"].forEach(function(i){$(i).addEventListener("input",function(){if(!edited)compose();});$(i).addEventListener("change",function(){if(!edited||i==="dm_objet"){edited=false;compose();}});});
-$("dm_msg").addEventListener("input",function(){edited=true;});
+$("dm_msg").addEventListener("input",function(){edited=true;uc();});["dm_email","dm_tel","dm_nom","dm_ens","dm_adr","dm_org"].forEach(function(i){$(i).addEventListener("input",uc);});
 $("dm_cancel").addEventListener("click",function(){$("demande").classList.remove("on");});$("demande").addEventListener("click",function(e){if(e.target===this)this.classList.remove("on");});
 $("dmform").addEventListener("submit",function(e){e.preventDefault();var st=$("dm_status");if(!$("dm_nom").value.trim()||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test($("dm_email").value.trim())){st.textContent=ERRT+"nom et e-mail requis.";st.className="msg err";return;}
   var b=$("dm_send");b.disabled=true;var p={objet:$("dm_objet").value,formule:$("dm_objet").value==="adhesion"?$("dm_formule").value:null,nom:$("dm_nom").value.trim(),organisation:$("dm_org").value.trim()||null,email:$("dm_email").value.trim(),tel:$("dm_tel").value.trim()||null,enseigne:$("dm_ens").value.trim()||null,adresse:$("dm_adr").value.trim()||null,message:$("dm_msg").value.trim(),langue:"nl",source:"acrb",user_agent:navigator.userAgent.slice(0,200)};
