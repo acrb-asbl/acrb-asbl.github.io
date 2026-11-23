@@ -864,7 +864,7 @@ if(!I18N[l0])l0="fr";L_=l0;T=I18N[L_];applyLang();render();walk();initMap();rout
 (function(){
   if(window.REVEND)return;
   var URL_SB=(typeof SB!=="undefined"?SB:"https://movoukcjirtjnqjgwndw.supabase.co"),CLE=(typeof KEY!=="undefined"?KEY:"sb_publishable_jVXX4nAfC5F0wzj_FedaAQ_WhzzN_O6");
-  var JETON="sb-"+URL_SB.replace(/^https:\/\//,"").split(".")[0]+"-auth-token",ATTENTE="acrb_rev_attente";
+  var JETON="sb-"+URL_SB.replace(/^https:\/\//,"").split(".")[0]+"-auth-token",ATTENTE="acrb_rev_attente",APPAREIL="acrb_appareil",DELAI=10*60*1000,PROTEGE=false; /* 23/11/2026 : fenêtre du code protégée, état gardé, appareil mémorisé */
   var CANAL={sms:false,whatsapp:false,email:true};
   var TX={
     fr:{t:"Gérer cette fiche",c1:"C’est mon commerce, je le gère",c1s:"Espace commerçant tout de suite, fiche publique sous votre contrôle après vérification.",
@@ -873,7 +873,7 @@ if(!I18N[l0])l0="fr";L_=l0;T=I18N[L_];applyLang();render();walk();initMap();rout
       gsm:"GSM direct",gsm_h:"Obligatoire : le numéro du gérant ou du responsable qui décide pour la société.",email:"E-mail",
       email_code:"E-mail (pour recevoir votre code)",email_h:"Vous y recevez un code à 6 chiffres.",email_h2:"Pour votre espace commerçant.",
       afficher:"Afficher mon nom sur la fiche publique",afficher_h:"Par défaut, votre nom reste caché.",cible:"Quel nom retirer ?",note:"Ce qui ne va pas (facultatif)",
-      envoyer:"Recevoir mon code",code_t:"Entrez le code reçu",code_h:"Envoyé à {d}.",code_h_mail:" Pensez aux indésirables.",valider:"Valider",renvoyer:"Renvoyer le code",autre:"Modifier",
+      envoyer:"Recevoir mon code",code_t:"Entrez le code reçu",code_h:"Code envoyé à {h} au {d}.",deja:"J’ai déjà un code",limite:"Trop de codes demandés pour ce numéro aujourd’hui. Réessayez demain ou écrivez à info@shoppingbrabant.be.",code_h_mail:" Pensez aux indésirables.",valider:"Valider",renvoyer:"Renvoyer le code",autre:"Modifier",
       gsm_ko:"Ce numéro ne ressemble pas à un GSM belge (04xx xx xx xx). Vérifiez-le.",gsm_ok:"Numéro reconnu",req:"Complétez les champs obligatoires.",choisir:"Choisissez votre nom ou indiquez-le.",
       email_ko:"Adresse e-mail incomplète.",code_ko:"Code incorrect ou expiré.",envoi_ko:"Le SMS n’a pas pu partir. Vérifiez le numéro, puis réessayez dans une minute ; sinon, écrivez à info@shoppingbrabant.be.",sms_repli:"Le SMS n’est pas encore disponible : code envoyé par e-mail. Votre GSM est enregistré.",
       ouvrir:"Ouvrir mon espace commerçant",fermer:"Fermer",pas:"Étape {n} sur 3",retour:"‹ Retour",envoi:"Envoi…",verif:"Vérification…"},
@@ -883,7 +883,7 @@ if(!I18N[l0])l0="fr";L_=l0;T=I18N[L_];applyLang();render();walk();initMap();rout
       gsm:"Rechtstreekse gsm",gsm_h:"Verplicht: het nummer van de zaakvoerder of verantwoordelijke die beslist voor de vennootschap.",email:"E-mail",
       email_code:"E-mail (om uw code te ontvangen)",email_h:"U ontvangt een code van 6 cijfers.",email_h2:"Voor uw handelaarsruimte.",
       afficher:"Mijn naam op de openbare fiche tonen",afficher_h:"Standaard blijft uw naam verborgen.",cible:"Welke naam verwijderen?",note:"Wat klopt er niet (optioneel)",
-      envoyer:"Mijn code ontvangen",code_t:"Voer de ontvangen code in",code_h:"Verzonden naar {d}.",code_h_mail:" Kijk ook bij ongewenste e-mail.",valider:"Bevestigen",renvoyer:"Code opnieuw sturen",autre:"Wijzigen",
+      envoyer:"Mijn code ontvangen",code_t:"Voer de ontvangen code in",code_h:"Code verzonden om {h} naar {d}.",deja:"Ik heb al een code",limite:"Te veel codes gevraagd voor dit nummer vandaag. Probeer morgen opnieuw of mail info@shoppingbrabant.be.",code_h_mail:" Kijk ook bij ongewenste e-mail.",valider:"Bevestigen",renvoyer:"Code opnieuw sturen",autre:"Wijzigen",
       gsm_ko:"Dit lijkt geen Belgisch gsm-nummer (04xx xx xx xx). Controleer het.",gsm_ok:"Nummer herkend",req:"Vul de verplichte velden in.",choisir:"Kies uw naam of vul hem in.",
       email_ko:"Onvolledig e-mailadres.",code_ko:"Onjuiste of verlopen code.",envoi_ko:"De code kon niet vertrekken: probeer over een minuut opnieuw.",sms_repli:"Sms is nog niet beschikbaar: code per e-mail verzonden. Uw gsm is geregistreerd.",
       ouvrir:"Mijn handelaarsruimte openen",fermer:"Sluiten",pas:"Stap {n} van 3",retour:"‹ Terug",envoi:"Verzenden…",verif:"Controleren…"},
@@ -893,7 +893,7 @@ if(!I18N[l0])l0="fr";L_=l0;T=I18N[L_];applyLang();render();walk();initMap();rout
       gsm:"Direct mobile",gsm_h:"Required: the number of the manager who decides for the company.",email:"Email",
       email_code:"Email (to receive your code)",email_h:"You will receive a 6-digit code.",email_h2:"For your shop space.",
       afficher:"Show my name on the public listing",afficher_h:"By default, your name stays hidden.",cible:"Which name to remove?",note:"What is wrong (optional)",
-      envoyer:"Get my code",code_t:"Enter the code you received",code_h:"Sent to {d}.",code_h_mail:" Check your spam folder too.",valider:"Confirm",renvoyer:"Resend the code",autre:"Change",
+      envoyer:"Get my code",code_t:"Enter the code you received",code_h:"Code sent at {h} to {d}.",deja:"I already have a code",limite:"Too many codes requested for this number today. Try again tomorrow or email info@shoppingbrabant.be.",code_h_mail:" Check your spam folder too.",valider:"Confirm",renvoyer:"Resend the code",autre:"Change",
       gsm_ko:"This does not look like a Belgian mobile number (04xx xx xx xx). Please check.",gsm_ok:"Number recognised",req:"Please fill in the required fields.",choisir:"Pick your name or type it.",
       email_ko:"Incomplete email address.",code_ko:"Wrong or expired code.",envoi_ko:"The code could not be sent: try again in a minute.",sms_repli:"SMS is not available yet: code sent by email. Your mobile is recorded.",
       ouvrir:"Open my shop space",fermer:"Close",pas:"Step {n} of 3",retour:"‹ Back",envoi:"Sending…",verif:"Checking…"}};
@@ -925,10 +925,10 @@ if(!I18N[l0])l0="fr";L_=l0;T=I18N[L_];applyLang();render();walk();initMap();rout
   document.head.appendChild(css);
   function shop(id){return (typeof BY!=="undefined"&&BY[id])||null;}
   function courant(){var m=/^#c-(\d+)/.exec(location.hash||"");return m?m[1]:null;}
-  function fermer(){var o=$("rv_ov");if(o)o.remove();document.documentElement.style.overflow="";}
+  function fermer(){PROTEGE=false;var o=$("rv_ov");if(o)o.remove();document.documentElement.style.overflow="";}
   function cadre(n,corps){var t=L();fermer();var o=document.createElement("div");o.className="rv-ov";o.id="rv_ov";o.setAttribute("role","dialog");o.setAttribute("aria-modal","true");o.setAttribute("aria-label",t.t);
     o.innerHTML='<div class="rv-sh"><div class="rv-hd"><div><b>'+e(t.t)+'</b><small>'+e(st.s?st.s.n:"")+(n?" · "+e(t.pas.replace("{n}",n)):"")+'</small></div><button class="rv-x" type="button" aria-label="'+e(t.fermer)+'">×</button></div><div id="rv_c">'+corps+'</div></div>';
-    o.addEventListener("click",function(ev){if(ev.target===o||ev.target.closest(".rv-x"))fermer();});document.body.appendChild(o);document.documentElement.style.overflow="hidden";return o;}
+    o.addEventListener("click",function(ev){var x=ev.target.closest(".rv-x");if(ev.target!==o&&!x)return;if(!PROTEGE){fermer();return;}if(x)abandon();});document.body.appendChild(o);document.documentElement.style.overflow="hidden";return o;}
   /* étape 1 : le choix */
   function etape1(){var t=L();var o=cadre(1,
       '<button class="rv-ch" type="button" data-t="revendiquer" data-aide="Vous gérez ce commerce : votre espace commerçant s’ouvre tout de suite ; la fiche publique passe sous votre contrôle après 48 h (72 h si votre nom n’est pas au registre), sauf contestation."><b>'+e(t.c1)+'</b><span>'+e(t.c1s)+'</span></button>'+
@@ -950,13 +950,13 @@ if(!I18N[l0])l0="fr";L_=l0;T=I18N[L_];applyLang();render();walk();initMap();rout
     h+='<label>'+e(mailCode?t.email_code:t.email)+(mailCode?" *":"")+'<input id="rv_email" type="email" inputmode="email" autocomplete="email" value="'+e(st.email||"")+'" data-aide="'+(mailCode?"Vous y recevez un code à 6 chiffres pour prouver que c’est bien vous.":"L’adresse de votre espace commerçant.")+'"><span class="rv-h">'+e(mailCode?t.email_h:t.email_h2)+'</span></label>';
     if(rev)h+='<label class="rv-ck"><input type="checkbox" id="rv_aff"'+(st.afficher?" checked":"")+' data-aide="Cochez seulement si vous voulez que les clients voient votre nom sur la fiche."><span>'+e(t.afficher)+'<br><span class="rv-h">'+e(t.afficher_h)+'</span></span></label>';
     if(st.type==="mauvais_magasin")h+='<label>'+e(t.note)+'<textarea id="rv_note" rows="2" data-aide="Par exemple : la boutique a changé de nom ou d’adresse.">'+e(st.note||"")+'</textarea></label>';
-    h+='<div class="rv-msg" id="rv_msg" role="status"></div><button class="rv-go" type="submit">'+e(t.envoyer)+'</button><button class="rv-lk" type="button" id="rv_back">'+e(t.retour)+'</button></form>';
+    var a2=attente();h+='<div class="rv-msg" id="rv_msg" role="status"></div><button class="rv-go" type="submit">'+e(t.envoyer)+'</button>'+(a2?'<button class="rv-lk" type="button" id="rv_deja">'+e(t.deja)+'</button>':'')+'<button class="rv-lk" type="button" id="rv_back">'+e(t.retour)+'</button></form>';
     var o=cadre(2,h);
     Array.prototype.forEach.call(o.querySelectorAll('input[name=rv_qui]'),function(r){r.onchange=function(){lire();st.k=r.value==="autre"?"autre":+r.value;var need=st.k==="autre";if(need!==!!$("rv_nom"))etape2();};});
     var g=$("rv_gsm");function chk(){if(!g)return;var n=gsmNorm(g.value),el=$("rv_gsm_h");if(!g.value.trim()){el.className="rv-h";el.textContent=t.gsm_h;return;}
       if(gsmMobileBE(n)){el.className="rv-h rv-ok";el.textContent="✓ "+t.gsm_ok+" : "+n;}else{el.className="rv-h rv-ko";el.textContent=t.gsm_ko;}}
     if(g){g.addEventListener("input",chk);g.addEventListener("blur",chk);chk();}
-    $("rv_back").onclick=etape1;
+    $("rv_back").onclick=etape1;if($("rv_deja"))$("rv_deja").onclick=function(){reprendre(attente());};
     function lire(){if($("rv_prenom"))st.prenom=$("rv_prenom").value.trim();if($("rv_nom"))st.nom=$("rv_nom").value.trim();if(g)st.gsm=g.value.trim();st.email=$("rv_email").value.trim();
       if($("rv_aff"))st.afficher=$("rv_aff").checked;if($("rv_note"))st.note=$("rv_note").value.trim();}
     $("rv_f").addEventListener("submit",function(ev){ev.preventDefault();var m=$("rv_msg");lire();m.className="rv-msg rv-ko";
@@ -971,25 +971,30 @@ if(!I18N[l0])l0="fr";L_=l0;T=I18N[L_];applyLang();render();walk();initMap();rout
   /* envoi du code : module interchangeable */
   var ENVOI={
     email:function(){return Promise.reject(new Error("sms"));}, /* 23/11/2026 : plus aucun courriel d'authentification Supabase */
-    sms:function(){return fetch(URL_SB+"/functions/v1/acrb-verif",{method:"POST",headers:H({"Authorization":"Bearer "+CLE}),body:JSON.stringify({action:"start",gsm:gsmNorm(st.gsm)})})
-      .then(function(r){return r.json().catch(function(){return {};}).then(function(j){if(j&&j.ok)return;var x=new Error((j&&j.erreur)||"sms");x.repli=!j||j.erreur==="sms_indisponible"||r.status===404;throw x;});});}};
+    sms:function(){return fetch(URL_SB+"/functions/v1/acrb-verif",{method:"POST",headers:H({"Authorization":"Bearer "+CLE}),body:JSON.stringify({action:"start",gsm:gsmNorm(st.gsm),appareil:appareil(gsmNorm(st.gsm))})})
+      .then(function(r){return r.json().catch(function(){return {};}).then(function(j){if(j&&j.ok)return j;var x=new Error((j&&j.erreur)||"sms");x.repli=!j||j.erreur==="sms_indisponible"||r.status===404;throw x;});});}};
   var VERIF={
     email:function(){return Promise.reject(new Error("code"));},
-    sms:function(code){return fetch(URL_SB+"/functions/v1/acrb-verif",{method:"POST",headers:H({"Authorization":"Bearer "+CLE}),body:JSON.stringify({action:"check",gsm:gsmNorm(st.gsm),code:code})}).then(function(r){return r.json().then(function(j){if(!r.ok||!j.jeton)throw new Error("code");return {jeton:j.jeton};});});}};
+    sms:function(code){return fetch(URL_SB+"/functions/v1/acrb-verif",{method:"POST",headers:H({"Authorization":"Bearer "+CLE}),body:JSON.stringify({action:"check",gsm:gsmNorm(st.gsm),code:code})}).then(function(r){return r.json().then(function(j){if(!r.ok||!j.jeton)throw new Error("code");try{if(j.appareil)localStorage.setItem(APPAREIL,JSON.stringify({gsm:gsmNorm(st.gsm),jeton:j.appareil,le:Date.now()}));}catch(x){}return {jeton:j.jeton};});});}};
   function envoyerCode(m){var t=L(),f=(window.REVEND_ENVOI&&window.REVEND_ENVOI[st.canal])||ENVOI[st.canal];m.className="rv-msg";m.textContent=t.envoi;
-    try{localStorage.setItem(ATTENTE,JSON.stringify({id:st.s.id,type:st.type,prenom:st.prenom,nom:st.nom,gsm:st.gsm,email:st.email,bce_index:st.bce_index,cible:st.cible,afficher:!!st.afficher,note:st.note||null,le:Date.now()}));}catch(x){}
-    Promise.resolve().then(function(){return f();}).then(function(){etape3();}).catch(function(x){
+    var a=attente();if(a&&gsmNorm(a.gsm)===gsmNorm(st.gsm)&&!st.forcer){st.envoye=a.envoye;garderAttente();etape3();return;} /* jamais deux SMS inutiles */
+    st.forcer=false;
+    Promise.resolve().then(function(){return f();}).then(function(j){j=j||{};
+      if(j.jeton){/* appareil déjà vérifié : pas de SMS */return soumettre({jeton:j.jeton}).then(fini);}
+      st.envoye=j.envoye_le?Date.parse(j.envoye_le):Date.now();garderAttente();etape3();}).catch(function(x){
+      if(x&&/limite|plafond/.test(x.message||"")){m.className="rv-msg rv-ko";m.textContent=t.limite;return;}
       /* plus de repli vers un courriel Supabase : message clair et contact de l'association */
       m.className="rv-msg rv-ko";m.textContent=t.envoi_ko;});}
+  function garderAttente(){try{localStorage.setItem(ATTENTE,JSON.stringify({id:st.s.id,type:st.type,prenom:st.prenom,nom:st.nom,gsm:st.gsm,email:st.email,bce_index:st.bce_index,cible:st.cible,afficher:!!st.afficher,note:st.note||null,envoye:st.envoye||Date.now()}));}catch(x){}}
   /* étape 3 : le code */
-  function etape3(){var t=L(),dest=st.canal==="email"?st.email:gsmNorm(st.gsm);
+  function etape3(){var t=L(),dest=st.canal==="email"?st.email:gsmNorm(st.gsm);st.envoye=st.envoye||Date.now();
     cadre(3,(st.repli?'<p class="rv-h rv-ok" style="margin:0 0 8px">'+e(t.sms_repli)+'</p>':'')+'<form class="rv-f" id="rv_v" novalidate><label>'+e(t.code_t)+'<input id="rv_code" class="rv-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" data-aide="Les chiffres reçus. Le code expire rapidement : demandez-en un autre si besoin."></label>'+
-      '<span class="rv-h">'+e(t.code_h.replace("{d}",dest)+(st.canal==="email"?t.code_h_mail:""))+'</span><div class="rv-msg" id="rv_msg" role="status"></div><button class="rv-go" type="submit">'+e(t.valider)+'</button>'+
+      '<span class="rv-h">'+e(t.code_h.replace("{h}",hm(st.envoye)).replace("{d}",masque(dest)))+'</span><div class="rv-msg" id="rv_msg" role="status"></div><button class="rv-go" type="submit">'+e(t.valider)+'</button>'+
       '<div style="display:flex;justify-content:space-between"><button class="rv-lk" type="button" id="rv_re" disabled>'+e(t.renvoyer)+'</button><button class="rv-lk" type="button" id="rv_chg">'+e(t.autre)+'</button></div></form>');
-    var c=$("rv_code");c.focus();var go=false;
+    PROTEGE=true;var c=$("rv_code");c.focus();var go=false;
     c.addEventListener("input",function(){c.value=c.value.replace(/\D/g,"").slice(0,6);if(c.value.length===6&&!go)valider();});
-    setTimeout(function(){var b=$("rv_re");if(b)b.disabled=false;},30000);
-    $("rv_re").onclick=function(){envoyerCode($("rv_msg"));};$("rv_chg").onclick=etape2;
+    (function tic(){var b=$("rv_re");if(!b)return;var r=DELAI-(Date.now()-st.envoye);if(r<=0){b.disabled=false;b.textContent=t.renvoyer;return;}b.disabled=true;b.textContent=t.renvoyer+" ("+Math.ceil(r/60000)+" min)";setTimeout(tic,15000);})();
+    $("rv_re").onclick=function(){st.forcer=true;envoyerCode($("rv_msg"));};$("rv_chg").onclick=etape2;
     $("rv_v").addEventListener("submit",function(ev){ev.preventDefault();valider();});
     function valider(){var m=$("rv_msg"),v=(window.REVEND_VERIF&&window.REVEND_VERIF[st.canal])||VERIF[st.canal];if(c.value.length<4){m.className="rv-msg rv-ko";m.textContent=t.code_ko;return;}
       go=true;m.className="rv-msg";m.textContent=t.verif;v(c.value).then(soumettre).then(fini).catch(function(x){go=false;m.className="rv-msg rv-ko";m.textContent=x&&x.message&&x.message!=="code"?x.message:t.code_ko;});}}
@@ -1016,10 +1021,21 @@ if(!I18N[l0])l0="fr";L_=l0;T=I18N[L_];applyLang();render();walk();initMap();rout
       if(typeof render==="function")render();if(courant()&&typeof route==="function")route();}).catch(function(){});}
   fetch(URL_SB+"/rest/v1/acrb_reglages?select=valeur&cle=eq.verif_canal",{headers:H({"Authorization":"Bearer "+CLE})}).then(function(r){return r.ok?r.json():[];}).then(function(r){var v=r&&r[0]&&r[0].valeur;if(v&&typeof v==="object")CANAL={sms:!!v.sms,whatsapp:!!v.whatsapp,email:v.email!==false};}).catch(function(){});
   document.addEventListener("click",function(ev){var b=ev.target.closest&&ev.target.closest("[data-rev]");if(!b)return;ev.preventDefault();var id=b.getAttribute("data-rev")||courant(),s=shop(id);if(!s)return;
+    var a0=attente();if(a0&&String(a0.id)===String(id)){reprendre(a0);return;}
     st={s:s};var i=b.getAttribute("data-rev-i");if(i!=null){var ps=(s.p||[]).filter(function(p){return p.i!=null||p.n;});ps.forEach(function(p,k){if(String(p.i)===i)st.k=k;});}etape1();});
-  document.addEventListener("keydown",function(ev){if(ev.key==="Escape")fermer();});
+  document.addEventListener("keydown",function(ev){if(ev.key==="Escape"&&!PROTEGE)fermer();});
+  /* pendant l'étape du code : fermeture seulement par la croix, avec confirmation (pas de fenêtre système) */
+  function abandon(){var c=$("rv_c");if(!c||$("rv_ab"))return;c.insertAdjacentHTML("afterbegin",'<div id="rv_ab" class="rv-msg rv-ko" role="alertdialog" style="display:block;margin:0 0 10px"><b>Abandonner ?</b> Le code reste valable 10 min : en rouvrant cette fiche, vous revenez ici.<div style="display:flex;gap:8px;margin-top:8px"><button type="button" class="rv-lk" id="rv_ab_non">Continuer</button><button type="button" class="rv-lk" id="rv_ab_oui">Abandonner</button></div></div>');
+    $("rv_ab_non").onclick=function(){var a=$("rv_ab");if(a)a.remove();var k=$("rv_code");if(k)k.focus();};$("rv_ab_oui").onclick=fermer;}
+  function attente(){try{var a=JSON.parse(localStorage.getItem(ATTENTE)||"null");return a&&a.envoye&&Date.now()-a.envoye<DELAI?a:null;}catch(x){return null;}}
+  function appareil(g){try{var a=JSON.parse(localStorage.getItem(APPAREIL)||"null");return a&&a.gsm===g&&a.jeton?a.jeton:null;}catch(x){return null;}}
+  function hm(ms){var d=new Date(ms);return ("0"+d.getHours()).slice(-2)+" h "+("0"+d.getMinutes()).slice(-2);}
+  function masque(g){g=String(g||"");return g.slice(0,3)+"…"+g.slice(-2);}
+  function reprendre(a){var s=shop(a.id)||{id:a.id,n:"",p:[]};st={s:s,type:a.type,prenom:a.prenom,nom:a.nom,gsm:a.gsm,email:a.email,bce_index:a.bce_index,cible:a.cible,afficher:a.afficher,note:a.note,canal:"sms",envoye:a.envoye};etape3();}
+  function reprise(){var a=attente();if(!a)return;if(String(courant&&courant()||"")===String(a.id))reprendre(a);}
+  window.addEventListener("hashchange",function(){if(!$("rv_ov"))reprise();});
   window.REVEND={ouvrir:function(id){var s=shop(id);if(!s)return;st={s:s};etape1();},fermer:fermer,afficher:afficher,_gsm:gsmNorm,_st:function(){return st;},_canal:function(c){if(c)CANAL=c;return CANAL;}};
-  function go(){retourLien();afficher();}
+  function go(){retourLien();afficher();setTimeout(reprise,400);}
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
 })();
 </script><script>
