@@ -726,7 +726,7 @@ err_req:"ایک لازمی خانہ (* والا) خالی ہے۔",err_photo:"ا�
   var initial="fr";
   try{initial=new URLSearchParams(location.search).get("lang")||localStorage.getItem("acrb_lang")||"fr";}catch(e){}
   // Compte Google déjà connecté (espace privé) : nom et adresse pré-remplis
-  try{var sk=Object.keys(localStorage).filter(function(k){return /^sb-.*-auth-token$/.test(k);})[0];if(sk){var ss=JSON.parse(localStorage.getItem(sk)||"{}"),su=ss&&ss.user;if(su){var pe=document.getElementById("p_email"),pn=document.getElementById("p_nom");if(pe&&!pe.value&&su.email)pe.value=su.email;if(pn&&!pn.value&&su.user_metadata&&su.user_metadata.full_name)pn.value=su.user_metadata.full_name;}}}catch(e){}
+  try{var sk=Object.keys(localStorage).filter(function(k){return k==="sb-movoukcjirtjnqjgwndw-auth-token";})[0];if(sk){var ss=JSON.parse(localStorage.getItem(sk)||"{}"),su=ss&&ss.user;if(su){var pe=document.getElementById("p_email"),pn=document.getElementById("p_nom");if(pe&&!pe.value&&su.email)pe.value=su.email;if(pn&&!pn.value&&su.user_metadata&&su.user_metadata.full_name)pn.value=su.user_metadata.full_name;}}}catch(e){}
   setLang(initial);
   addItem(socBox,"t_soc"); addItem(magBox,"t_mag");
 
@@ -767,6 +767,9 @@ err_req:"ایک لازمی خانہ (* والا) خالی ہے۔",err_photo:"ا�
     ev.preventDefault();
     msg.className="msg";
     if(document.getElementById("website_url").value) return;
+    /* 23/11/2026 : une adresse e-mail fausse ou dont le domaine ne reçoit pas de courriel bloque l'envoi (avant : simple avertissement) */
+    var mbad=[].slice.call(f.querySelectorAll('input[type=email]')).filter(function(x){var v=(x.value||"").trim();return v&&(!window.okMail||!okMail(v)||x.dataset.mx==="ko");})[0];
+    if(mbad){if(window.check)check(mbad);mbad.scrollIntoView({block:"center"});mbad.focus();msg.className="msg err";msg.textContent=mbad.dataset.mx==="ko"?"Cette adresse e-mail ne peut pas recevoir de courriel (domaine inconnu). Vérifiez l’orthographe.":"Adresse e-mail incomplète ou mal écrite.";return;}
     var bad=f.querySelector(":invalid");
     if(bad){
       var d=bad.closest("details");if(d)d.open=true;
@@ -901,12 +904,18 @@ if(!f)return;
 
 /* ——— 1. Contrôles non bloquants ——— */
 function okGsm(v){var d=dg(v);if(d.indexOf("0032")===0)d=d.slice(2);if(d.indexOf("32")===0)d="0"+d.slice(2);return /^04[5-9]\d{7}$/.test(d);}
-function okMail(v){return /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(String(v).trim());}
+function okMail(v){v=String(v).trim();return /^[a-z0-9._%+'-]+@[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}$/i.test(v)&&!/\.\.|@\.|\.@/.test(v)&&!/@(gmal|gmial|gnail|gmai|hotmial|hotmal|yaho|outlok)\./i.test(v)&&!/@gmail\.(co|cm|om|con|fr|be)$/i.test(v);}
+window.okMail=okMail;
+/* le domaine reçoit-il des courriels ? (DNS public, sans donnée personnelle hors du domaine) */
+function mx(el){var v=(el.value||"").trim();if(!okMail(v)){delete el.dataset.mx;return;}var d=v.split("@")[1].toLowerCase();if(el.dataset.mxd===d)return;el.dataset.mxd=d;
+  fetch("https://dns.google/resolve?name="+encodeURIComponent(d)+"&type=MX").then(function(r){return r.json();}).then(function(j){el.dataset.mx=(j&&j.Status===0&&j.Answer&&j.Answer.length)?"ok":"ko";
+    if(el.dataset.mx==="ko"){var w=el.nextElementSibling&&el.nextElementSibling.classList.contains("warn")?el.nextElementSibling:null;if(!w){w=document.createElement("p");w.className="warn";w.setAttribute("role","status");el.insertAdjacentElement("afterend",w);}w.textContent="Ce domaine ne reçoit pas de courriel : vérifiez l’orthographe.";}}).catch(function(){});}
+document.addEventListener("focusout",function(e){if(e.target&&e.target.type==="email")mx(e.target);});
 function okBce(v){var d=dg(v);if(d.length===9)d="0"+d;if(d.length!==10)return false;return 97-(parseInt(d.slice(0,8),10)%97)===parseInt(d.slice(8),10);}
 function okNum(v){return /^\d{1,4}\s*[a-zA-Z]?(\s*[-\/]\s*\d{1,4}\s*[a-zA-Z]?)?$/.test(String(v).trim());}
 function rule(el){if(!el||!el.tagName||el.readOnly)return null;if(el.id==="p_tel"||el.dataset.chk==="gsm")return ["w_gsm",okGsm];if(el.type==="email")return ["w_email",okMail];
   if(el.dataset.k==="bce")return ["w_bce",okBce];if(el.dataset.k==="numero")return ["w_num",okNum];return null;}
-function check(el){var r=rule(el);if(!r)return;var v=(el.value||"").trim(),w=el.nextElementSibling&&el.nextElementSibling.classList.contains("warn")?el.nextElementSibling:null;
+window.check=check;function check(el){var r=rule(el);if(!r)return;var v=(el.value||"").trim(),w=el.nextElementSibling&&el.nextElementSibling.classList.contains("warn")?el.nextElementSibling:null;
   if(v&&!r[1](v)){if(!w){w=document.createElement("p");w.className="warn";w.setAttribute("role","status");el.insertAdjacentElement("afterend",w);}w.dataset.t=r[0];w.textContent=L(r[0]);}
   else if(w)w.remove();}
 document.addEventListener("focusout",function(e){check(e.target);});
@@ -970,7 +979,7 @@ restore();
 
 /* ——— 5. Mode « Ma fiche » ——— */
 var mf=document.getElementById("mf"),login=document.getElementById("loginhint"),S=null,DATA=[],CUR=null,ORIG=null;
-function sess(){var k,s;try{k=Object.keys(localStorage).filter(function(x){return /^sb-.*-auth-token$/.test(x);})[0];s=k&&JSON.parse(localStorage.getItem(k)||"null");}catch(e){s=null;}
+function sess(){var k,s;try{k=Object.keys(localStorage).filter(function(x){return x==="sb-movoukcjirtjnqjgwndw-auth-token";})[0];s=k&&JSON.parse(localStorage.getItem(k)||"null");}catch(e){s=null;}
   if(s&&s.currentSession)s=s.currentSession;
   if(!s||!s.access_token)return Promise.resolve(null);
   if((s.expires_at||0)*1000>Date.now()+60000)return Promise.resolve(s);
