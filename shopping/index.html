@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="fr">
 <head>
+<script>(function(){var K=["classique","vitrine","souk","nuit"],q=null,t=null;try{q=new URLSearchParams(location.search).get("theme");}catch(e){}
+if(q&&K.indexOf(q)>=0){document.documentElement.setAttribute("data-theme",q);document.documentElement.setAttribute("data-apercu",q);return;}
+try{t=localStorage.getItem("sb_theme");}catch(e){}if(t&&K.indexOf(t)>=0)document.documentElement.setAttribute("data-theme",t);
+fetch("https://blaehmatdmobhwlhqfjo.supabase.co/rest/v1/acrb_reglages?select=valeur&cle=eq.annuaire_theme",{headers:{apikey:"sb_publishable_c1ovcVD1pbOGPedrJfDU3g_jtS1bY73"}}).then(function(r){return r.json();}).then(function(r){var v=r&&r[0]&&r[0].valeur;if(typeof v==="string"&&K.indexOf(v)>=0){document.documentElement.setAttribute("data-theme",v);try{localStorage.setItem("sb_theme",v);}catch(e){}}}).catch(function(){});})();</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Shopping Brabant — Les commerces de la rue de Brabant, Bruxelles</title>
@@ -181,7 +185,63 @@ footer{padding-block:24px 60px;font-size:13px;color:var(--muted);display:grid;ga
 .note{font-size:13px;color:var(--muted)}.box ul{margin:0;padding-left:18px}.box li{margin:3px 0}
 #fmap{height:220px;overflow:hidden;border:1px solid var(--line)}
 .rep{display:none;gap:10px}.rep.open{display:grid}.rep select,.rep textarea,.rep input{width:100%;padding:10px 12px;border:1px solid var(--line);font:inherit;background:#fff}.rep textarea{min-height:70px}
+
+.apercu{position:sticky;top:0;z-index:60;background:#c99a3a;color:#111;font:600 14px/1.3 var(--body);padding:8px 16px;text-align:center}.apercu a{color:#111;font-weight:800;margin-left:8px}
+/* ---------- VITRINE : grande place de marché ---------- */
+html[data-theme=vitrine]{--bg:#fff;--bg2:#f5f6f8;--fg:#14171f;--muted:#5d6470;--line:#e7e9ee;--accent:#e4572e;--accent-d:#c2431f;--ink:#14171f;--display:"Inter","Segoe UI",Arial,sans-serif;--body:"Inter","Segoe UI",Arial,sans-serif;--r:12px}
+html[data-theme=vitrine] nav{border-bottom:1px solid var(--line);box-shadow:0 2px 12px rgba(20,23,31,.06)}
+html[data-theme=vitrine] h1,html[data-theme=vitrine] h2,html[data-theme=vitrine] h3,html[data-theme=vitrine] .card h4{text-transform:none;letter-spacing:-.01em}
+html[data-theme=vitrine] .grid{grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
+html[data-theme=vitrine] .card{grid-template-columns:1fr;padding:0;border:0;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(20,23,31,.08),0 6px 20px rgba(20,23,31,.06);transition:transform .15s,box-shadow .15s}
+html[data-theme=vitrine] .card:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(20,23,31,.14)}
+html[data-theme=vitrine] .av{width:100%;height:132px;font:800 56px var(--display);background:linear-gradient(135deg,var(--c),#14171f 160%)}
+html[data-theme=vitrine] .av b{left:auto;right:8px;bottom:8px;border-radius:999px;padding:2px 9px;background:rgba(255,255,255,.92);color:#14171f}
+html[data-theme=vitrine] .card>div:last-child{padding:10px 12px 14px}
+html[data-theme=vitrine] .card h4{font:700 15.5px/1.25 var(--display)}
+html[data-theme=vitrine] .card .cat{font:600 12px var(--display);text-transform:none;letter-spacing:0}
+html[data-theme=vitrine] .tile,html[data-theme=vitrine] .btn,html[data-theme=vitrine] .box,html[data-theme=vitrine] .pcard{border-radius:12px}
+html[data-theme=vitrine] .btn.p{background:var(--accent);border-color:var(--accent)}
+html[data-theme=vitrine] .sub2{background:#14171f}
+@media(max-width:560px){html[data-theme=vitrine] .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}html[data-theme=vitrine] .av{height:104px;font-size:44px}}
+/* ---------- SOUK : chaleureux ---------- */
+html[data-theme=souk]{--bg:#fbf6ee;--bg2:#f3e9da;--card:#fffdf8;--fg:#2b1d14;--muted:#7a6656;--line:#e8dccb;--accent:#b5532f;--accent-d:#913f22;--ink:#2b1d14;--green:#4f7a3a;--display:"DM Serif Display",Georgia,serif;--body:"Inter","Segoe UI",Arial,sans-serif;--r:10px}
+html[data-theme=souk] body{background:var(--bg)}
+html[data-theme=souk] nav,html[data-theme=souk] .hero{background:var(--bg)}
+html[data-theme=souk] h1,html[data-theme=souk] h2,html[data-theme=souk] h3,html[data-theme=souk] .card h4{text-transform:none;font-weight:400}
+html[data-theme=souk] .grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+html[data-theme=souk] .card{grid-template-columns:76px 1fr;border-radius:14px;border-color:var(--line);background:var(--card);padding:12px}
+html[data-theme=souk] .av{width:76px;height:76px;border-radius:50%;font:400 32px var(--display)}
+html[data-theme=souk] .av b{border-radius:0 0 50% 50%}
+html[data-theme=souk] .card h4{font:400 20px/1.1 var(--display)}
+html[data-theme=souk] .card .cat{text-transform:none;letter-spacing:0;font:600 13px var(--body)}
+html[data-theme=souk] .tile,html[data-theme=souk] .btn,html[data-theme=souk] .box,html[data-theme=souk] .pcard{border-radius:10px}
+html[data-theme=souk] .btn.p{background:var(--accent);border-color:var(--accent)}
+html[data-theme=souk] .sub2{background:#3a2719}
+html[data-theme=souk] .filters,html[data-theme=souk] nav{background:var(--bg)}
+/* ---------- NUIT : premium ---------- */
+html[data-theme=nuit]{--bg:#0f0f12;--bg2:#17171c;--card:#18181e;--fg:#f4efe6;--muted:#a59f94;--line:#2b2b33;--accent:#c9a45c;--accent-d:#a98840;--ink:#0b0b0d;--green:#7fc49a;--green-l:#1d2a22;--display:"DM Serif Display",Georgia,serif;--body:"Inter","Segoe UI",Arial,sans-serif;--r:6px}
+html[data-theme=nuit] body{background:var(--bg);color:var(--fg)}
+html[data-theme=nuit] a{color:var(--fg)}
+html[data-theme=nuit] nav,html[data-theme=nuit] .hero,html[data-theme=nuit] .top{background:#0b0b0d;color:var(--fg);border-color:var(--line)}
+html[data-theme=nuit] h1,html[data-theme=nuit] h2,html[data-theme=nuit] h3,html[data-theme=nuit] .card h4{text-transform:none;font-weight:400}
+html[data-theme=nuit] .grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+html[data-theme=nuit] .card{grid-template-columns:1fr;padding:0;background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+html[data-theme=nuit] .card:hover{border-color:var(--accent)}
+html[data-theme=nuit] .av{width:100%;height:150px;font:400 64px var(--display);background:radial-gradient(circle at 30% 20%,var(--c),#0b0b0d 120%)}
+html[data-theme=nuit] .av b{left:auto;right:10px;bottom:10px;background:var(--accent);color:#111;border-radius:2px;padding:2px 8px}
+html[data-theme=nuit] .card>div:last-child{padding:12px 14px 16px}
+html[data-theme=nuit] .card h4{font:400 21px/1.15 var(--display);color:#fff}
+html[data-theme=nuit] .card .cat{color:var(--accent);text-transform:uppercase;letter-spacing:.14em;font:600 11px var(--body)}
+html[data-theme=nuit] .tile,html[data-theme=nuit] .box,html[data-theme=nuit] .pcard,html[data-theme=nuit] .fiche{background:var(--card);border-color:var(--line);color:var(--fg)}
+html[data-theme=nuit] input,html[data-theme=nuit] select,html[data-theme=nuit] textarea{background:#111116;color:var(--fg);border-color:var(--line)}
+html[data-theme=nuit] .btn{background:transparent;color:var(--fg);border-color:var(--line)}html[data-theme=nuit] .btn.p{background:var(--accent);color:#111;border-color:var(--accent)}
+html[data-theme=nuit] .sub2{background:#000}
+html[data-theme=nuit] .filters,html[data-theme=nuit] .nl,html[data-theme=nuit] .quick button,html[data-theme=nuit] .hsel,html[data-theme=nuit] .badge,html[data-theme=nuit] .gal button,html[data-theme=nuit] .rep select,html[data-theme=nuit] .rep textarea,html[data-theme=nuit] .rep input{background:var(--bg);color:var(--fg);border-color:var(--line)}
+html[data-theme=nuit] .search{background:#111116;border-color:var(--accent)}html[data-theme=nuit] .search input{background:transparent;color:var(--fg)}html[data-theme=nuit] .search button{background:var(--accent);color:#111}
+html[data-theme=nuit] .cats button{color:var(--muted)}html[data-theme=nuit] .cats button[aria-pressed=true]{color:var(--accent);border-bottom-color:var(--accent)}
+@media(max-width:560px){html[data-theme=nuit] .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}html[data-theme=nuit] .av{height:110px;font-size:46px}}
 </style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
 </head>
 <body>
 <div class="top"><div class="wrap"><span><b>Bruxelles-Nord</b> 5 min</span><span class="hide-m">·</span><span class="hide-m" id="topstatus"></span><div class="sp" id="lang"><a href="#" data-l="fr">FR</a><a href="#" data-l="nl">NL</a><a href="#" data-l="en">EN</a></div></div></div>
@@ -606,4 +666,5 @@ function navH(){var nv=document.querySelector("nav");if(nv)document.documentElem
 var l0="fr";try{l0=new URLSearchParams(location.search).get("lang")||localStorage.getItem("acrb_site_lang")||(navigator.language||"fr").slice(0,2);}catch(e){}
 if(!I18N[l0])l0="fr";L_=l0;T=I18N[L_];applyLang();render();walk();initMap();route();loadForm();
 </script>
-</body></html>
+<script>(function(){var a=document.documentElement.getAttribute("data-apercu");if(!a)return;var N={classique:"Classique",vitrine:"Vitrine",souk:"Souk chaleureux",nuit:"Nuit premium"};
+var d=document.createElement("div");d.className="apercu";d.innerHTML='Aperçu de la présentation <b>« '+N[a]+' »</b>, soumise au vote du conseil. <a href="'+location.pathname+'">Revenir au site</a>';document.body.insertBefore(d,document.body.firstChild);})();</script></body></html>

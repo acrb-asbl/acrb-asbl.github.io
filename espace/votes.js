@@ -182,5 +182,8 @@ window.VOTES={recharger:function(){return sb&&charger();},init:function(_sb,_use
         sb.rpc("acrb_scrutin_creer",{p_titre:ti,p_objet:ob||null,p_echeance:ec,p_regle:$("vo_regle").value}).then(function(x){b.disabled=false;if(x.error){etat("Ouverture refusée : "+err(x),"bad");return;}
           f.reset();ouvert["f"+x.data]=true;etat("Vote ouvert. Ajoutez maintenant les offres reçues.","ok");charger();});}
       else if(f.dataset.offreForm){e.preventDefault();soumettreOffre(f);}});}
+    var va=$("vo_annuaire");if(va)va.addEventListener("click",function(){va.disabled=true;
+      sb.rpc("acrb_scrutin_annuaire_creer",{p_echeance:null,p_regle:"majorite"}).then(function(x){va.disabled=false;if(x.error){etat("Ouverture refusée : "+err(x),"bad");return;}
+        ouvert["f"+x.data]=true;etat("Vote ouvert avec les 4 présentations. Chaque administrateur peut ouvrir les aperçus puis voter ; la présentation adoptée s’affiche seule sur le site.","ok");charger();});});
   charger();}};
 })();
