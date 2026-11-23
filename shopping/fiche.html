@@ -73,12 +73,53 @@ details .grid,details .days{margin-top:12px}
 .done{text-align:center;padding:48px 24px}
 .done h2{font:800 26px/1.15 var(--display);margin:0 0 10px}
 .done p{color:var(--muted)}.done .ref{font-family:monospace;font-size:13px}
-.hp{position:absolute;left:-9999px}.chk{display:flex;gap:8px;align-items:center;font-size:15px}.chk small{color:var(--muted)}
+.hp{position:absolute!important;width:1px!important;min-width:0!important;height:1px!important;padding:0!important;border:0!important;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;opacity:0;pointer-events:none}.chk{display:flex;gap:8px;align-items:center;font-size:15px}.chk small{color:var(--muted)}
 .lookup{display:flex;gap:8px;margin-top:10px}.lookup input{flex:1}.lookup button{padding:10px 14px;border:0;border-radius:8px;background:var(--accent);color:var(--accent-fg);font-weight:600;white-space:nowrap}
 .hits{display:grid;gap:6px;margin-top:10px}.hit{display:flex;justify-content:space-between;gap:10px;align-items:center;text-align:left;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);font:inherit}
 .hit b{display:block;font-size:15px}.hit small{color:var(--muted)}.hit .pick{color:var(--accent);font-weight:600;white-space:nowrap}
 .picked{display:grid;gap:6px;margin-top:10px}.picked div{padding:8px 12px;border-radius:8px;background:var(--soft);font-size:14px;display:flex;justify-content:space-between;gap:8px}.picked button{background:none;border:0;color:var(--err);font-weight:600}
 .lkmsg{font-size:13px;color:var(--muted);margin-top:8px}
+[hidden]{display:none!important}
+/* WebKit (iPhone) : les champs heure et les listes imposaient leur largeur minimale aux grilles (14 px de débordement) */
+.grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}@media(max-width:560px){.grid{grid-template-columns:minmax(0,1fr)}}
+.grid>*,.times>*,.days>*,.item,.card{min-width:0}.times{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.days{grid-template-columns:auto minmax(0,1fr) minmax(0,1fr)}
+input,select,textarea{max-width:100%}
+/* ——— Fiche commerçant : étapes, brouillon, contrôles, mode « Ma fiche » (23/11) ——— */
+.card{box-shadow:0 1px 2px rgba(29,27,23,.04),0 4px 14px rgba(29,27,23,.04);border-radius:14px}
+.loginhint{margin:10px 0 0;font-size:15px}.loginhint a{color:var(--accent);font-weight:600}
+.steps{position:sticky;top:0;z-index:6;background:var(--bg);padding:10px 0 8px;margin:0 -2px}
+.steps ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.steps button{width:100%;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:6px 4px;font-size:12.5px;font-weight:600;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.15;min-height:44px}
+.steps button b{display:inline-block;width:20px;height:20px;line-height:20px;border-radius:999px;background:var(--line);color:var(--fg);font-size:12px}
+.steps button[aria-current=step]{border-color:var(--accent);color:var(--accent)}.steps button[aria-current=step] b{background:var(--accent);color:var(--accent-fg)}
+.steps button.ok b{background:#2e7d4f;color:#fff}
+.bar{height:6px;border-radius:999px;background:var(--line);margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.barl{font-size:12px;color:var(--muted);margin-top:4px}
+.warn{margin:5px 0 0;font-size:13px;color:#8a5a00;background:#fff6e0;border-radius:6px;padding:5px 8px}
+.need{outline:2px solid #e0a100!important;outline-offset:1px}
+.draft{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:14px;padding:10px 14px;border-radius:10px;background:#eef6f0;font-size:14px}
+.draft button{background:none;border:0;padding:0;color:var(--accent);font-weight:600;text-decoration:underline}
+@media(max-width:700px){body.stk #btn,#mf_save{position:sticky;bottom:max(10px,env(safe-area-inset-bottom,0px));z-index:7;box-shadow:0 6px 20px rgba(155,58,42,.28)}}
+/* Ma fiche */
+body.mf-wait #f,body.mf-on #f,body.mf-on header>h1,body.mf-on header>p:not(.latin),body.mf-on #loginhint{display:none}
+body.mf-on.mf-add #f{display:block}
+.mfwait{display:none;margin-top:18px;color:var(--muted)}body.mf-wait .mfwait{display:block}
+.mfhead{display:flex;gap:16px;align-items:center;margin-top:6px}
+.mfhead .av{flex:none;width:72px;height:72px;border-radius:16px;background:var(--soft);display:grid;place-items:center;font:800 30px var(--display);color:var(--accent);overflow:hidden;border:1px solid var(--line)}
+.mfhead .av img{width:100%;height:100%;object-fit:cover}
+.mfhead h1{margin:4px 0 4px;font-size:clamp(24px,5vw,32px);overflow-wrap:anywhere}
+.mfban{margin:0;font-size:14px;color:var(--muted)}.mfban b{color:var(--fg)}
+.mfacts{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.btn2{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:999px;background:var(--fg);color:#fff;font-weight:600;text-decoration:none;font-size:15px;min-height:44px}
+.btn2.off{background:var(--line);color:var(--muted);pointer-events:none}
+.lnk{background:none;border:1px solid var(--line);border-radius:999px;padding:10px 16px;font-weight:600;color:var(--fg);min-height:44px}
+.lock{background:#faf9f6}.lock h2 .pad{font-size:17px}
+.ro{background:#f1efe9!important;color:#4a463f!important;border-style:dashed!important;cursor:not-allowed}
+.lock label .pad{font-weight:400;margin-inline-start:4px}
+.ph{display:flex;gap:12px;align-items:center}.ph img{width:64px;height:64px;object-fit:cover;border-radius:10px;border:1px solid var(--line);flex:none}
+.ph input[type=file]{flex:1;min-width:0;width:100%;font-size:14px}
+.ph .none{width:64px;height:64px;border-radius:10px;border:1px dashed var(--line);flex:none}
+.ok-msg{display:block;background:#e9f6ee;color:#1f5f3a}
 </style>
 </head>
 <body>
@@ -96,10 +137,15 @@ details .grid,details .days{margin-top:12px}
   <h1 data-i18n="h1"></h1>
   <p data-i18n="intro"></p>
   <p class="latin" data-i18n="latin_hint"></p>
+  <p class="loginhint" id="loginhint" hidden><a href="../espace/commercant.html" data-t="login"></a></p>
 </header>
+<p class="mfwait" data-t="mf_wait"></p>
+<div id="mf" hidden></div>
 
 <form id="f" novalidate>
 <input class="hp" type="text" name="website_url" id="website_url" tabindex="-1" autocomplete="off">
+<nav class="steps" id="steps" aria-label="Étapes"><ol><li><button type="button" data-go="0"><b>1</b><span data-t="st1"></span></button></li><li><button type="button" data-go="1"><b>2</b><span data-t="st2"></span></button></li><li><button type="button" data-go="2"><b>3</b><span data-t="st3"></span></button></li><li><button type="button" data-go="3"><b>4</b><span data-t="st4"></span></button></li></ol><div class="bar" aria-hidden="true"><i></i></div><div class="barl" aria-live="polite"></div></nav>
+<div class="draft" id="draftmsg" hidden><span data-t="draft"></span><button type="button" id="draft_x" data-t="draft_x"></button></div>
 
 <section class="card" id="step0">
   <h2 data-i18n="s0"></h2>
@@ -283,6 +329,7 @@ details .grid,details .days{margin-top:12px}
     </select></div>
     <div class="full"><label class="req" data-i18n="articles"></label><input type="text" data-k="articles" required data-i18n-ph="articles_ph"></div>
     <div><label data-i18n="debut"></label><input type="text" data-k="debut_activite" inputmode="numeric" maxlength="4"></div>
+    <div class="full"><div class="consent" style="margin-top:0"><input type="checkbox" data-k2="masquer_depuis"><label data-i18n="masquer_depuis"></label></div></div>
     <div><label data-i18n="tel_mag"></label><input type="tel" data-k="tel"></div>
     <div class="full"><label data-i18n="email_mag"></label><input type="email" data-k="email"></div>
     <div class="full"><label data-i18n="description"></label><textarea data-k="description" data-i18n-ph="desc_ph"></textarea></div>
@@ -385,7 +432,7 @@ details .grid,details .days{margin-top:12px}
 
 <script>
 var I18N={
-fr:{s0_abs_t:"Autres établissements enregistrés à votre adresse",s0_abs_h:"Cochez ceux qui ne sont plus à cette adresse : ils seront retirés du site. Ne cochez rien si un autre commerce occupe réellement le même numéro.",done_ref:"Référence de votre envoi",latin_hint:"",s0:"0. Déjà dans l'annuaire ?",s0h:"Cherchez votre commerce (enseigne, nom de société, numéro d'entreprise ou numéro de rue). Les données officielles sont reprises automatiquement ; vous ne complétez que ce qui manque. Plusieurs commerces ? Ajoutez-les un par un.",s0_ph:"Enseigne, société, n° BCE ou n° de rue…",s0_btn:"Chercher",s0_pick:"Reprendre",s0_none:"Aucun résultat : remplissez le formulaire ci-dessous.",s0_done:"Données reprises de l'annuaire. Vérifiez-les, puis complétez.",s0_err:"Recherche impossible pour le moment : remplissez le formulaire.",gerant2:"Deuxième gérant·e (s'il y en a un)",resp_h:"C'est la personne que l'ACRB et les clients contacteront en premier pour ce magasin. Laissez vide si c'est vous.",murs_sum:"Propriétaire des murs (facultatif)","add_soc_same":"+ Même activité sous une autre société","add_soc_same_h":"Nous ajoutons une société et un magasin identique au précédent : il ne vous reste que le nom de la société et le numéro du magasin.",eyebrow:"Association des Commerçants de la Rue de Brabant",h1:"Mettons à jour votre fiche commerçant",intro:"L'ACRB refait son annuaire et son site. Seuls les champs marqués * sont obligatoires. Si vous avez plusieurs sociétés ou plusieurs magasins, ajoutez-les un par un : chaque magasin est rattaché à sa société.",
+fr:{masquer_depuis:"Ne pas afficher depuis quand je suis installé",s0_abs_t:"Autres établissements enregistrés à votre adresse",s0_abs_h:"Cochez ceux qui ne sont plus à cette adresse : ils seront retirés du site. Ne cochez rien si un autre commerce occupe réellement le même numéro.",done_ref:"Référence de votre envoi",latin_hint:"",s0:"0. Déjà dans l'annuaire ?",s0h:"Cherchez votre commerce (enseigne, nom de société, numéro d'entreprise ou numéro de rue). Les données officielles sont reprises automatiquement ; vous ne complétez que ce qui manque. Plusieurs commerces ? Ajoutez-les un par un.",s0_ph:"Enseigne, société, n° BCE ou n° de rue…",s0_btn:"Chercher",s0_pick:"Reprendre",s0_none:"Aucun résultat : remplissez le formulaire ci-dessous.",s0_done:"Données reprises de l'annuaire. Vérifiez-les, puis complétez.",s0_err:"Recherche impossible pour le moment : remplissez le formulaire.",gerant2:"Deuxième gérant·e (s'il y en a un)",resp_h:"C'est la personne que l'ACRB et les clients contacteront en premier pour ce magasin. Laissez vide si c'est vous.",murs_sum:"Propriétaire des murs (facultatif)","add_soc_same":"+ Même activité sous une autre société","add_soc_same_h":"Nous ajoutons une société et un magasin identique au précédent : il ne vous reste que le nom de la société et le numéro du magasin.",eyebrow:"Association des Commerçants de la Rue de Brabant",h1:"Mettons à jour votre fiche commerçant",intro:"L'ACRB refait son annuaire et son site. Seuls les champs marqués * sont obligatoires. Si vous avez plusieurs sociétés ou plusieurs magasins, ajoutez-les un par un : chaque magasin est rattaché à sa société.",
 s1:"1. Vous",s1h:"La personne qui remplit cette fiche et que l'ACRB peut contacter.",nomprenom:"Nom et prénom",gsm:"GSM",tel:"Téléphone",email:"E-mail",
 s2:"2. Vos sociétés",s2h:"Une société par bloc. Les données administratives ne sont jamais publiées.",add_soc:"+ Ajouter une société",soc:"Société",rm:"Retirer",denomination:"Dénomination sociale",bce:"Numéro d'entreprise (BCE / TVA)",forme:"Forme juridique",choose:"Choisir…",indep:"Indépendant (personne physique)",autre:"Autre",siege:"Siège social (si différent du magasin)",soc_details:"Gérant et propriétaire de la société (facultatif, si ce n'est pas vous)",gerant:"Gérant·e",proprio_soc:"Propriétaire de la société",
 s3:"3. Vos magasins",s3h:"Un magasin par bloc, rattaché à l'une de vos sociétés. C'est ce qui apparaîtra sur le site de l'ACRB. Pour un second magasin qui vend la même chose, utilisez « Ajouter un magasin identique » : tout est recopié, il ne reste que l'adresse à changer.",add_mag:"+ Ajouter un magasin différent",add_mag_copy:"+ Ajouter un magasin identique (copie du précédent)",mag:"Magasin",enseigne:"Nom de l'enseigne",rue:"Rue",autre_rue:"Autre rue…",rue_autre_ph:"Nom de la rue",numero:"Numéro",commune:"Commune",societe_de:"Société de ce magasin",categorie:"Type de commerce",
@@ -403,7 +450,7 @@ consent_site:"J'accepte que les informations des magasins (enseigne, adresse, t�
 submit:"Envoyer ma fiche",sending:"Envoi en cours…",done_h:"Merci, votre fiche est enregistrée.",done_p:"L'ACRB reprendra contact avec vous si une précision est nécessaire.",
 err_req:"Il manque un champ obligatoire (marqué *).",err_photo:"Une photo dépasse 8 Mo.",err_save:"Enregistrement refusé. Réessayez dans un instant.",err_generic:"Une erreur est survenue. Réessayez dans un instant."},
 
-nl:{s0_abs_t:"Andere vestigingen geregistreerd op uw adres",s0_abs_h:"Vink aan welke niet meer op dit adres zijn: ze worden van de website verwijderd. Vink niets aan als een andere zaak werkelijk hetzelfde nummer deelt.",done_ref:"Referentie van uw inzending",latin_hint:"",s0:"0. Al in de gids?",s0h:"Zoek uw zaak (handelsnaam, vennootschap, ondernemingsnummer of huisnummer). De officiële gegevens worden automatisch overgenomen; u vult enkel aan wat ontbreekt. Meerdere zaken? Voeg ze één voor één toe.",s0_ph:"Handelsnaam, vennootschap, KBO-nr. of huisnummer…",s0_btn:"Zoeken",s0_pick:"Overnemen",s0_none:"Geen resultaat: vul het formulier hieronder in.",s0_done:"Gegevens overgenomen uit de gids. Controleer ze en vul aan.",s0_err:"Zoeken is nu niet mogelijk: vul het formulier in.",gerant2:"Tweede zaakvoerder (indien van toepassing)",resp_h:"De persoon die de ACRB en de klanten eerst contacteren voor deze winkel. Leeg laten als u het zelf bent.",murs_sum:"Eigenaar van het pand (optioneel)","add_soc_same":"+ Zelfde activiteit onder een andere vennootschap","add_soc_same_h":"We voegen een vennootschap en een winkel identiek aan de vorige toe: u vult alleen de naam van de vennootschap en het huisnummer in.",eyebrow:"Handelaarsvereniging Brabantstraat",h1:"Werk uw handelaarsfiche bij",intro:"De ACRB vernieuwt haar gids en website. Alleen de velden met * zijn verplicht. Hebt u meerdere vennootschappen of winkels? Voeg ze één voor één toe: elke winkel hoort bij een vennootschap.",
+nl:{masquer_depuis:"Niet tonen sinds wanneer ik hier gevestigd ben",s0_abs_t:"Andere vestigingen geregistreerd op uw adres",s0_abs_h:"Vink aan welke niet meer op dit adres zijn: ze worden van de website verwijderd. Vink niets aan als een andere zaak werkelijk hetzelfde nummer deelt.",done_ref:"Referentie van uw inzending",latin_hint:"",s0:"0. Al in de gids?",s0h:"Zoek uw zaak (handelsnaam, vennootschap, ondernemingsnummer of huisnummer). De officiële gegevens worden automatisch overgenomen; u vult enkel aan wat ontbreekt. Meerdere zaken? Voeg ze één voor één toe.",s0_ph:"Handelsnaam, vennootschap, KBO-nr. of huisnummer…",s0_btn:"Zoeken",s0_pick:"Overnemen",s0_none:"Geen resultaat: vul het formulier hieronder in.",s0_done:"Gegevens overgenomen uit de gids. Controleer ze en vul aan.",s0_err:"Zoeken is nu niet mogelijk: vul het formulier in.",gerant2:"Tweede zaakvoerder (indien van toepassing)",resp_h:"De persoon die de ACRB en de klanten eerst contacteren voor deze winkel. Leeg laten als u het zelf bent.",murs_sum:"Eigenaar van het pand (optioneel)","add_soc_same":"+ Zelfde activiteit onder een andere vennootschap","add_soc_same_h":"We voegen een vennootschap en een winkel identiek aan de vorige toe: u vult alleen de naam van de vennootschap en het huisnummer in.",eyebrow:"Handelaarsvereniging Brabantstraat",h1:"Werk uw handelaarsfiche bij",intro:"De ACRB vernieuwt haar gids en website. Alleen de velden met * zijn verplicht. Hebt u meerdere vennootschappen of winkels? Voeg ze één voor één toe: elke winkel hoort bij een vennootschap.",
 s1:"1. U",s1h:"De persoon die deze fiche invult en die de ACRB mag contacteren.",nomprenom:"Naam en voornaam",gsm:"Gsm",tel:"Telefoon",email:"E-mail",
 s2:"2. Uw vennootschappen",s2h:"Eén vennootschap per blok. Administratieve gegevens worden nooit gepubliceerd.",add_soc:"+ Vennootschap toevoegen",soc:"Vennootschap",rm:"Verwijderen",denomination:"Maatschappelijke naam",bce:"Ondernemingsnummer (KBO / btw)",forme:"Rechtsvorm",choose:"Kies…",indep:"Zelfstandige (natuurlijke persoon)",autre:"Andere",siege:"Maatschappelijke zetel (indien anders dan de winkel)",soc_details:"Zaakvoerder en eigenaar van de vennootschap (optioneel, als u het niet zelf bent)",gerant:"Zaakvoerder",proprio_soc:"Eigenaar van de vennootschap",
 s3:"3. Uw winkels",s3h:"Eén winkel per blok, gekoppeld aan een van uw vennootschappen. Dit verschijnt op de website van de ACRB. Voor een tweede winkel met hetzelfde aanbod: gebruik « Identieke winkel toevoegen », alles wordt gekopieerd en u past alleen het adres aan.",add_mag:"+ Andere winkel toevoegen",add_mag_copy:"+ Identieke winkel toevoegen (kopie van de vorige)",mag:"Winkel",enseigne:"Naam van de winkel",rue:"Straat",autre_rue:"Andere straat…",rue_autre_ph:"Naam van de straat",numero:"Huisnummer",commune:"Gemeente",societe_de:"Vennootschap van deze winkel",categorie:"Soort handel",
@@ -421,7 +468,7 @@ consent_site:"Ik ga akkoord dat de winkelgegevens (naam, adres, telefoon van de 
 submit:"Mijn fiche verzenden",sending:"Bezig met verzenden…",done_h:"Bedankt, uw fiche is geregistreerd.",done_p:"De ACRB neemt contact met u op als er iets moet worden verduidelijkt.",
 err_req:"Er ontbreekt een verplicht veld (met *).",err_photo:"Een foto is groter dan 8 MB.",err_save:"Opslaan geweigerd. Probeer het zo meteen opnieuw.",err_generic:"Er is een fout opgetreden. Probeer het zo meteen opnieuw."},
 
-en:{s0_abs_t:"Other establishments registered at your address",s0_abs_h:"Tick those no longer at this address: they will be removed from the site. Tick nothing if another business really shares the same number.",done_ref:"Reference of your submission",latin_hint:"",s0:"0. Already in the directory?",s0h:"Search for your business (trade name, company, company number or street number). Official data is filled in automatically; you only complete what is missing. Several shops? Add them one by one.",s0_ph:"Trade name, company, CBE no. or street no.…",s0_btn:"Search",s0_pick:"Use",s0_none:"No result: fill in the form below.",s0_done:"Data taken from the directory. Check it, then complete.",s0_err:"Search unavailable right now: fill in the form.",gerant2:"Second manager (if any)",resp_h:"The person the ACRB and customers will contact first for this shop. Leave empty if it is you.",murs_sum:"Owner of the premises (optional)","add_soc_same":"+ Same activity under another company","add_soc_same_h":"We add a company and a shop identical to the previous one: you only fill in the company name and the shop number.",eyebrow:"Rue de Brabant Merchants' Association",h1:"Let's update your shop listing",intro:"The ACRB is rebuilding its directory and website. Only fields marked * are required. If you have several companies or shops, add them one by one: each shop is linked to its company.",
+en:{masquer_depuis:"Do not show how long I have been here",s0_abs_t:"Other establishments registered at your address",s0_abs_h:"Tick those no longer at this address: they will be removed from the site. Tick nothing if another business really shares the same number.",done_ref:"Reference of your submission",latin_hint:"",s0:"0. Already in the directory?",s0h:"Search for your business (trade name, company, company number or street number). Official data is filled in automatically; you only complete what is missing. Several shops? Add them one by one.",s0_ph:"Trade name, company, CBE no. or street no.…",s0_btn:"Search",s0_pick:"Use",s0_none:"No result: fill in the form below.",s0_done:"Data taken from the directory. Check it, then complete.",s0_err:"Search unavailable right now: fill in the form.",gerant2:"Second manager (if any)",resp_h:"The person the ACRB and customers will contact first for this shop. Leave empty if it is you.",murs_sum:"Owner of the premises (optional)","add_soc_same":"+ Same activity under another company","add_soc_same_h":"We add a company and a shop identical to the previous one: you only fill in the company name and the shop number.",eyebrow:"Rue de Brabant Merchants' Association",h1:"Let's update your shop listing",intro:"The ACRB is rebuilding its directory and website. Only fields marked * are required. If you have several companies or shops, add them one by one: each shop is linked to its company.",
 s1:"1. You",s1h:"The person filling in this form, whom the ACRB may contact.",nomprenom:"Full name",gsm:"Mobile",tel:"Phone",email:"E-mail",
 s2:"2. Your companies",s2h:"One company per block. Administrative data is never published.",add_soc:"+ Add a company",soc:"Company",rm:"Remove",denomination:"Company name",bce:"Company number (CBE / VAT)",forme:"Legal form",choose:"Choose…",indep:"Self-employed (natural person)",autre:"Other",siege:"Registered office (if different from the shop)",soc_details:"Manager and owner of the company (optional, if not you)",gerant:"Manager",proprio_soc:"Owner of the company",
 s3:"3. Your shops",s3h:"One shop per block, linked to one of your companies. This is what will appear on the ACRB website. For a second shop selling the same things, use \"Add an identical shop\": everything is copied, you only change the address.",add_mag:"+ Add a different shop",add_mag_copy:"+ Add an identical shop (copy of the previous one)",mag:"Shop",enseigne:"Shop name",rue:"Street",autre_rue:"Other street…",rue_autre_ph:"Street name",numero:"Number",commune:"Municipality",societe_de:"Company of this shop",categorie:"Type of business",
@@ -439,7 +486,7 @@ consent_site:"I agree that the shop details (name, address, shop phone, hours, i
 submit:"Send my listing",sending:"Sending…",done_h:"Thank you, your listing has been saved.",done_p:"The ACRB will get back to you if anything needs clarifying.",
 err_req:"A required field (marked *) is missing.",err_photo:"A photo exceeds 8 MB.",err_save:"Saving was refused. Please try again in a moment.",err_generic:"Something went wrong. Please try again in a moment."},
 
-tr:{s0_abs_t:"Adresinizde kayıtlı diğer işletmeler",s0_abs_h:"Artık bu adreste olmayanları işaretleyin: siteden kaldırılacaklar. Aynı numarayı gerçekten paylaşan bir işletme varsa hiçbir şeyi işaretlemeyin.",done_ref:"Gönderi referansınız",latin_hint:"",s0:"0. Rehberde zaten var mısınız?",s0h:"İşletmenizi arayın (tabela adı, şirket, işletme numarası veya kapı numarası). Resmi veriler otomatik alınır; yalnızca eksikleri tamamlarsınız. Birden fazla mağaza? Tek tek ekleyin.",s0_ph:"Tabela adı, şirket, BCE no. veya kapı no.…",s0_btn:"Ara",s0_pick:"Al",s0_none:"Sonuç yok: aşağıdaki formu doldurun.",s0_done:"Veriler rehberden alındı. Kontrol edin, sonra tamamlayın.",s0_err:"Arama şu an yapılamıyor: formu doldurun.",gerant2:"İkinci yönetici (varsa)",resp_h:"ACRB ve müşterilerin bu mağaza için ilk arayacağı kişi. Siz iseniz boş bırakın.",murs_sum:"Dükkân sahibi (isteğe bağlı)","add_soc_same":"+ Aynı faaliyet, başka bir şirket altında","add_soc_same_h":"Bir şirket ve öncekiyle aynı bir mağaza ekliyoruz: yalnızca şirket adını ve kapı numarasını girersiniz.",eyebrow:"Rue de Brabant Esnaf Derneği",h1:"Esnaf bilgi formunuzu güncelleyelim",intro:"ACRB rehberini ve web sitesini yeniliyor. Yalnızca * işaretli alanlar zorunludur. Birden fazla şirketiniz veya mağazanız varsa tek tek ekleyin: her mağaza bir şirkete bağlıdır.",
+tr:{masquer_depuis:"Ne zamandan beri burada olduğumu gösterme",s0_abs_t:"Adresinizde kayıtlı diğer işletmeler",s0_abs_h:"Artık bu adreste olmayanları işaretleyin: siteden kaldırılacaklar. Aynı numarayı gerçekten paylaşan bir işletme varsa hiçbir şeyi işaretlemeyin.",done_ref:"Gönderi referansınız",latin_hint:"",s0:"0. Rehberde zaten var mısınız?",s0h:"İşletmenizi arayın (tabela adı, şirket, işletme numarası veya kapı numarası). Resmi veriler otomatik alınır; yalnızca eksikleri tamamlarsınız. Birden fazla mağaza? Tek tek ekleyin.",s0_ph:"Tabela adı, şirket, BCE no. veya kapı no.…",s0_btn:"Ara",s0_pick:"Al",s0_none:"Sonuç yok: aşağıdaki formu doldurun.",s0_done:"Veriler rehberden alındı. Kontrol edin, sonra tamamlayın.",s0_err:"Arama şu an yapılamıyor: formu doldurun.",gerant2:"İkinci yönetici (varsa)",resp_h:"ACRB ve müşterilerin bu mağaza için ilk arayacağı kişi. Siz iseniz boş bırakın.",murs_sum:"Dükkân sahibi (isteğe bağlı)","add_soc_same":"+ Aynı faaliyet, başka bir şirket altında","add_soc_same_h":"Bir şirket ve öncekiyle aynı bir mağaza ekliyoruz: yalnızca şirket adını ve kapı numarasını girersiniz.",eyebrow:"Rue de Brabant Esnaf Derneği",h1:"Esnaf bilgi formunuzu güncelleyelim",intro:"ACRB rehberini ve web sitesini yeniliyor. Yalnızca * işaretli alanlar zorunludur. Birden fazla şirketiniz veya mağazanız varsa tek tek ekleyin: her mağaza bir şirkete bağlıdır.",
 s1:"1. Siz",s1h:"Bu formu dolduran ve ACRB'nin iletişime geçebileceği kişi.",nomprenom:"Ad ve soyad",gsm:"Cep telefonu",tel:"Telefon",email:"E-posta",
 s2:"2. Şirketleriniz",s2h:"Her blokta bir şirket. İdari bilgiler asla yayımlanmaz.",add_soc:"+ Şirket ekle",soc:"Şirket",rm:"Kaldır",denomination:"Şirket unvanı",bce:"İşletme numarası (BCE / KDV)",forme:"Hukuki yapı",choose:"Seçin…",indep:"Serbest meslek (gerçek kişi)",autre:"Diğer",siege:"Şirket merkezi (mağazadan farklıysa)",soc_details:"Şirket yöneticisi ve sahibi (isteğe bağlı, siz değilseniz)",gerant:"Yönetici",proprio_soc:"Şirket sahibi",
 s3:"3. Mağazalarınız",s3h:"Her blokta bir mağaza, şirketlerinizden birine bağlı. ACRB web sitesinde görünecek bilgiler bunlardır. Aynı ürünleri satan ikinci bir mağaza için « Aynı mağazayı ekle » düğmesini kullanın: her şey kopyalanır, yalnızca adresi değiştirirsiniz.",add_mag:"+ Farklı bir mağaza ekle",add_mag_copy:"+ Aynı mağazayı ekle (öncekinin kopyası)",mag:"Mağaza",enseigne:"Mağaza adı",rue:"Sokak",autre_rue:"Başka sokak…",rue_autre_ph:"Sokak adı",numero:"Kapı numarası",commune:"Belediye",societe_de:"Bu mağazanın şirketi",categorie:"İşletme türü",
@@ -457,7 +504,7 @@ consent_site:"Mağaza bilgilerinin (ad, adres, mağaza telefonu, saatler, ürün
 submit:"Formumu gönder",sending:"Gönderiliyor…",done_h:"Teşekkürler, formunuz kaydedildi.",done_p:"Bir açıklama gerekirse ACRB sizinle iletişime geçecektir.",
 err_req:"Zorunlu bir alan (* işaretli) eksik.",err_photo:"Bir fotoğraf 8 MB'ı aşıyor.",err_save:"Kayıt reddedildi. Lütfen biraz sonra tekrar deneyin.",err_generic:"Bir hata oluştu. Lütfen biraz sonra tekrar deneyin."},
 
-ar:{s0_abs_t:"مؤسسات أخرى مسجّلة في عنوانكم",s0_abs_h:"ضعوا علامة على التي لم تعد في هذا العنوان: ستُحذف من الموقع. لا تضعوا أي علامة إذا كان متجر آخر يشغل فعلاً الرقم نفسه.",done_ref:"مرجع إرسالكم",latin_hint:"يُرجى ملء جميع الخانات بالأحرف اللاتينية (مثلاً: Rue de Brabant 230, Mohamed Alami). العناوين فقط مكتوبة بالعربية؛ الإدخال يتم من اليسار إلى اليمين.",s0:"0. هل أنتم مسجّلون في الدليل؟",s0h:"ابحثوا عن متجركم (الاسم التجاري، الشركة، رقم المؤسسة أو رقم الشارع). تُسترجع البيانات الرسمية تلقائيًا؛ لا تكملون إلا ما ينقص. عدة متاجر؟ أضيفوها واحدًا تلو الآخر.",s0_ph:"الاسم التجاري، الشركة، رقم BCE أو رقم الشارع…",s0_btn:"بحث",s0_pick:"استرجاع",s0_none:"لا نتائج: املؤوا النموذج أدناه.",s0_done:"تم استرجاع البيانات من الدليل. تحققوا منها ثم أكملوا.",s0_err:"البحث غير متاح حاليًا: املؤوا النموذج.",gerant2:"المدير الثاني (إن وُجد)",resp_h:"الشخص الذي ستتصل به الجمعية والزبائن أولًا بخصوص هذا المتجر. اتركوه فارغًا إن كان هو أنتم.",murs_sum:"مالك العقار (اختياري)","add_soc_same":"+ النشاط نفسه تحت شركة أخرى","add_soc_same_h":"نضيف شركة ومتجرًا مطابقًا للسابق: لا يبقى لكم سوى اسم الشركة ورقم المتجر.",eyebrow:"جمعية تجار شارع برابانت",h1:"لنحدّث بطاقة متجركم",intro:"تجدّد جمعية ACRB دليلها وموقعها الإلكتروني. الحقول المعلّمة بـ * فقط إلزامية. إن كانت لديكم عدة شركات أو عدة متاجر، أضيفوها واحدًا تلو الآخر: كل متجر مرتبط بشركته.",
+ar:{masquer_depuis:"لا تُظهر منذ متى أنا موجود هنا",s0_abs_t:"مؤسسات أخرى مسجّلة في عنوانكم",s0_abs_h:"ضعوا علامة على التي لم تعد في هذا العنوان: ستُحذف من الموقع. لا تضعوا أي علامة إذا كان متجر آخر يشغل فعلاً الرقم نفسه.",done_ref:"مرجع إرسالكم",latin_hint:"يُرجى ملء جميع الخانات بالأحرف اللاتينية (مثلاً: Rue de Brabant 230, Mohamed Alami). العناوين فقط مكتوبة بالعربية؛ الإدخال يتم من اليسار إلى اليمين.",s0:"0. هل أنتم مسجّلون في الدليل؟",s0h:"ابحثوا عن متجركم (الاسم التجاري، الشركة، رقم المؤسسة أو رقم الشارع). تُسترجع البيانات الرسمية تلقائيًا؛ لا تكملون إلا ما ينقص. عدة متاجر؟ أضيفوها واحدًا تلو الآخر.",s0_ph:"الاسم التجاري، الشركة، رقم BCE أو رقم الشارع…",s0_btn:"بحث",s0_pick:"استرجاع",s0_none:"لا نتائج: املؤوا النموذج أدناه.",s0_done:"تم استرجاع البيانات من الدليل. تحققوا منها ثم أكملوا.",s0_err:"البحث غير متاح حاليًا: املؤوا النموذج.",gerant2:"المدير الثاني (إن وُجد)",resp_h:"الشخص الذي ستتصل به الجمعية والزبائن أولًا بخصوص هذا المتجر. اتركوه فارغًا إن كان هو أنتم.",murs_sum:"مالك العقار (اختياري)","add_soc_same":"+ النشاط نفسه تحت شركة أخرى","add_soc_same_h":"نضيف شركة ومتجرًا مطابقًا للسابق: لا يبقى لكم سوى اسم الشركة ورقم المتجر.",eyebrow:"جمعية تجار شارع برابانت",h1:"لنحدّث بطاقة متجركم",intro:"تجدّد جمعية ACRB دليلها وموقعها الإلكتروني. الحقول المعلّمة بـ * فقط إلزامية. إن كانت لديكم عدة شركات أو عدة متاجر، أضيفوها واحدًا تلو الآخر: كل متجر مرتبط بشركته.",
 s1:"1. أنتم",s1h:"الشخص الذي يملأ هذه البطاقة ويمكن للجمعية الاتصال به.",nomprenom:"الاسم واللقب",gsm:"الهاتف المحمول",tel:"الهاتف",email:"البريد الإلكتروني",
 s2:"2. شركاتكم",s2h:"شركة واحدة في كل خانة. البيانات الإدارية لا تُنشر أبدًا.",add_soc:"+ إضافة شركة",soc:"شركة",rm:"حذف",denomination:"الاسم القانوني للشركة",bce:"رقم المؤسسة (BCE / الضريبة على القيمة المضافة)",forme:"الشكل القانوني",choose:"اختر…",indep:"مستقل (شخص طبيعي)",autre:"أخرى",siege:"المقر الاجتماعي (إن اختلف عن المتجر)",soc_details:"مدير الشركة ومالكها (اختياري، إن لم تكونوا أنتم)",gerant:"المدير",proprio_soc:"مالك الشركة",
 s3:"3. متاجركم",s3h:"متجر واحد في كل خانة، مرتبط بإحدى شركاتكم. هذه هي المعلومات التي ستظهر على موقع الجمعية. لمتجر ثانٍ يبيع الأشياء نفسها، استعملوا « إضافة متجر مطابق »: يُنسخ كل شيء ولا يبقى سوى تغيير العنوان.",add_mag:"+ إضافة متجر مختلف",add_mag_copy:"+ إضافة متجر مطابق (نسخة من السابق)",mag:"متجر",enseigne:"اسم المتجر",rue:"الشارع",autre_rue:"شارع آخر…",rue_autre_ph:"اسم الشارع",numero:"الرقم",commune:"البلدية",societe_de:"شركة هذا المتجر",categorie:"نوع التجارة",
@@ -475,7 +522,7 @@ consent_site:"أوافق على نشر معلومات المتاجر (الاسم
 submit:"إرسال بطاقتي",sending:"جارٍ الإرسال…",done_h:"شكرًا، تم تسجيل بطاقتكم.",done_p:"ستتصل بكم الجمعية إن احتاج الأمر إلى توضيح.",
 err_req:"حقل إلزامي (معلّم بـ *) ناقص.",err_photo:"إحدى الصور تتجاوز 8 ميغابايت.",err_save:"رُفض التسجيل. حاولوا مجددًا بعد قليل.",err_generic:"حدث خطأ. حاولوا مجددًا بعد قليل."},
 
-ur:{s0_abs_t:"آپ کے پتے پر رجسٹرڈ دیگر ادارے",s0_abs_h:"جو اب اس پتے پر نہیں ہیں انہیں نشان زد کریں: وہ سائٹ سے ہٹا دیے جائیں گے۔ اگر کوئی اور دکان واقعی یہی نمبر استعمال کرتی ہے تو کچھ نشان زد نہ کریں۔",done_ref:"آپ کی جمع کرائی کا حوالہ",latin_hint:"براہِ کرم تمام خانے لاطینی حروف میں بھریں (مثلاً: Rue de Brabant 230, Mohamed Alami)۔ صرف عنوانات اردو میں ہیں؛ اندراج بائیں سے دائیں ہوتا ہے۔",s0:"0. کیا آپ پہلے سے ڈائریکٹری میں ہیں؟",s0h:"اپنی دکان تلاش کریں (تجارتی نام، کمپنی، کمپنی نمبر یا گلی نمبر)۔ سرکاری معلومات خود بخود بھر جائیں گی؛ آپ صرف کمی پوری کریں۔ کئی دکانیں؟ ایک ایک کر کے شامل کریں۔",s0_ph:"تجارتی نام، کمپنی، BCE نمبر یا گلی نمبر…",s0_btn:"تلاش",s0_pick:"لیں",s0_none:"کوئی نتیجہ نہیں: نیچے فارم بھریں۔",s0_done:"معلومات ڈائریکٹری سے لی گئیں۔ جانچیں، پھر مکمل کریں۔",s0_err:"تلاش فی الحال ممکن نہیں: فارم بھریں۔",gerant2:"دوسرا منیجر (اگر ہو)",resp_h:"وہ شخص جس سے ACRB اور گاہک اس دکان کے لیے سب سے پہلے رابطہ کریں گے۔ اگر آپ خود ہیں تو خالی چھوڑیں۔",murs_sum:"عمارت کا مالک (اختیاری)","add_soc_same":"+ یہی کاروبار دوسری کمپنی کے تحت","add_soc_same_h":"ہم ایک کمپنی اور پچھلی جیسی ایک دکان شامل کرتے ہیں: آپ صرف کمپنی کا نام اور دکان کا نمبر لکھیں۔",eyebrow:"رو دو برابانٹ تاجر انجمن",h1:"آئیے اپنی دکان کا ریکارڈ اپ ڈیٹ کریں",intro:"ACRB اپنی ڈائریکٹری اور ویب سائٹ نئی بنا رہی ہے۔ صرف * والے خانے لازمی ہیں۔ اگر آپ کی کئی کمپنیاں یا کئی دکانیں ہیں تو انہیں ایک ایک کر کے شامل کریں: ہر دکان اپنی کمپنی سے منسلک ہوتی ہے۔",
+ur:{masquer_depuis:"یہ نہ دکھائیں کہ میں کب سے یہاں ہوں",s0_abs_t:"آپ کے پتے پر رجسٹرڈ دیگر ادارے",s0_abs_h:"جو اب اس پتے پر نہیں ہیں انہیں نشان زد کریں: وہ سائٹ سے ہٹا دیے جائیں گے۔ اگر کوئی اور دکان واقعی یہی نمبر استعمال کرتی ہے تو کچھ نشان زد نہ کریں۔",done_ref:"آپ کی جمع کرائی کا حوالہ",latin_hint:"براہِ کرم تمام خانے لاطینی حروف میں بھریں (مثلاً: Rue de Brabant 230, Mohamed Alami)۔ صرف عنوانات اردو میں ہیں؛ اندراج بائیں سے دائیں ہوتا ہے۔",s0:"0. کیا آپ پہلے سے ڈائریکٹری میں ہیں؟",s0h:"اپنی دکان تلاش کریں (تجارتی نام، کمپنی، کمپنی نمبر یا گلی نمبر)۔ سرکاری معلومات خود بخود بھر جائیں گی؛ آپ صرف کمی پوری کریں۔ کئی دکانیں؟ ایک ایک کر کے شامل کریں۔",s0_ph:"تجارتی نام، کمپنی، BCE نمبر یا گلی نمبر…",s0_btn:"تلاش",s0_pick:"لیں",s0_none:"کوئی نتیجہ نہیں: نیچے فارم بھریں۔",s0_done:"معلومات ڈائریکٹری سے لی گئیں۔ جانچیں، پھر مکمل کریں۔",s0_err:"تلاش فی الحال ممکن نہیں: فارم بھریں۔",gerant2:"دوسرا منیجر (اگر ہو)",resp_h:"وہ شخص جس سے ACRB اور گاہک اس دکان کے لیے سب سے پہلے رابطہ کریں گے۔ اگر آپ خود ہیں تو خالی چھوڑیں۔",murs_sum:"عمارت کا مالک (اختیاری)","add_soc_same":"+ یہی کاروبار دوسری کمپنی کے تحت","add_soc_same_h":"ہم ایک کمپنی اور پچھلی جیسی ایک دکان شامل کرتے ہیں: آپ صرف کمپنی کا نام اور دکان کا نمبر لکھیں۔",eyebrow:"رو دو برابانٹ تاجر انجمن",h1:"آئیے اپنی دکان کا ریکارڈ اپ ڈیٹ کریں",intro:"ACRB اپنی ڈائریکٹری اور ویب سائٹ نئی بنا رہی ہے۔ صرف * والے خانے لازمی ہیں۔ اگر آپ کی کئی کمپنیاں یا کئی دکانیں ہیں تو انہیں ایک ایک کر کے شامل کریں: ہر دکان اپنی کمپنی سے منسلک ہوتی ہے۔",
 s1:"1. آپ",s1h:"وہ شخص جو یہ فارم بھر رہا ہے اور جس سے ACRB رابطہ کر سکتی ہے۔",nomprenom:"پورا نام",gsm:"موبائل",tel:"فون",email:"ای میل",
 s2:"2. آپ کی کمپنیاں",s2h:"ہر خانے میں ایک کمپنی۔ انتظامی معلومات کبھی شائع نہیں کی جاتیں۔",add_soc:"+ کمپنی شامل کریں",soc:"کمپنی",rm:"ہٹائیں",denomination:"کمپنی کا قانونی نام",bce:"کمپنی نمبر (BCE / VAT)",forme:"قانونی حیثیت",choose:"منتخب کریں…",indep:"خود روزگار (انفرادی)",autre:"دیگر",siege:"رجسٹرڈ دفتر (اگر دکان سے مختلف ہو)",soc_details:"کمپنی کا منیجر اور مالک (اختیاری، اگر آپ خود نہیں ہیں)",gerant:"منیجر",proprio_soc:"کمپنی کا مالک",
 s3:"3. آپ کی دکانیں",s3h:"ہر خانے میں ایک دکان، آپ کی کسی ایک کمپنی سے منسلک۔ یہی معلومات ACRB کی ویب سائٹ پر نظر آئیں گی۔ ایک جیسی چیزیں بیچنے والی دوسری دکان کے لیے « ایک جیسی دکان شامل کریں » استعمال کریں: سب کچھ نقل ہو جاتا ہے، صرف پتہ بدلنا ہوتا ہے۔",add_mag:"+ مختلف دکان شامل کریں",add_mag_copy:"+ ایک جیسی دکان شامل کریں (پچھلی کی نقل)",mag:"دکان",enseigne:"دکان کا نام",rue:"سڑک",autre_rue:"دوسری سڑک…",rue_autre_ph:"سڑک کا نام",numero:"نمبر",commune:"میونسپلٹی",societe_de:"اس دکان کی کمپنی",categorie:"کاروبار کی قسم",
@@ -764,6 +811,276 @@ err_req:"ایک لازمی خانہ (* والا) خالی ہے۔",err_photo:"ا�
       .then(function(j){f.hidden=true;var d=document.getElementById("done");d.hidden=false;if(j&&j.journal_id){var r=document.createElement("p");r.className="ref";r.textContent=(T.done_ref||"Référence")+" : "+j.journal_id+" · "+j.empreinte.slice(0,12);d.appendChild(r);}window.scrollTo(0,0);})
       .catch(function(e){fail((e&&e.message)||T.err_generic);});
   });
+})();
+</script>
+<script>
+/* Fiche commerçant (23/11) : étapes et progression, brouillon automatique, contrôles non bloquants,
+   et mode « Ma fiche » pour un compte connecté qui a déjà une fiche (lecture acrb_ma_fiche, écriture acrb_ma_fiche_maj, liste blanche). */
+(function(){
+var SB="https://blaehmatdmobhwlhqfjo.supabase.co",KEY="sb_publishable_c1ovcVD1pbOGPedrJfDU3g_jtS1bY73";
+var DAYS=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"],LANGS=["Français","Néerlandais","Anglais","Arabe","Turc","Ourdou","Espagnol"];
+var WL=["enseigne","tel","email","site_web","instagram","facebook","tiktok","google_maps","description","articles","langues","horaires_json","jours_ouverture","horaires",
+  "priere_vendredi","priere_fermeture","priere_reouverture","priere_ete_decalage","ferme_aid_fitr","ferme_aid_adha","fermetures_autres","logo_url","photo_url",
+  "responsable_nom","responsable_tel","responsable_email","debut_activite","masquer_depuis","contact_gsm","consent_site","afficher_nom"];
+var MF={
+fr:{login:"Déjà un compte ? Connectez-vous pour modifier votre fiche",st1:"Vous",st2:"Société",st3:"Magasin",st4:"Horaires et photos",prog:"Fiche complétée à",
+ draft:"Brouillon retrouvé : vous reprenez où vous en étiez.",draft_x:"Recommencer à zéro",missing:"Données officielles reprises. Il reste à compléter les champs surlignés.",
+ w_gsm:"Ce numéro ne ressemble pas à un GSM belge (04xx xx xx xx). Vous pouvez quand même envoyer.",w_email:"Adresse e-mail à vérifier.",w_bce:"Numéro d'entreprise à vérifier (10 chiffres, la clé de contrôle ne correspond pas).",w_num:"Numéro de rue à vérifier (ex. 12, 12A, 12-14).",
+ mf_wait:"Ouverture de votre fiche…",mf_eyebrow:"Ma fiche · Shopping Brabant",ban_a:"Votre fiche",ban_maj:"dernière mise à jour le",ban_verif:"vérifiée le",ban_nonverif:"pas encore vérifiée par l'ACRB",
+ pub:"Voir ma fiche publique",nonpub:"Pas encore visible sur le site",add_other:"Ajouter un autre commerce",choose_mag:"Votre commerce",
+ lock_t:"Informations officielles",lock_h:"Reprises de la Banque-Carrefour des Entreprises et vérifiées par l'ACRB. Elles ne se modifient pas ici : signalez une erreur en un toucher.",
+ adresse:"Adresse du magasin",rubrique:"Rubrique",nace:"Activité officielle (NACE)",dirigeants:"Dirigeants",email_cx:"Adresse de connexion",signal:"Une donnée officielle est fausse ? Signalez-la :",
+ sect_ident:"Votre commerce",sect_contact:"Contact",sect_photos:"Logo et photo",sect_vis:"Visibilité sur le site",
+ contact_gsm:"Votre GSM (pour l'ACRB, jamais publié)",afficher_nom:"Afficher mon nom sur la fiche publique",consent:"Publier ma fiche sur Shopping Brabant",remplacer:"Remplacer l'image",
+ save:"Enregistrer les modifications",saving:"Enregistrement…",saved:"Modifications enregistrées.",nochange:"Aucune modification à enregistrer.",err:"Enregistrement impossible. Réessayez dans un instant.",err_ens:"L'enseigne ne peut pas être vide."},
+nl:{login:"Al een account? Meld u aan om uw fiche te wijzigen",st1:"U",st2:"Bedrijf",st3:"Winkel",st4:"Uren en foto's",prog:"Fiche ingevuld voor",
+ draft:"Concept teruggevonden: u gaat verder waar u was.",draft_x:"Opnieuw beginnen",missing:"Officiële gegevens overgenomen. Vul nog de gemarkeerde velden in.",
+ w_gsm:"Dit lijkt geen Belgisch gsm-nummer (04xx xx xx xx). U kunt toch verzenden.",w_email:"E-mailadres nakijken.",w_bce:"Ondernemingsnummer nakijken (10 cijfers, controlecijfer klopt niet).",w_num:"Huisnummer nakijken (bv. 12, 12A, 12-14).",
+ mf_wait:"Uw fiche wordt geopend…",mf_eyebrow:"Mijn fiche · Shopping Brabant",ban_a:"Uw fiche",ban_maj:"laatst bijgewerkt op",ban_verif:"gecontroleerd op",ban_nonverif:"nog niet gecontroleerd door de ACRB",
+ pub:"Mijn openbare fiche bekijken",nonpub:"Nog niet zichtbaar op de site",add_other:"Een andere zaak toevoegen",choose_mag:"Uw zaak",
+ lock_t:"Officiële gegevens",lock_h:"Overgenomen uit de Kruispuntbank van Ondernemingen en gecontroleerd door de ACRB. Ze worden hier niet gewijzigd: meld een fout met één tik.",
+ adresse:"Adres van de winkel",rubriek:"Rubriek",rubrique:"Rubriek",nace:"Officiële activiteit (NACE)",dirigeants:"Bestuurders",email_cx:"Aanmeldadres",signal:"Klopt een officieel gegeven niet? Meld het:",
+ sect_ident:"Uw zaak",sect_contact:"Contact",sect_photos:"Logo en foto",sect_vis:"Zichtbaarheid op de site",
+ contact_gsm:"Uw gsm (voor de ACRB, nooit gepubliceerd)",afficher_nom:"Mijn naam tonen op de openbare fiche",consent:"Mijn fiche publiceren op Shopping Brabant",remplacer:"Afbeelding vervangen",
+ save:"Wijzigingen opslaan",saving:"Opslaan…",saved:"Wijzigingen opgeslagen.",nochange:"Geen wijzigingen om op te slaan.",err:"Opslaan mislukt. Probeer het zo meteen opnieuw.",err_ens:"De handelsnaam mag niet leeg zijn."},
+en:{login:"Already have an account? Sign in to edit your listing",st1:"You",st2:"Company",st3:"Shop",st4:"Hours and photos",prog:"Listing completed:",
+ draft:"Draft found: you are picking up where you left off.",draft_x:"Start over",missing:"Official data filled in. Please complete the highlighted fields.",
+ w_gsm:"This does not look like a Belgian mobile number (04xx xx xx xx). You can still send.",w_email:"Please check this e-mail address.",w_bce:"Please check the company number (10 digits, check key does not match).",w_num:"Please check the street number (e.g. 12, 12A, 12-14).",
+ mf_wait:"Opening your listing…",mf_eyebrow:"My listing · Shopping Brabant",ban_a:"Your listing",ban_maj:"last updated on",ban_verif:"verified on",ban_nonverif:"not yet verified by the ACRB",
+ pub:"View my public listing",nonpub:"Not yet visible on the site",add_other:"Add another shop",choose_mag:"Your shop",
+ lock_t:"Official information",lock_h:"Taken from the Crossroads Bank for Enterprises and checked by the ACRB. It cannot be changed here: report an error in one tap.",
+ adresse:"Shop address",rubrique:"Category",nace:"Official activity (NACE)",dirigeants:"Directors",email_cx:"Sign-in address",signal:"Is an official detail wrong? Report it:",
+ sect_ident:"Your shop",sect_contact:"Contact",sect_photos:"Logo and photo",sect_vis:"Visibility on the site",
+ contact_gsm:"Your mobile (for the ACRB, never published)",afficher_nom:"Show my name on the public listing",consent:"Publish my listing on Shopping Brabant",remplacer:"Replace image",
+ save:"Save changes",saving:"Saving…",saved:"Changes saved.",nochange:"No changes to save.",err:"Could not save. Please try again in a moment.",err_ens:"The shop name cannot be empty."},
+tr:{login:"Hesabınız var mı? Kaydınızı düzenlemek için giriş yapın",st1:"Siz",st2:"Şirket",st3:"Mağaza",st4:"Saatler ve fotoğraflar",prog:"Kayıt tamamlanma:",
+ draft:"Taslak bulundu: kaldığınız yerden devam ediyorsunuz.",draft_x:"Baştan başla",missing:"Resmî bilgiler dolduruldu. İşaretli alanları tamamlayın.",
+ w_gsm:"Bu bir Belçika cep numarasına benzemiyor (04xx xx xx xx). Yine de gönderebilirsiniz.",w_email:"E-posta adresini kontrol edin.",w_bce:"Şirket numarasını kontrol edin (10 rakam, kontrol anahtarı tutmuyor).",w_num:"Kapı numarasını kontrol edin (ör. 12, 12A, 12-14).",
+ mf_wait:"Kaydınız açılıyor…",mf_eyebrow:"Kaydım · Shopping Brabant",ban_a:"Kaydınız",ban_maj:"son güncelleme",ban_verif:"doğrulama",ban_nonverif:"ACRB tarafından henüz doğrulanmadı",
+ pub:"Herkese açık kaydımı gör",nonpub:"Sitede henüz görünmüyor",add_other:"Başka bir işyeri ekle",choose_mag:"İşyeriniz",
+ lock_t:"Resmî bilgiler",lock_h:"İşletmeler Kayıt Bankası'ndan alınmış ve ACRB tarafından kontrol edilmiştir. Burada değiştirilemez: bir hatayı tek dokunuşla bildirin.",
+ adresse:"Mağaza adresi",rubrique:"Kategori",nace:"Resmî faaliyet (NACE)",dirigeants:"Yöneticiler",email_cx:"Giriş adresi",signal:"Resmî bir bilgi yanlış mı? Bildirin:",
+ sect_ident:"İşyeriniz",sect_contact:"İletişim",sect_photos:"Logo ve fotoğraf",sect_vis:"Sitede görünürlük",
+ contact_gsm:"Cep telefonunuz (ACRB için, asla yayınlanmaz)",afficher_nom:"Adımı herkese açık kayıtta göster",consent:"Kaydımı Shopping Brabant'ta yayınla",remplacer:"Resmi değiştir",
+ save:"Değişiklikleri kaydet",saving:"Kaydediliyor…",saved:"Değişiklikler kaydedildi.",nochange:"Kaydedilecek değişiklik yok.",err:"Kaydedilemedi. Birazdan tekrar deneyin.",err_ens:"Tabela adı boş olamaz."},
+ar:{login:"لديك حساب؟ سجّل الدخول لتعديل بطاقتك",st1:"أنت",st2:"الشركة",st3:"المتجر",st4:"المواعيد والصور",prog:"اكتمال البطاقة:",
+ draft:"عثرنا على مسودة: تتابع من حيث توقفت.",draft_x:"البدء من جديد",missing:"تم إدخال البيانات الرسمية. أكمل الحقول المظللة.",
+ w_gsm:"لا يبدو هذا رقم هاتف محمول بلجيكيًا (04xx xx xx xx). يمكنك الإرسال مع ذلك.",w_email:"تحقق من البريد الإلكتروني.",w_bce:"تحقق من رقم المؤسسة (10 أرقام، رقم التحقق غير مطابق).",w_num:"تحقق من رقم المبنى (مثل 12 أو 12A أو 12-14).",
+ mf_wait:"جارٍ فتح بطاقتك…",mf_eyebrow:"بطاقتي · Shopping Brabant",ban_a:"بطاقتك",ban_maj:"آخر تحديث في",ban_verif:"تم التحقق في",ban_nonverif:"لم تتحقق منها الجمعية بعد",
+ pub:"عرض بطاقتي العامة",nonpub:"غير ظاهرة على الموقع بعد",add_other:"إضافة متجر آخر",choose_mag:"متجرك",
+ lock_t:"المعلومات الرسمية",lock_h:"مأخوذة من البنك المركزي للمؤسسات وتحققت منها الجمعية. لا تُعدَّل هنا: أبلغ عن خطأ بلمسة واحدة.",
+ adresse:"عنوان المتجر",rubrique:"الفئة",nace:"النشاط الرسمي (NACE)",dirigeants:"المسيّرون",email_cx:"عنوان تسجيل الدخول",signal:"هل هناك معلومة رسمية خاطئة؟ أبلغ عنها:",
+ sect_ident:"متجرك",sect_contact:"الاتصال",sect_photos:"الشعار والصورة",sect_vis:"الظهور على الموقع",
+ contact_gsm:"هاتفك المحمول (للجمعية، لا يُنشر أبدًا)",afficher_nom:"إظهار اسمي على البطاقة العامة",consent:"نشر بطاقتي على Shopping Brabant",remplacer:"استبدال الصورة",
+ save:"حفظ التعديلات",saving:"جارٍ الحفظ…",saved:"تم حفظ التعديلات.",nochange:"لا توجد تعديلات للحفظ.",err:"تعذّر الحفظ. حاول مجددًا بعد قليل.",err_ens:"لا يمكن ترك اسم المتجر فارغًا."},
+ur:{login:"پہلے سے اکاؤنٹ ہے؟ اپنی فائل میں تبدیلی کے لیے لاگ اِن کریں",st1:"آپ",st2:"کمپنی",st3:"دکان",st4:"اوقات اور تصاویر",prog:"فائل مکمل:",
+ draft:"مسودہ مل گیا: آپ وہیں سے جاری رکھ رہے ہیں۔",draft_x:"نئے سرے سے شروع کریں",missing:"سرکاری معلومات بھر دی گئیں۔ نمایاں خانے مکمل کریں۔",
+ w_gsm:"یہ بیلجیم کا موبائل نمبر نہیں لگتا (04xx xx xx xx)۔ آپ پھر بھی بھیج سکتے ہیں۔",w_email:"ای میل پتہ چیک کریں۔",w_bce:"کمپنی نمبر چیک کریں (10 ہندسے، جانچ کا ہندسہ میل نہیں کھاتا)۔",w_num:"گلی کا نمبر چیک کریں (مثلاً 12، 12A، 12-14)۔",
+ mf_wait:"آپ کی فائل کھل رہی ہے…",mf_eyebrow:"میری فائل · Shopping Brabant",ban_a:"آپ کی فائل",ban_maj:"آخری تبدیلی",ban_verif:"تصدیق",ban_nonverif:"ابھی ACRB نے تصدیق نہیں کی",
+ pub:"اپنی عوامی فائل دیکھیں",nonpub:"ابھی سائٹ پر نظر نہیں آتی",add_other:"ایک اور دکان شامل کریں",choose_mag:"آپ کی دکان",
+ lock_t:"سرکاری معلومات",lock_h:"کاروباری اداروں کے مرکزی بینک سے لی گئی اور ACRB سے تصدیق شدہ۔ یہاں تبدیل نہیں ہوتیں: غلطی ایک ٹچ میں بتائیں۔",
+ adresse:"دکان کا پتہ",rubrique:"زمرہ",nace:"سرکاری سرگرمی (NACE)",dirigeants:"منتظمین",email_cx:"لاگ اِن پتہ",signal:"کوئی سرکاری معلومات غلط ہے؟ بتائیں:",
+ sect_ident:"آپ کی دکان",sect_contact:"رابطہ",sect_photos:"لوگو اور تصویر",sect_vis:"سائٹ پر نمائش",
+ contact_gsm:"آپ کا موبائل (ACRB کے لیے، کبھی شائع نہیں ہوتا)",afficher_nom:"عوامی فائل پر میرا نام دکھائیں",consent:"میری فائل Shopping Brabant پر شائع کریں",remplacer:"تصویر بدلیں",
+ save:"تبدیلیاں محفوظ کریں",saving:"محفوظ ہو رہا ہے…",saved:"تبدیلیاں محفوظ ہو گئیں۔",nochange:"محفوظ کرنے کے لیے کوئی تبدیلی نہیں۔",err:"محفوظ نہیں ہو سکا۔ تھوڑی دیر میں دوبارہ کوشش کریں۔",err_ens:"دکان کا نام خالی نہیں ہو سکتا۔"}
+};
+function lg(){var l=document.documentElement.lang||"fr";return MF[l]?l:"fr";}
+function L(k){var l=lg(),a=MF[l]||{},I=window.I18N||{},b=I[l]||{};if(a[k]!=null)return a[k];if(b[k])return b[k];if(MF.fr[k]!=null)return MF.fr[k];return (I.fr&&I.fr[k])||k;}
+function tr(root){Array.prototype.forEach.call((root||document).querySelectorAll("[data-t]"),function(e){e.textContent=L(e.dataset.t);});}
+function esc(x){return String(x==null?"":x).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function dg(v){return String(v||"").replace(/\D/g,"");}
+function qs(s,r){return (r||document).querySelector(s);}
+function qsa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));}
+var f=document.getElementById("f");
+if(!f)return;
+
+/* ——— 1. Contrôles non bloquants ——— */
+function okGsm(v){var d=dg(v);if(d.indexOf("0032")===0)d=d.slice(2);if(d.indexOf("32")===0)d="0"+d.slice(2);return /^04[5-9]\d{7}$/.test(d);}
+function okMail(v){return /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(String(v).trim());}
+function okBce(v){var d=dg(v);if(d.length===9)d="0"+d;if(d.length!==10)return false;return 97-(parseInt(d.slice(0,8),10)%97)===parseInt(d.slice(8),10);}
+function okNum(v){return /^\d{1,4}\s*[a-zA-Z]?(\s*[-\/]\s*\d{1,4}\s*[a-zA-Z]?)?$/.test(String(v).trim());}
+function rule(el){if(!el||!el.tagName||el.readOnly)return null;if(el.id==="p_tel"||el.dataset.chk==="gsm")return ["w_gsm",okGsm];if(el.type==="email")return ["w_email",okMail];
+  if(el.dataset.k==="bce")return ["w_bce",okBce];if(el.dataset.k==="numero")return ["w_num",okNum];return null;}
+function check(el){var r=rule(el);if(!r)return;var v=(el.value||"").trim(),w=el.nextElementSibling&&el.nextElementSibling.classList.contains("warn")?el.nextElementSibling:null;
+  if(v&&!r[1](v)){if(!w){w=document.createElement("p");w.className="warn";w.setAttribute("role","status");el.insertAdjacentElement("afterend",w);}w.dataset.t=r[0];w.textContent=L(r[0]);}
+  else if(w)w.remove();}
+document.addEventListener("focusout",function(e){check(e.target);});
+document.addEventListener("input",function(e){var t=e.target;if(t&&t.nextElementSibling&&t.nextElementSibling.classList&&t.nextElementSibling.classList.contains("warn"))check(t);});
+
+/* ——— 2. Étapes et progression ——— */
+var steps=document.getElementById("steps");
+function tgt(i){var s=qsa("section.card",f);if(i===0)return s[0];if(i===1)return document.getElementById("societes").closest("section");if(i===2)return document.getElementById("magasins").closest("section");
+  var g=qs('#magasins [data-g="open"]');return g?g.closest(".full"):s[s.length-1];}
+function filled(sel){var e=qs(sel,f);if(!e)return false;if(e.type==="checkbox")return e.checked;if(e.type==="file")return !!(e.files&&e.files.length);return !!(e.value||"").trim();}
+function progress(){if(!steps)return;
+  var grp=[["#p_nom","#p_tel"],['#societes [data-k="denomination"]','#societes [data-k="forme_juridique"]'],['#magasins [data-k="enseigne"]','#magasins [data-k="numero"]','#magasins [data-k="categorie"]','#magasins [data-k="articles"]'],
+    ['#magasins [data-g="open"]','#magasins [data-g="close"]','#magasins [data-f="photo"]','#consent_rgpd']],tot=0,ok=0;
+  grp.forEach(function(g,i){var n=0;g.forEach(function(s){tot++;if(filled(s)){ok++;n++;}});var b=qs('[data-go="'+i+'"]',steps);if(b)b.classList.toggle("ok",n===g.length);});
+  var s0=document.getElementById("step0");document.body.classList.toggle("stk",!!s0&&s0.getBoundingClientRect().bottom<window.innerHeight*0.6);
+  var pc=Math.round(ok*100/tot);qs(".bar i",steps).style.width=pc+"%";qs(".barl",steps).textContent=L("prog")+" "+pc+" %";
+  var act=0;for(var i=3;i>=0;i--){var t=tgt(i);if(t&&t.getBoundingClientRect().top<window.innerHeight*0.35){act=i;break;}}
+  qsa("[data-go]",steps).forEach(function(b){if(+b.dataset.go===act)b.setAttribute("aria-current","step");else b.removeAttribute("aria-current");});}
+if(steps){steps.addEventListener("click",function(e){var b=e.target.closest("[data-go]");if(!b)return;var t=tgt(+b.dataset.go);if(!t)return;var y=t.getBoundingClientRect().top+window.pageYOffset-steps.offsetHeight-8;window.scrollTo({top:y,behavior:"smooth"});});
+  var tk;var pl=function(){clearTimeout(tk);tk=setTimeout(progress,80);};window.addEventListener("scroll",pl,{passive:true});f.addEventListener("input",pl);f.addEventListener("change",pl);f.addEventListener("click",pl);}
+
+/* ——— 3. Après un choix dans l'annuaire : aller droit à ce qui manque ——— */
+function jumpMissing(){var miss=qsa("input,select,textarea",f).filter(function(e){return e.willValidate&&!e.checkValidity()&&e.type!=="checkbox"&&e.offsetParent!==null;});
+  qsa(".need",f).forEach(function(e){e.classList.remove("need");});if(!miss.length)return;miss.forEach(function(e){e.classList.add("need");e.addEventListener("input",function o(){e.classList.remove("need");e.removeEventListener("input",o);});});
+  var d=miss[0].closest("details");if(d)d.open=true;var lm=document.getElementById("lkmsg");if(lm)lm.textContent=L("missing");
+  var t=miss[0].closest(".item")||miss[0].closest("div")||miss[0];setTimeout(function(){var y=t.getBoundingClientRect().top+window.pageYOffset-(steps?steps.offsetHeight:0)-12;window.scrollTo({top:y,behavior:"smooth"});},60);}
+try{new MutationObserver(function(ms){if(ms.some(function(m){return m.addedNodes.length;}))setTimeout(function(){jumpMissing();progress();},30);}).observe(document.getElementById("picked"),{childList:true});}catch(e){}
+
+/* ——— 4. Brouillon automatique (navigateur de la personne uniquement) ——— */
+var DK="acrb_fiche_brouillon_v1",restoring=false;
+function fields(it){return qsa("input,select,textarea",it).filter(function(e){return e.type!=="file"&&e.type!=="search"&&!e.classList.contains("hp");});}
+function snapItem(it){return {ue:it.dataset.ue||"",d:qsa("details",it).map(function(d){return d.open;}),v:fields(it).map(function(e){return e.type==="checkbox"||e.type==="radio"?(e.checked?1:0):e.tagName==="SELECT"?{i:e.selectedIndex}:[e.value,e.dataset.manual||""];})};}
+function snap(){var ids={};["p_nom","p_tel","p_email","preoccupation","remarques","mk_com"].forEach(function(i){var e=document.getElementById(i);if(e)ids[i]=e.value;});
+  ["consent_site","consent_rgpd"].forEach(function(i){var e=document.getElementById(i);if(e)ids[i]=e.checked;});
+  return {t:Date.now(),ids:ids,rad:qsa('section input[name="membre_acrb"],section input[name="marketplace"],section input[name="interets"]',f).map(function(e){return e.checked?1:0;}),
+    socs:qsa("#societes > .item").map(snapItem),mags:qsa("#magasins > .item").map(snapItem)};}
+function empty(s){return !Object.keys(s.ids).some(function(k){return s.ids[k]&&typeof s.ids[k]==="string";})&&!s.mags.some(function(m){return m.v.some(function(x){return Array.isArray(x)&&x[0];});});}
+function save(){if(restoring||f.hidden||document.body.classList.contains("mf-on"))return;try{var s=snap();if(empty(s))localStorage.removeItem(DK);else localStorage.setItem(DK,JSON.stringify(s));}catch(e){}}
+function fillItem(it,s){if(s.ue)it.dataset.ue=s.ue;qsa("details",it).forEach(function(d,i){if(s.d[i])d.open=true;});
+  fields(it).forEach(function(e,i){var x=s.v[i];if(x==null)return;if(e.type==="checkbox"||e.type==="radio")e.checked=!!x;else if(e.tagName==="SELECT"){if(x.i>=0&&x.i<e.options.length)e.selectedIndex=x.i;}else{e.value=x[0]||"";if(x[1])e.dataset.manual=x[1];}});}
+function restore(){var s;try{s=JSON.parse(localStorage.getItem(DK)||"null");}catch(e){s=null;}
+  if(!s||!s.ids||Date.now()-s.t>30*864e5||empty(s))return;
+  try{if(new URLSearchParams(location.search).get("ue"))return;}catch(e){}
+  restoring=true;
+  try{Object.keys(s.ids).forEach(function(i){var e=document.getElementById(i);if(!e)return;if(typeof s.ids[i]==="boolean")e.checked=s.ids[i];else e.value=s.ids[i]||"";});
+    var rads=qsa('section input[name="membre_acrb"],section input[name="marketplace"],section input[name="interets"]',f);(s.rad||[]).forEach(function(x,i){if(rads[i])rads[i].checked=!!x;});
+    var addS=document.getElementById("add_soc"),addM=document.getElementById("add_mag");
+    while(qsa("#societes > .item").length<s.socs.length)addS.click();
+    qsa("#societes > .item").forEach(function(it,i){if(s.socs[i])fillItem(it,s.socs[i]);});
+    var sd=qs('#societes [data-k="denomination"]');if(sd)sd.dispatchEvent(new Event("input",{bubbles:true}));
+    while(qsa("#magasins > .item").length<s.mags.length)addM.click();
+    qsa("#magasins > .item").forEach(function(it,i){if(s.mags[i])fillItem(it,s.mags[i]);});
+    qsa("#magasins [data-p]:checked,#magasins .rue_sel",f).forEach(function(e){e.dispatchEvent(new Event("change",{bubbles:true}));});
+    var n=document.getElementById("draftmsg");if(n){n.hidden=false;tr(n);}
+  }catch(e){}
+  restoring=false;}
+var dt;f.addEventListener("input",function(){clearTimeout(dt);dt=setTimeout(save,500);});f.addEventListener("change",function(){clearTimeout(dt);dt=setTimeout(save,500);});
+var dx=document.getElementById("draft_x");if(dx)dx.addEventListener("click",function(){try{localStorage.removeItem(DK);}catch(e){}location.reload();});
+try{new MutationObserver(function(){if(!document.getElementById("done").hidden){try{localStorage.removeItem(DK);}catch(e){}}}).observe(document.getElementById("done"),{attributes:true,attributeFilter:["hidden"]});}catch(e){}
+restore();
+
+/* ——— 5. Mode « Ma fiche » ——— */
+var mf=document.getElementById("mf"),login=document.getElementById("loginhint"),S=null,DATA=[],CUR=null,ORIG=null;
+function sess(){var k,s;try{k=Object.keys(localStorage).filter(function(x){return /^sb-.*-auth-token$/.test(x);})[0];s=k&&JSON.parse(localStorage.getItem(k)||"null");}catch(e){s=null;}
+  if(s&&s.currentSession)s=s.currentSession;
+  if(!s||!s.access_token)return Promise.resolve(null);
+  if((s.expires_at||0)*1000>Date.now()+60000)return Promise.resolve(s);
+  if(!s.refresh_token)return Promise.resolve(null);
+  return fetch(SB+"/auth/v1/token?grant_type=refresh_token",{method:"POST",headers:{"apikey":KEY,"Content-Type":"application/json"},body:JSON.stringify({refresh_token:s.refresh_token})})
+    .then(function(r){return r.ok?r.json():null;}).then(function(n){if(!n||!n.access_token)return null;if(!n.expires_at)n.expires_at=Math.floor(Date.now()/1000)+(n.expires_in||3600);try{localStorage.setItem(k,JSON.stringify(n));}catch(e){}return n;})
+    .catch(function(){return null;});}
+function api(fn,body){return fetch(SB+"/rest/v1/rpc/"+fn,{method:"POST",headers:{"apikey":KEY,"Authorization":"Bearer "+S.access_token,"Content-Type":"application/json"},body:JSON.stringify(body||{})})
+  .then(function(r){return r.json().catch(function(){return null;}).then(function(j){if(!r.ok)throw new Error((j&&j.message)||("HTTP "+r.status));return j;});});}
+function upload(file,prefix){if(!file)return Promise.resolve(null);if(file.size>8*1024*1024)return Promise.reject(new Error(L("err_photo")));
+  var ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg",path=prefix+"/"+Date.now()+"-"+Math.random().toString(36).slice(2,8)+"."+ext;
+  return fetch(SB+"/storage/v1/object/acrb/"+path,{method:"POST",headers:{"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":file.type||"application/octet-stream"},body:file})
+    .then(function(r){if(!r.ok)throw new Error(L("err"));return SB+"/storage/v1/object/public/acrb/"+path;});}
+function dt8(v){if(!v)return "";var d=new Date(v);if(isNaN(d))return "";return ("0"+d.getDate()).slice(-2)+"/"+("0"+(d.getMonth()+1)).slice(-2)+"/"+d.getFullYear();}
+function hm(v){return v?String(v).slice(0,5):"";}
+function fmtBce(b){var d=dg(b);if(d.length===9)d="0"+d;return d.length===10?d.slice(0,4)+"."+d.slice(4,7)+"."+d.slice(7):(b||"");}
+function inp(k,lab,o){o=o||{};var id="mf_"+k,t=o.type||"text";
+  var ctl=t==="textarea"?'<textarea id="'+id+'" data-m="'+k+'"'+(o.attrs||"")+'>'+esc(o.v)+'</textarea>':'<input id="'+id+'" type="'+t+'" data-m="'+k+'" value="'+esc(o.v)+'"'+(o.attrs||"")+'>';
+  return '<div class="'+(o.full?"full":"")+'"><label for="'+id+'" data-t="'+lab+'"'+(o.req?' class="req"':"")+'></label>'+ctl+(o.note?'<p class="note" data-t="'+o.note+'"></p>':"")+'</div>';}
+function ro(k,lab,v,full){return '<div class="'+(full?"full":"")+'"><label for="mfl_'+k+'"><span data-t="'+lab+'"></span><span class="pad" aria-hidden="true">🔒</span></label><input id="mfl_'+k+'" class="ro" type="text" readonly aria-readonly="true" value="'+esc(v||"—")+'"></div>';}
+function chk(k,lab,v){return '<div class="consent"><input type="checkbox" id="mf_'+k+'" data-m="'+k+'"'+(v?" checked":"")+'><label for="mf_'+k+'" data-t="'+lab+'"></label></div>';}
+function ph(k,lab,url,prefix){return '<div><label for="mf_f_'+k+'" data-t="'+lab+'"></label><div class="ph">'+(url?'<img src="'+esc(url)+'" alt="" id="mf_img_'+k+'">':'<span class="none" id="mf_img_'+k+'"></span>')+
+  '<input type="file" id="mf_f_'+k+'" data-mf="'+k+'" data-prefix="'+prefix+'" accept="image/*"></div></div>';}
+function banner(){var b=document.getElementById("mf_ban");if(!b||!CUR)return;
+  b.innerHTML='<b>'+esc(L("ban_a"))+'</b> · '+esc(L("ban_maj"))+' '+esc(dt8(CUR.maj_le))+' · '+(CUR.verifie_le?esc(L("ban_verif"))+' '+esc(dt8(CUR.verifie_le)):esc(L("ban_nonverif")));}
+function render(i){CUR=DATA[i];var m=CUR.modifiable||{},v=CUR.verrouille||{},hj=m.horaires_json||{},jo=(m.jours_ouverture&&m.jours_ouverture.length)?m.jours_ouverture:DAYS.filter(function(d){return hj[d];});
+  var cnt={},best="";jo.forEach(function(d){var h=hj[d];if(h){var key=(h.ouvre||"")+"|"+(h.ferme||"");cnt[key]=(cnt[key]||0)+1;if(!best||cnt[key]>cnt[best])best=key;}});
+  var co=best.split("|")[0]||"",cc=best.split("|")[1]||"",diff=jo.some(function(d){var h=hj[d];return h&&((h.ouvre||"")+"|"+(h.ferme||""))!==best;});
+  var ad=[v.rue,v.numero].filter(Boolean).join(" ")+(v.code_postal?", "+v.code_postal:""),dir=(v.dirigeants||[]).map(function(x){return x.nom+(x.role?" ("+x.role+")":"");}).join(" · ");
+  var ens=m.enseigne||v.denomination||"";
+  var h='<div class="mfhead"><div class="av">'+(m.logo_url?'<img src="'+esc(m.logo_url)+'" alt="">':esc((ens||"?").trim().charAt(0).toUpperCase()))+'</div><div style="min-width:0"><div class="eyebrow" data-t="mf_eyebrow"></div><h1 id="mf_title">'+esc(ens)+'</h1><p class="mfban" id="mf_ban"></p></div></div>'+
+   '<div class="mfacts">'+(CUR["public"]?'<a class="btn2" id="mf_pub" href="./'+(dg(CUR.ue)?"#c-"+dg(CUR.ue):"")+'"><span data-t="pub"></span> →</a>':'<span class="btn2 off" id="mf_pub"><span data-t="nonpub"></span></span>')+
+   '<button type="button" class="lnk" id="mf_add" data-t="add_other"></button></div>'+
+   (DATA.length>1?'<section class="card"><label for="mf_sel" data-t="choose_mag"></label><select id="mf_sel">'+DATA.map(function(x,j){var mm=x.modifiable||{},vv=x.verrouille||{};return '<option value="'+j+'"'+(j===i?" selected":"")+'>'+esc((mm.enseigne||vv.denomination||"?")+" · "+[vv.rue,vv.numero].filter(Boolean).join(" "))+'</option>';}).join("")+'</select></section>':"")+
+   '<section class="card lock" id="mf_lock"><h2><span class="pad" aria-hidden="true">🔒</span> <span data-t="lock_t"></span></h2><p class="hint" data-t="lock_h"></p><div class="grid">'+
+     ro("denomination","denomination",v.denomination,true)+ro("bce","bce",fmtBce(v.bce))+ro("forme","forme",v.forme)+ro("adresse","adresse",ad,true)+
+     (v.siege?ro("siege","siege",v.siege,true):"")+ro("rubrique","rubrique",v.rubrique)+ro("nace","nace",v.activite)+(dir?ro("dirigeants","dirigeants",dir,true):"")+ro("email_cx","email_cx",v.email_connexion,true)+
+   '</div><div id="mf_uc" style="margin-top:12px"></div></section>'+
+   '<form id="mf_f" novalidate>'+
+   '<section class="card"><h2 data-t="sect_ident"></h2><div class="grid">'+inp("enseigne","enseigne",{v:m.enseigne,full:true,req:true,attrs:' autocomplete="organization"'})+
+     inp("articles","articles",{v:m.articles,full:true})+inp("description","description",{v:m.description,full:true,type:"textarea"})+
+     inp("debut_activite","debut",{v:m.debut_activite,attrs:' inputmode="numeric" maxlength="4"'})+'<div class="full">'+chk("masquer_depuis","masquer_depuis",!!m.masquer_depuis)+'</div>'+
+     '<div class="full"><label id="mf_lg_l" data-t="langues"></label><div class="chips" role="group" aria-labelledby="mf_lg_l">'+LANGS.map(function(x,j){return '<label><input type="checkbox" data-ml value="'+esc(x)+'"'+((m.langues||[]).indexOf(x)>=0?" checked":"")+'><span data-t="L'+(j+1)+'"></span></label>';}).join("")+'</div></div>'+
+   '</div></section>'+
+   '<section class="card"><h2 data-t="sect_contact"></h2><div class="grid">'+inp("tel","tel_mag",{v:m.tel,type:"tel"})+inp("email","email_mag",{v:m.email,type:"email"})+
+     inp("contact_gsm","contact_gsm",{v:m.contact_gsm,type:"tel",full:true,attrs:' data-chk="gsm" autocomplete="tel"'})+'</div></section>'+
+   '<section class="card" id="mf_hours"><h2 data-t="horaires"></h2><div class="grid">'+
+     '<div class="full"><label id="mf_j_l" data-t="jours_ouv"></label><div class="chips" role="group" aria-labelledby="mf_j_l">'+DAYS.map(function(d,j){return '<label><input type="checkbox" data-md="'+d+'"'+(jo.indexOf(d)>=0?" checked":"")+'><span data-t="d'+(j+1)+'"></span></label>';}).join("")+'</div></div>'+
+     '<div class="full"><div class="times"><div><label for="mf_go" data-t="ouverture"></label><input type="time" id="mf_go" value="'+esc(hm(co))+'"></div><div><label for="mf_gc" data-t="fermeture"></label><input type="time" id="mf_gc" value="'+esc(hm(cc))+'"></div></div>'+
+     '<details id="mf_hdiff"'+(diff?" open":"")+'><summary data-t="horaires_diff"></summary><div class="days">'+DAYS.map(function(d,j){var x=hj[d]||{};var man=diff&&hj[d]&&((x.ouvre||"")+"|"+(x.ferme||""))!==best;
+       return '<span id="mf_dl_'+j+'" data-t="d'+(j+1)+'"></span><input type="time" aria-labelledby="mf_dl_'+j+'" data-mdo="'+d+'" value="'+esc(hm(x.ouvre||co))+'"'+(man?' data-manual="1"':"")+'><input type="time" aria-labelledby="mf_dl_'+j+'" data-mdc="'+d+'" value="'+esc(hm(x.ferme||cc))+'"'+(man?' data-manual="1"':"")+'>';}).join("")+'</div></details></div>'+
+     '<div class="full"><label id="mf_pr_l" data-t="priere"></label><div class="chips" role="radiogroup" aria-labelledby="mf_pr_l">'+[["Oui","pr_oui"],["Non","pr_non"],["Variable","pr_var"]].map(function(p){return '<label><input type="radio" name="mf_pr" value="'+p[0]+'"'+(m.priere_vendredi===p[0]?" checked":"")+'><span data-t="'+p[1]+'"></span></label>';}).join("")+'</div>'+
+       '<div class="sub" id="mf_pbox"'+(m.priere_vendredi==="Oui"?"":" hidden")+'><div class="times"><div><label for="mf_priere_fermeture" data-t="priere_from"></label><input type="time" id="mf_priere_fermeture" data-m="priere_fermeture" value="'+esc(hm(m.priere_fermeture))+'"></div><div><label for="mf_priere_reouverture" data-t="priere_to"></label><input type="time" id="mf_priere_reouverture" data-m="priere_reouverture" value="'+esc(hm(m.priere_reouverture))+'"></div></div>'+
+       chk("priere_ete_decalage","priere_ete",m.priere_ete_decalage!==false)+'</div></div>'+
+     '<div class="full"><label id="mf_fe_l" data-t="fermetures"></label><div class="chips" role="group" aria-labelledby="mf_fe_l"><label><input type="checkbox" data-m="ferme_aid_fitr"'+(m.ferme_aid_fitr?" checked":"")+'><span data-t="aid_fitr"></span></label><label><input type="checkbox" data-m="ferme_aid_adha"'+(m.ferme_aid_adha?" checked":"")+'><span data-t="aid_adha"></span></label></div></div>'+
+     inp("fermetures_autres","autres_ferm",{v:m.fermetures_autres,full:true})+
+   '</div></section>'+
+   '<section class="card"><h2 data-t="sect_photos"></h2><div class="grid">'+ph("logo","logo",m.logo_url,"logos")+ph("photo","photo",m.photo_url,"facades")+'</div></section>'+
+   '<section class="card"><h2 data-t="online"></h2><div class="grid">'+inp("site_web","site",{v:m.site_web,type:"url",attrs:' placeholder="https://"'})+inp("instagram","Instagram",{v:m.instagram,attrs:' placeholder="@…"'})+
+     inp("facebook","Facebook",{v:m.facebook})+inp("tiktok","TikTok",{v:m.tiktok,attrs:' placeholder="@…"'})+inp("google_maps","maps",{v:m.google_maps,type:"url",full:true})+'</div></section>'+
+   '<section class="card"><h2 data-t="resp_sum"></h2><div class="grid">'+inp("responsable_nom","resp",{v:m.responsable_nom,full:true})+inp("responsable_tel","tel",{v:m.responsable_tel,type:"tel"})+inp("responsable_email","email",{v:m.responsable_email,type:"email"})+'</div></section>'+
+   '<section class="card"><h2 data-t="sect_vis"></h2>'+chk("consent_site","consent",!!m.consent_site)+chk("afficher_nom","afficher_nom",!!m.afficher_nom)+'</section>'+
+   '<button class="submit" id="mf_save" type="submit" data-t="save"></button><div class="msg" id="mf_msg" role="status" aria-live="polite"></div></form>';
+  mf.innerHTML=h;tr(mf);banner();wire();ORIG=collect();
+  signaler(ens,v,0);
+}
+function signaler(ens,v,n){var el=document.getElementById("mf_uc");if(!el||CUR&&CUR.verrouille!==v)return;
+  if(!(window.UNCLIC&&UNCLIC.rendre)){if(n<40)setTimeout(function(){signaler(ens,v,n+1);},150);return;}
+  try{el.innerHTML="";UNCLIC.rendre(el,{sujet:"Erreur dans les données officielles de ma fiche",label:L("signal"),intro:"Une donnée officielle de ma fiche Shopping Brabant est inexacte.",
+    champs:[["Commerce",ens+(v.bce?" (BCE "+fmtBce(v.bce)+")":"")],["Adresse de connexion",v.email_connexion||""],["Donnée inexacte",""],["Valeur correcte",""]]});}catch(e){}}
+function wire(){var F=document.getElementById("mf_f");
+  var sel=document.getElementById("mf_sel");if(sel)sel.addEventListener("change",function(){render(+sel.value);window.scrollTo(0,0);});
+  document.getElementById("mf_add").addEventListener("click",function(){document.body.classList.add("mf-add");setTimeout(function(){f.scrollIntoView({behavior:"smooth"});},30);});
+  qsa('[name="mf_pr"]',F).forEach(function(r){r.addEventListener("change",function(){document.getElementById("mf_pbox").hidden=r.value!=="Oui";});});
+  ["mf_go","mf_gc"].forEach(function(id,j){document.getElementById(id).addEventListener("input",function(e){qsa(j?"[data-mdc]":"[data-mdo]",F).forEach(function(x){if(!x.dataset.manual)x.value=e.target.value;});});});
+  qsa("[data-mdo],[data-mdc]",F).forEach(function(x){x.addEventListener("input",function(){x.dataset.manual="1";});});
+  qsa("[data-mf]",F).forEach(function(x){x.addEventListener("change",function(){var fl=x.files&&x.files[0],im=document.getElementById("mf_img_"+x.dataset.mf);if(!fl||!im)return;try{var u=URL.createObjectURL(fl);if(im.tagName!=="IMG"){var n=document.createElement("img");n.id=im.id;n.alt="";im.replaceWith(n);im=n;}im.src=u;}catch(e){}});});
+  F.addEventListener("submit",onSave);}
+function collect(){var F=document.getElementById("mf_f"),o={};
+  qsa("[data-m]",F).forEach(function(e){var k=e.dataset.m;if(e.type==="checkbox")o[k]=e.checked;else{var s=(e.value||"").trim();o[k]=s||null;}});
+  o.langues=qsa("[data-ml]:checked",F).map(function(e){return e.value;});
+  var pr=qs('[name="mf_pr"]:checked',F);o.priere_vendredi=pr?pr.value:null;
+  if(o.priere_vendredi!=="Oui"){o.priere_fermeture=null;o.priere_reouverture=null;}
+  var go=document.getElementById("mf_go").value||null,gc=document.getElementById("mf_gc").value||null,diff=document.getElementById("mf_hdiff").open,json={},lines=[],jours=[];
+  DAYS.forEach(function(d){var on=qs('[data-md="'+d+'"]',F).checked,io=qs('[data-mdo="'+d+'"]',F).value||null,ic=qs('[data-mdc="'+d+'"]',F).value||null;
+    var oo=diff?(io||go):go,cc=diff?(ic||gc):gc;
+    if(on){jours.push(d);json[d]={ouvre:oo,ferme:cc};lines.push(d+" : "+((oo||cc)?((oo||"?")+" – "+(cc||"?")):"ouvert"));}else{json[d]=null;lines.push(d+" : fermé");}});
+  o.horaires_json=json;o.jours_ouverture=jours;o.horaires=lines.join("\n");
+  return o;}
+function say(t,ok){var m=document.getElementById("mf_msg");m.className="msg "+(ok?"ok-msg":"err");m.textContent=t;}
+function onSave(ev){ev.preventDefault();var F=ev.target,b=document.getElementById("mf_save"),cur=collect(),p={};
+  Object.keys(cur).forEach(function(k){if(WL.indexOf(k)>=0&&JSON.stringify(cur[k])!==JSON.stringify(ORIG[k]))p[k]=cur[k];});
+  if("enseigne" in p&&!p.enseigne){say(L("err_ens"));document.getElementById("mf_enseigne").focus();return;}
+  if(p.horaires_json||p.jours_ouverture||p.horaires){p.horaires_json=cur.horaires_json;p.jours_ouverture=cur.jours_ouverture;p.horaires=cur.horaires;}
+  var files=qsa("[data-mf]",F).filter(function(x){return x.files&&x.files[0];});
+  if(!Object.keys(p).length&&!files.length){say(L("nochange"),true);return;}
+  b.disabled=true;b.textContent=L("saving");
+  Promise.all(files.map(function(x){return upload(x.files[0],x.dataset.prefix).then(function(u){if(u)p[x.dataset.mf+"_url"]=u;});}))
+   .then(function(){return api("acrb_ma_fiche_maj",{p_ue:String(CUR.id),p:p});})
+   .then(function(j){Object.keys(p).forEach(function(k){CUR.modifiable[k]=p[k];});if(j&&j.maj_le)CUR.maj_le=j.maj_le;
+      files.forEach(function(x){x.value="";});ORIG=collect();banner();var t=document.getElementById("mf_title");if(t&&p.enseigne)t.textContent=p.enseigne;
+      if("consent_site" in p&&!p.consent_site){var pb=document.getElementById("mf_pub");if(pb){pb.className="btn2 off";pb.removeAttribute("href");pb.innerHTML='<span data-t="nonpub"></span>';tr(pb);}}
+      say(L("saved"),true);})
+   .catch(function(e){say(L("err")+(e&&e.message?" ("+e.message+")":""));})
+   .then(function(){b.disabled=false;b.textContent=L("save");});}
+function start(){document.body.classList.remove("mf-wait");document.body.classList.add("mf-on");mf.hidden=false;
+  var want="";try{want=dg(new URLSearchParams(location.search).get("ue")||"");}catch(e){}
+  var i=0;if(want)DATA.forEach(function(x,j){if(dg(x.ue)===want)i=j;});render(i);}
+if(mf){sess().then(function(s){if(!s){if(login)login.hidden=false;return;}S=s;document.body.classList.add("mf-wait");
+  return api("acrb_ma_fiche",{}).then(function(j){DATA=(j&&j.magasins)||[];if(!DATA.length){document.body.classList.remove("mf-wait");return;}start();});})
+ .catch(function(){document.body.classList.remove("mf-wait");if(login)login.hidden=false;});}
+
+/* langue : retraduire ce module après le changement fait par la page */
+var lb=document.getElementById("langs");if(lb)lb.addEventListener("click",function(){setTimeout(function(){tr();banner();progress();},0);});
+tr();progress();
 })();
 </script>
 <script>/* Liens « un clic » ACRB (demande de Karim du 23/11/2026) : sur chaque écran où quelqu'un doit agir,
