@@ -1,7 +1,9 @@
 /* Charte documentaire de l'ACRB : tous les documents produits par l'association (PV, convocations, listes de présence,
    procurations, lettres, actes, décisions de vote) sortent avec la même identité : logo de l'association, rouge institutionnel,
    en-tête et pied de page officiels, pagination. Moteur PDF : pdf-lib (vectoriel, texte sélectionnable, A4).
-   Expose window.DOCACRB = { AS, pdf(blocs, titre), actions(conteneur, blob, nom, options), propre(texte) }. */
+   Expose window.DOCACRB = { AS, pdf(blocs, titre), actions(conteneur, blob, nom, options), propre(texte) }.
+   Option opt.emetteur = { nom, sous, ligne, pied } : document d'une autre organisation (commerçant, société) préparé sur la
+   plateforme ; même mise en page, sans le logo ni l'identité de l'ACRB. Sans cette option, rien ne change. */
 (function(){
 var AS={
   nom:"Association des Commerçants des rues de Brabant, Liedts et Gallait",
@@ -27,15 +29,18 @@ var WIN=new Set(Array.from("€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–
 function propre(t){return String(t==null?"":t).replace(/\r/g,"").replace(/« /g,"«\u00a0").replace(/ »/g,"\u00a0»").replace(/ ([:;!?])/g,"\u00a0$1").replace(/./gu,function(c){if(REMPL[c]!=null)return REMPL[c];var k=c.charCodeAt(0);if(c.length>1)return "";if(k===10||(k>=32&&k<=126)||(k>=160&&k<=255)||WIN.has(k))return c;
   var n=c.normalize("NFD").replace(/[̀-ͯ]/g,"");return /^[\x20-\x7e]$/.test(n)?n:"";});}
 
-async function pdf(blocs,titre,opt){opt=opt||{};var L=window.PDFLib,doc=await L.PDFDocument.create();
-  doc.setTitle(propre(titre));doc.setAuthor(AS.abr);doc.setCreator("Plateforme de gestion de l'ACRB");doc.setProducer("ACRB");doc.setLanguage("fr-BE");
+async function pdf(blocs,titre,opt){opt=opt||{};var E=opt.emetteur||null,L=window.PDFLib,doc=await L.PDFDocument.create();
+  doc.setTitle(propre(titre));doc.setAuthor(E?propre(E.nom):AS.abr);doc.setCreator("Plateforme de gestion de l'ACRB");doc.setProducer("ACRB");doc.setLanguage("fr-BE");
   var F=await doc.embedFont(L.StandardFonts.Helvetica),B=await doc.embedFont(L.StandardFonts.HelveticaBold),I=await doc.embedFont(L.StandardFonts.HelveticaOblique);
-  var img=null;try{img=await doc.embedPng(await chargerLogo());}catch(e){img=null;}
+  var img=null;if(!E){try{img=await doc.embedPng(await chargerLogo());}catch(e){img=null;}}
   var W=595.28,H=841.89,M=56,HAUT=118,BAS=74,y,page,num=0;
   var c=function(a){return L.rgb(a[0],a[1],a[2]);};
   function entete(){page=doc.addPage([W,H]);num++;
     if(img){var lw=num===1?112:70,lh=lw*img.height/img.width;page.drawImage(img,{x:M-4,y:H-28-lh,width:lw,height:lh});}
-    var x=num===1?M+122:M+80,yy=H-40;
+    var x=E?M:(num===1?M+122:M+80),yy=H-40;
+    if(E){var en=num===1?wrap(E.nom,B,13,W-2*M):[E.nom];en.forEach(function(l){page.drawText(propre(l),{x:x,y:yy,size:num===1?13:8.5,font:B,color:c(ROUGE)});yy-=num===1?16:11;});
+      if(num===1){if(E.sous){page.drawText(propre(E.sous),{x:x,y:yy,size:8.5,font:F,color:c(GRIS)});yy-=11;}if(E.ligne){wrap(E.ligne,F,7.6,W-2*M).slice(0,2).forEach(function(l){page.drawText(l,{x:x,y:yy,size:7.6,font:F,color:c(GRIS)});yy-=10;});}}
+      var le=num===1?H-HAUT:H-74;page.drawRectangle({x:M,y:le,width:W-2*M,height:1.6,color:c(ROUGE)});y=le-26;return;}
     var nom=num===1?wrap(AS.nom,B,11.5,W-M-x):[AS.nom];
     nom.forEach(function(l){page.drawText(propre(l),{x:x,y:yy,size:num===1?11.5:8.5,font:B,color:c(ROUGE)});yy-=num===1?14:11;});
     if(num===1){page.drawText(propre(AS.abr+" · "+AS.forme),{x:x,y:yy,size:8.5,font:F,color:c(GRIS)});yy-=11;
@@ -86,7 +91,7 @@ async function pdf(blocs,titre,opt){opt=opt||{};var L=window.PDFLib,doc=await L.
   var pied=(blocs.filter(function(b){return b.f;})[0]||{}).f;
   var pages=doc.getPages();pages.forEach(function(pg,i){
     pg.drawLine({start:{x:M,y:BAS-18},end:{x:W-M,y:BAS-18},thickness:.5,color:c(FILET)});
-    pg.drawText(propre(AS.abr+" · N° d'entreprise "+AS.num+" · "+AS.siege+" · "+AS.rpm),{x:M,y:BAS-30,size:6.8,font:F,color:c(GRIS)});
+    pg.drawText(E?propre(E.pied||E.nom).slice(0,150):propre(AS.abr+" · N° d'entreprise "+AS.num+" · "+AS.siege+" · "+AS.rpm),{x:M,y:BAS-30,size:6.8,font:F,color:c(GRIS)});
     if(pied){var pl=wrap(pied,F,6.8,W-2*M-50);pl.slice(0,2).forEach(function(l,k){pg.drawText(l,{x:M,y:BAS-40-k*8.5,size:6.8,font:F,color:c(GRIS)});});}
     var pn="Page "+(i+1)+" / "+pages.length;pg.drawText(pn,{x:W-M-F.widthOfTextAtSize(pn,7.5),y:BAS-30,size:7.5,font:B,color:c(ROUGE)});});
   return new Blob([await doc.save()],{type:"application/pdf"});}
