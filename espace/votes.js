@@ -73,7 +73,7 @@ function carte(s,moi){
       (o.objet?'<div>'+esc(o.objet)+'</div>':'')+
       (Math.max(+o.montant_tvac||0,+o.montant_htva||0)>12500?'<div class="vo_ag">Plus de 12 500 € : l\u2019accord de l\u2019assemblée générale aux deux tiers est requis (statuts, art. 15).</div>':'')+
       '<div class="vo_m">'+(o.montant_tvac!=null?esc(eur(o.montant_tvac))+' TVAC':'')+(o.montant_htva!=null?(o.montant_tvac!=null?' · ':'')+esc(eur(o.montant_htva))+' HTVA':'')+(o.montant_tvac==null&&o.montant_htva==null?'<span class="soon">montant non indiqué</span>':'')+'</div>'+
-      (o.notes?'<div class="soon">'+esc(o.notes)+'</div>':'')+
+      (typeof o.notes==="string"&&o.notes?'<div class="soon">'+esc(o.notes)+'</div>':'')+
       '<div class="vo_docs">'+(o.fichier?'<button type="button" class="lk" data-doc="'+esc(o.fichier)+'">Voir l’offre (document)</button>':'')+(o.lien?'<a class="lk" target="_blank" rel="noopener" href="'+esc(o.lien)+'">Ouvrir le lien</a>':'')+
       (open&&!dejaVote?'<button type="button" class="lk d" data-retirer="'+o.id+'">Retirer</button>':'')+'</div>'+
       (pour.length?'<div class="vo_pour">Pour : '+pour.map(esc).join(", ")+'</div>':'')+notesHtml(o,moi,votant&&open)+
