@@ -130,7 +130,7 @@ h1 em{font-style:normal;font-weight:700;color:var(--accent)}
 .filters{position:sticky;top:var(--navh,68px);z-index:30;background:#fff;padding:10px 0 8px;border-bottom:1px solid var(--fg);margin-top:28px}
 @media(max-width:720px){.filters{top:var(--navh,104px)}}
 .filters .row{display:flex;gap:8px;align-items:center}
-.cats{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0;padding:2px 0}.cats::-webkit-scrollbar{display:none}
+.cats{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0;padding:2px 0}.cats::-webkit-scrollbar{display:none}@media(min-width:701px){.cats,.sub2 .links,nav .links,.feat,.fx-row{flex-wrap:wrap!important;overflow-x:visible!important}}
 .cats button{flex:none;border:0;border-bottom:3px solid transparent;background:transparent;padding:8px 12px;font:600 15px var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);white-space:nowrap}
 .cats button[aria-pressed=true]{color:var(--fg);border-bottom-color:var(--fg)}
 .toggle{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-top:8px}.toggle input{accent-color:var(--fg);width:18px;height:18px;flex:none;margin:0}

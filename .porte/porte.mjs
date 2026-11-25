@@ -16,7 +16,8 @@ fs.mkdirSync(OUT, { recursive: true })
 const SB = 'https://movoukcjirtjnqjgwndw.supabase.co', CLE = 'sb_publishable_jVXX4nAfC5F0wzj_FedaAQ_WhzzN_O6'
 const PAGES = ['index.html', 'acrb/index.html', 'acrb/index-nl.html', 'acrb/annuaire.html', 'acrb/fiche.html', 'acrb/valider.html', 'acrb/confidentialite.html', 'espace/ca.html',
   'shopping/index.html', 'shopping/fiche.html', 'shopping/guide.html', 'quartier/index.html', 'stagiaires/index.html', 'espace/index.html', 'espace/commercant.html', 'espace/terrain.html', 'espace/signer.html']
-const PROFILS = { iphone13: [webkit, devices['iPhone 13']], android: [chromium, devices['Pixel 7']] }
+// faute du 25/11 : le bouton « Prix de l'aide de l'IA » coupé sur ordinateur et les rubriques suivantes inaccessibles ; la porte teste aussi l'écran d'ordinateur
+const PROFILS = { iphone13: [webkit, devices['iPhone 13']], android: [chromium, devices['Pixel 7']], bureau: [chromium, { viewport: { width: 1366, height: 800 }, deviceScaleFactor: 1 }] }
 const DANGER = /envoyer|supprim|retir|valider|signer|payer|publier|enregistr|émettre|emettre|confirmer|google|déconnect|deconnect|inscri|ajouter|créer|creer|adhérer|adherer|commander|voter|demander|ouvrir le vote|relier|déposer|deposer|annuler|lien de connexion|invitation/i
 const ECRITURE = /\/rest\/v1\/rpc\/[a-z_]*(creer|ajout|maj|inscri|signal|adher|demande|soumet|enregistr|envoy|valid|retir|regler|import|bulk|utiliser|voter|annuler|pousser|rectifier|rappels)|\/rest\/v1\/(?!rpc)|\/storage\/v1\/object\/(?!sign|public)|\/functions\/v1\//i
 // clé d'un rouge pour le cliquet : sans les chiffres qui varient d'une machine à l'autre (pixels, millisecondes)
@@ -50,9 +51,15 @@ async function ecran(moteur, prof, pg) {
   const ms = Date.now() - s0; await p.waitForTimeout(600)
   if (st >= 400) pb.push('http:' + st)
   const m = await p.evaluate(() => ({ texte: document.body.innerText.trim().length, debord: document.documentElement.scrollWidth - innerWidth,
+    // bouton ou lien coupé par un conteneur qui défile ou masque (barre d'onglets) : on ne le voit pas, on ne l'atteint pas
+    caches: [...document.querySelectorAll('a,button,[role=tab]')].filter(e => e.offsetParent !== null && e.getClientRects().length).map(e => { const r = e.getBoundingClientRect(); let a = e.parentElement
+      while (a && a !== document.body) { const cs = getComputedStyle(a); if (/(auto|scroll|hidden)/.test(cs.overflowX)) { const q = a.getBoundingClientRect(); if (r.right > q.right + 2 || r.left < q.left - 2) return (e.innerText || e.getAttribute('aria-label') || '').trim().slice(0, 40) } a = a.parentElement }
+      return null }).filter(Boolean),
     liens: [...new Set([...document.querySelectorAll('a[href]')].map(a => a.href.split('#')[0]))] })).catch(() => ({ texte: 0, debord: 0, liens: [] }))
   if (m.texte < 40) pb.push('vide:ecran vide')
   if (m.debord > 2) pb.push('debordement:' + m.debord + ' px')
+  // sur téléphone on fait défiler du doigt ; sur ordinateur, un bouton hors du cadre d'une barre qui défile est introuvable
+  if (prof[2] === 'bureau') for (const t of [...new Set(m.caches || [])].slice(0, 5)) pb.push('bouton coupé:« ' + t + ' »')
   for (const l of m.liens) { if (!l.startsWith(BASE + '/')) continue; try { const g = await ctx.request.get(l, { timeout: 15000 }); if (g.status() >= 400) pb.push('lien:' + g.status() + ' ' + l.replace(BASE, '')) } catch { pb.push('lien:injoignable ' + l.replace(BASE, '')) } }
   const sel = 'button:visible,[role=button]:visible,summary:visible,[role=tab]:visible'
   const n = Math.min(await p.locator(sel).count().catch(() => 0), 30); let clics = 0
@@ -84,7 +91,7 @@ async function tresorier(moteur, prof) {
     const u = r.request().url()
     if (/\/auth\/v1\/user/.test(u)) return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(user) })
     if (/\/auth\/v1\/token/.test(u)) return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(sess) })
-    if (/rpc\/acrb_mes_roles/.test(u)) return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(['tresorier', 'ca', 'admin']) })
+    if (/rpc\/acrb_mes_roles/.test(u)) return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(['tresorier', 'ca', 'admin', 'fondateur', 'commercant', 'terrain_troncon']) })
     if (/rpc\/acrb_scrutins_liste/.test(u)) return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ moi: 3, en_attente: [], scrutins: [{ id: 1, titre: 'Essai porte', statut: 'ouvert', secret: true, electeurs: [{ id: 3, nom: 'Robot' }], offres: [{ id: 1, prestataire: 'Offre A', notes: [] }, { id: 2, prestataire: 'Offre B', notes: [] }], bulletins: [], cree_le: '2026-01-01T00:00:00Z' }] }) })
     if (/rpc\/acrb_note_offre/.test(u)) return r.fulfill({ status: 200, contentType: 'application/json', body: 'null' })
     if (/rpc\/acrb_pingen_etat/.test(u)) return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ relie: false, courriers: [] }) })
@@ -117,6 +124,16 @@ async function tresorier(moteur, prof) {
   } catch (e) { pb.push('bouton muet:Enregistrer ma note (aucune confirmation visible à côté)') }
   v.courrier = await ouvrir('c_courrier'); v.relier = (await vis('co_form')) || await p.evaluate(() => (document.getElementById('co_cfg') || {}).open === true).catch(() => false)
   v.debord = await p.evaluate(() => document.documentElement.scrollWidth - innerWidth).catch(() => 0)
+  // faute du 25/11 : chaque section du menu, puis chacune de ses rubriques, doit être visible en entier et cliquable (pas coupée, pas cachée sous un défilement)
+  const sections = await p.$$eval('.nv .r1 a', l => l.map(a => a.getAttribute('href'))).catch(() => [])
+  for (const sec of sections) {
+    try { await p.click(`.nv .r1 a[href="${sec}"]`, { timeout: 4000 }); await p.waitForTimeout(200) } catch { pb.push('menu:section « ' + sec + ' » non cliquable'); continue }
+    const coupes = await p.evaluate(() => { const nv = document.querySelector('.nv'), q = nv.getBoundingClientRect()
+      return [...nv.querySelectorAll('.r2 a')].filter(a => a.offsetParent !== null).filter(a => { const r = a.getBoundingClientRect(); let z = a.parentElement, coupe = r.right > q.right + 1 || r.left < q.left - 1
+        while (!coupe && z && z !== nv) { const cs = getComputedStyle(z); if (/(auto|scroll|hidden)/.test(cs.overflowX)) { const w = z.getBoundingClientRect(); coupe = r.right > w.right + 1 || r.left < w.left - 1 } z = z.parentElement }
+        return coupe }).map(a => a.innerText.trim().slice(0, 40)) }).catch(() => [])
+    for (const t of coupes) pb.push('menu:rubrique coupée ou inaccessible « ' + t + ' »')
+  }
   if (!/Trésorier/.test(v.acces || '')) pb.push('tresorier:rôle non affiché')
   if (!v.treso) pb.push('tresorier:mode trésorier inactif')
   if (!v.cotisations || !v.facturer) pb.push('tresorier:facturation invisible')
@@ -132,12 +149,12 @@ async function tresorier(moteur, prof) {
 
 const wk = await webkit.launch(), ch = await chromium.launch()
 setTimeout(() => { console.log('FIN ROUGE : la porte a dépassé 20 minutes'); process.exit(1) }, 20 * 60 * 1000).unref()
-const moteurs = { iphone13: wk, android: ch }
+const moteurs = { iphone13: wk, android: ch, bureau: ch }
 for (const [k, v] of Object.entries(PROFILS)) v[2] = k
 const jobs = []
 for (const k of Object.keys(PROFILS)) { for (const pg of PAGES) jobs.push(() => ecran(moteurs[k], PROFILS[k], pg)); jobs.push(() => tresorier(moteurs[k], PROFILS[k])) }
 // chaque écran a 2 minutes au plus : un écran qui fige devient un rouge, jamais une porte bloquée
-const delai = (f, n) => Promise.race([f(), new Promise(r => setTimeout(() => { rouges.push('delai|' + n + '|fige'); console.log('ROUGE délai dépassé ' + n); r() }, 120000))])
+const delai = (f, n) => { let t; return Promise.race([f(), new Promise(r => { t = setTimeout(() => { rouges.push('delai|' + n + '|fige'); console.log('ROUGE délai dépassé ' + n); r() }, 120000) })]).finally(() => clearTimeout(t)) }
 let i = 0; await Promise.all(Array.from({ length: 4 }, async () => { while (i < jobs.length) { const k = i++; await delai(jobs[k], 'tache-' + k) } }))
 await wk.close(); await ch.close()
 
