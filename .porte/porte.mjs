@@ -139,6 +139,10 @@ async function tresorier(moteur, prof) {
       if (r) { await p.click(`.nv .r2 a[href="${r}"]`, { timeout: 3000 }).catch(() => {}); await p.waitForTimeout(350) }
       const sans = await p.evaluate(() => [...document.querySelectorAll('a[href],button,summary,select,[role=tab]')].filter(e => e.offsetParent !== null && e.getClientRects().length && !e.closest('[data-aide]') && !e.classList.contains('aide-btn')).map(e => (e.innerText || e.getAttribute('aria-label') || e.tagName).trim().replace(/\s+/g, ' ').slice(0, 40))).catch(() => [])
       for (const t of sans.slice(0, 5)) pb.push('sans explication au survol:« ' + t + ' » (' + (r || sec) + ')')
+      // faute du 25/11 : champ ou bouton écrasé (trop étroit pour être lu ou tapé, texte qui déborde de son bouton)
+      const ecrases = await p.evaluate(() => [...document.querySelectorAll('input:not([type=checkbox]):not([type=radio]):not([type=hidden]):not([type=file]),select,textarea,button,a.btn')].filter(e => e.offsetParent !== null && e.getClientRects().length).filter(e => { const r = e.getBoundingClientRect(); if (r.width < 1) return false
+        const t = (e.innerText || e.placeholder || '').trim(); return (/INPUT|SELECT|TEXTAREA/.test(e.tagName) ? (r.width < 56 || r.height < 30) : (r.width < 24 && t.length > 2)) || (e.tagName !== 'INPUT' && e.tagName !== 'SELECT' && e.tagName !== 'TEXTAREA' && e.scrollWidth > e.clientWidth + 3) }).map(e => (e.innerText || e.placeholder || e.name || e.tagName).trim().replace(/\s+/g, ' ').slice(0, 40))).catch(() => [])
+      for (const t of ecrases.slice(0, 5)) pb.push('élément écrasé:« ' + t + ' » (' + (r || sec) + ')')
     }
   }
   if (!/Trésorier/.test(v.acces || '')) pb.push('tresorier:rôle non affiché')
