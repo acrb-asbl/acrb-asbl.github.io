@@ -491,7 +491,7 @@ function start(){
    - Tout élément porteur de data-aide="…" a une explication en langage simple.
    - Un petit bouton « ? » en bas à droite active le mode aide : chaque élément expliqué est souligné,
      et un toucher montre son explication au lieu d'agir. Un second toucher sur « ? » referme le mode aide.
-   - Sur ordinateur, survoler un élément expliqué pendant une seconde montre aussi l'explication.
+   - Sur ordinateur, survoler un élément expliqué (0,3 s) montre aussi l'explication.
    - Les champs de saisie montrent leur explication sous le champ dès qu'on y entre. */
 (function(){
   if(window.AIDE)return;
@@ -518,12 +518,54 @@ function start(){
     var place=document.getElementById("aide-place");
     if(place){btn.classList.add("aide-dock");place.appendChild(btn);}else document.body.appendChild(btn);
     document.addEventListener("click",function(e){if(!on)return;var el=e.target.closest&&e.target.closest("[data-aide]");if(e.target===btn)return;e.preventDefault();e.stopPropagation();if(el)montrer(el);else cacher();},true);
-    var tm;document.addEventListener("mouseover",function(e){var el=e.target.closest&&e.target.closest("[data-aide]");clearTimeout(tm);if(!el||on){return;}tm=setTimeout(function(){montrer(el);},1000);});
+    var tm;document.addEventListener("mouseover",function(e){var el=e.target.closest&&e.target.closest("[data-aide]");clearTimeout(tm);if(!el||on){return;}tm=setTimeout(function(){montrer(el);},300);});
     document.addEventListener("mouseout",function(e){clearTimeout(tm);if(!on)cacher();});
     document.addEventListener("focusin",function(e){var el=e.target;if(!el.matches||!el.matches("input[data-aide],textarea[data-aide],select[data-aide]"))return;var n=el.nextElementSibling;if(n&&n.classList&&n.classList.contains("aide-sous"))return;var d=document.createElement("div");d.className="aide-sous";d.textContent=el.getAttribute("data-aide");el.insertAdjacentElement("afterend",d);});
     /* retrait différé : sinon la page remonte entre l’appui et le relâchement, et le toucher tombe à côté du bouton visé */
     document.addEventListener("focusout",function(e){var n=e.target.nextElementSibling;if(n&&n.classList&&n.classList.contains("aide-sous"))setTimeout(function(){if(n.parentNode&&document.activeElement!==e.target)n.remove();},300);});
     window.addEventListener("scroll",function(){if(!on)cacher();},{passive:true});
+    /* un « title » devient une explication du petit carré (même apparence partout, aussi au toucher en mode aide) */
+    function titres(r){(r.querySelectorAll?r:document).querySelectorAll("[title]:not([data-aide])").forEach(function(e){if(e===btn||/^(IFRAME|HTML|svg)$/i.test(e.tagName))return;var t=(e.getAttribute("title")||"").trim();if(t.length<4)return;e.setAttribute("data-aide",t);e.removeAttribute("title");});}
+    /* Demande de Karim (répétée, récidive du 25/11) : TOUT bouton, onglet, lien, liste ou volet a son petit carré.
+       Les explications écrites à la main (data-aide) priment ; sinon une explication précise est tirée du libellé et de la rubrique. */
+    var SPEC={"se deconnecter":"Ferme votre session sur cet appareil. Il faudra vous reconnecter (bouton Google) pour revenir.",
+      "acrb, l'association":"Ouvre le site public de l’association (ce que voient les visiteurs).","shopping brabant":"Ouvre l’annuaire public des commerces du quartier, tel que les clients le voient.",
+      "exporter le registre (csv)":"Télécharge le registre des membres en fichier tableur (CSV), à ouvrir dans Excel ou Google Sheets.",
+      "facturer en une fois":"Émet d’un coup la facture de cotisation à tous les commerçants de la liste choisie. Réservé au trésorier.",
+      "rappeler tous les retardataires":"Prépare un rappel pour chaque cotisation impayée après son échéance. Réservé au trésorier.",
+      "enregistrer la connexion":"Enregistre les identifiants du logiciel de facturation relié (Odoo), pour synchroniser les factures.",
+      "synchroniser maintenant":"Récupère tout de suite les factures et paiements du logiciel de facturation relié.",
+      "ouvrir le mode terrain":"Ouvre l’outil de terrain : valider commerce par commerce les enseignes, rubriques et statuts.",
+      "mode terrain":"Ouvre l’outil de terrain : valider commerce par commerce les enseignes, rubriques et statuts.",
+      "ouvrir mon espace commercant":"Ouvre votre espace commerçant : votre fiche, vos photos, vos horaires et vos avis.",
+      "nouvelle fiche":"Crée une nouvelle fiche dans le guide du quartier (adresse utile, numéro, service).",
+      "ouvrir l'acces":"Donne l’accès à cette adresse Google avec le rôle choisi. Il se retire en un clic et reste tracé.",
+      "enregistrer les reglages":"Enregistre les réglages de l’association. Chaque modification est tracée.",
+      "relier":"Relie le compte postal de l’association pour envoyer de vrais courriers par la poste.",
+      "ouvrir le vote":"Ouvre un nouveau vote du conseil avec la règle choisie ; chaque administrateur pourra voter.",
+      "ajouter a l'acte en preparation":"Ajoute cette décision à l’acte en cours de préparation (dépôt au greffe, publication au Moniteur)."};
+    var VERBES=[[/^enregistrer/,"Enregistre vos changements. Une confirmation s’affiche à côté du bouton."],[/^ajouter/,"Ajoute ce que vous venez de saisir à la liste."],[/^creer|^nouveau|^nouvelle/,"Crée un nouvel élément avec ce que vous avez saisi."],
+      [/^rechercher|^chercher/,"Lance la recherche avec le mot tapé."],[/^exporter|^telecharger/,"Télécharge le fichier sur votre appareil."],[/^imprimer/,"Ouvre l’impression du document."],[/^partager/,"Ouvre le partage (WhatsApp, courriel…) de votre téléphone."],
+      [/^retirer|^supprimer|^effacer/,"Retire cet élément. L’action est tracée."],[/^valider|^confirmer|^approuver/,"Valide cet élément. L’action est tracée à votre nom."],[/^refuser|^rejeter/,"Refuse cet élément ; vous pourrez en donner la raison."],
+      [/^envoyer|^emettre/,"Envoie ou émet le document préparé."],[/^annuler|^fermer/,"Ferme sans rien changer."],[/^modifier|^editer|^corriger/,"Ouvre cet élément pour le modifier."],[/^ouvrir|^voir|^apercu/,"Ouvre le détail."],
+      [/^synchroniser|^actualiser|^rafraichir/,"Met à jour les informations tout de suite."],[/^copier/,"Copie dans le presse-papiers, prêt à coller."],[/^suivant/,"Passe à l’étape suivante."],[/^precedent|^retour/,"Revient à l’étape précédente."],
+      [/^importer/,"Importe un fichier depuis votre appareil."],[/^voter/,"Enregistre votre voix pour ce vote."],[/^generer|^preparer|^rediger/,"Prépare le document à partir des informations déjà saisies."]];
+    function nrm(t){return (t||"").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[’]/g,"'").toLowerCase().replace(/\s+\d+$/,"").trim();}
+    function rub(e){var c=e.closest(".c,section,.card");var h=c&&c.querySelector("h2,h3");return h?h.textContent.split(" — ")[0].trim():"";}
+    function expliquer(e){if(e===btn||e.hasAttribute("data-aide")||e.closest(".aide-bulle"))return;
+      var t=(e.innerText||e.getAttribute("aria-label")||"").trim().replace(/\s+/g," "),n=nrm(t),r=rub(e),x="";
+      var sk=SPEC[n]?n:Object.keys(SPEC).filter(function(k){return k.length>6&&(n.slice(-k.length)===k||n.replace(/[^a-z0-9 ]/g,"")===k.replace(/[^a-z0-9 ]/g,""));})[0];if(sk)x=SPEC[sk];
+      else if(e.tagName==="SUMMARY")x="Déplie ou replie : "+t.replace(/\s*\(?\d+\)?$/,"")+".";
+      else if(e.tagName==="SELECT"){var l=e.getAttribute("aria-label")||"";if(!l&&e.labels&&e.labels[0]){var k=e.labels[0].cloneNode(true);k.querySelectorAll("select,option,input").forEach(function(z){z.remove();});l=k.textContent.replace(/\s+/g," ").trim();}if(!l&&e.options&&e.options[0])l="actuellement « "+e.options[e.selectedIndex<0?0:e.selectedIndex].text+" »";x="Choisissez dans la liste"+(l?" : "+l.trim():"")+(r?" (« "+r+" »)":"")+".";}
+      else if(e.tagName==="A"&&e.href&&e.host&&e.host!==location.host)x="Ouvre "+e.host.replace(/^www\./,"")+" dans un nouvel onglet.";
+      else if(e.tagName==="A"&&e.href)x="Ouvre "+(t?"« "+t.replace(/\s*→$/,"")+" »":"cette page")+(r?", depuis la rubrique « "+r+" »":"")+".";
+      else{for(var i=0;i<VERBES.length;i++)if(VERBES[i][0].test(n)){x=VERBES[i][1];break;}
+        if(x&&r)x="« "+t+" » ("+r+") : "+x.charAt(0).toLowerCase()+x.slice(1);
+        if(!x&&t)x="« "+t+" »"+(r?" dans « "+r+" »":"")+" : agit tout de suite ; le résultat s’affiche à côté.";}
+      if(x)e.setAttribute("data-aide",x);}
+    var tA;function tout(){clearTimeout(tA);tA=setTimeout(function(){document.querySelectorAll("a[href],button,summary,select,[role=tab]").forEach(expliquer);},150);}
+    tout();
+    titres(document);try{new MutationObserver(function(ms){ms.forEach(function(m){m.addedNodes.forEach(function(n){if(n.nodeType===1){if(n.hasAttribute&&n.hasAttribute("title"))titres(n.parentNode||document);titres(n);}});if(m.type==="attributes"&&m.target.hasAttribute&&m.target.hasAttribute("title"))titres(m.target.parentNode||document);});tout();}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:["title"]});}catch(e){}
   }
   window.AIDE={basculer:basculer,montrer:montrer};
   init();

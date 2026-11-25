@@ -19,6 +19,9 @@ var CSS='.nv{position:sticky;top:0;z-index:30;background:#fff;border:1px solid v
 '.nvh .tl{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}'+
 '.nvh .tl a{display:block;background:#fff;border:1px solid var(--line,#dfe3ea);border-left:4px solid var(--navy,#14233c);padding:12px 14px;text-decoration:none;color:#222;min-height:64px}'+
 '.nvh .tl a:hover,.nvh .tl a:focus{border-left-color:var(--brick,#b23a2b)}.nvh .tl b{display:block;font:800 15.5px "Libre Franklin",Arial,sans-serif;color:var(--navy,#14233c)}.nvh .tl span{display:block;font-size:13.5px;color:var(--muted,#5f6675);line-height:1.35;margin-top:3px}'+
+'#par_hub{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}'+
+'#par_hub a{display:block;background:#fff;border:1px solid var(--line,#dfe3ea);border-left:4px solid var(--navy,#14233c);padding:12px 14px;text-decoration:none;color:#222;min-height:64px}'+
+'#par_hub a:hover,#par_hub a:focus{border-left-color:var(--brick,#b23a2b)}#par_hub b{display:block;font:800 15.5px "Libre Franklin",Arial,sans-serif;color:var(--navy,#14233c)}#par_hub span{display:block;font-size:13.5px;color:var(--muted,#5f6675);line-height:1.35;margin-top:3px}'+
 '.nvh .vide{color:var(--muted,#5f6675);font-size:15px}'+
 '@media(max-width:700px){.nv .r1{display:grid;grid-template-columns:repeat(3,1fr);gap:0}.nv .r1 a{justify-content:center;padding:0 4px;font-size:14px;min-height:44px}.nv .r1 a .n{display:none}.nv .r2{flex-wrap:wrap;overflow-x:visible}.nv .r2 a{min-height:36px;padding:0 10px;font-size:13.5px}}';
 
@@ -28,7 +31,7 @@ function carte(sel){
   var t=norm(sel.slice(3)),hs=grid.querySelectorAll(".c > h2");
   for(var i=0;i<hs.length;i++)if(norm(hs[i].textContent).indexOf(t)===0)return hs[i].parentNode;return null;
 }
-function resume(el){var p=el.querySelector(":scope > p");var s=p?p.textContent.trim():"";var i=s.search(/[.:;!?](\s|$)/);s=i>0?s.slice(0,i+1):s;return s.length>110?s.slice(0,107)+"…":s;}
+function resume(el){var p=el.querySelector(":scope > p");var s=p?p.textContent.trim():"";var i=s.search(/[.!?](\s|$)/);if(i>0&&i<60){var j=s.slice(i+1).search(/[.!?](\s|$)/);if(j>0)i=i+1+j;}s=i>0?s.slice(0,i+1):s;return s.length>220?s.slice(0,217)+"…":s;}
 
 /* Rubriques actuellement accessibles, dans l'ordre du menu. */
 function dispo(){
@@ -55,8 +58,8 @@ function rendre(){
   var S=ss.filter(function(s){return s.k===sk;})[0];if(!S){sk="accueil";rk="";}
   var R=S?(S.rs.filter(function(r){return r.k===rk;})[0]||S.rs[0]):null;if(R)rk=R.k;
   cur={s:sk,r:rk};
-  bar.innerHTML='<div class="r1"><a href="#/accueil"'+(sk==="accueil"?' class="on" aria-current="page"':'')+'>Accueil</a>'+ss.map(function(s){return '<a href="#/'+s.k+'"'+(s.k===sk?' class="on" aria-current="page"':'')+'>'+esc(s.l)+(s.rs.length>1?' <span class="n">'+s.rs.length+'</span>':'')+'</a>';}).join("")+'</div>'+
-    '<div class="r2"'+(S&&S.rs.length>1?'':' hidden')+'>'+(S?S.rs.map(function(r){return '<a href="#/'+S.k+'/'+r.k+'"'+(r.k===rk?' class="on" aria-current="true"':'')+' data-nav-card="'+esc(r.el.id||"")+'">'+esc(r.l)+'</a>';}).join(""):"")+'</div>';
+  bar.innerHTML='<div class="r1"><a href="#/accueil"'+(sk==="accueil"?' class="on" aria-current="page"':'')+' data-aide="Revient à l’accueil : toutes vos rubriques en tuiles et une recherche pour aller droit au but.">Accueil</a>'+ss.map(function(s){return '<a href="#/'+s.k+'"'+(s.k===sk?' class="on" aria-current="page"':'')+' data-aide="'+esc("Ouvre la section « "+s.l+" » : "+s.rs.map(function(r){return r.l;}).join(", ")+".")+'">'+esc(s.l)+(s.rs.length>1?' <span class="n">'+s.rs.length+'</span>':'')+'</a>';}).join("")+'</div>'+
+    '<div class="r2"'+(S&&S.rs.length>1?'':' hidden')+'>'+(S?S.rs.map(function(r){return '<a href="#/'+S.k+'/'+r.k+'"'+(r.k===rk?' class="on" aria-current="true"':'')+' data-nav-card="'+esc(r.el.id||"")+'" data-aide="'+esc(r.d||("Ouvre la rubrique « "+r.l+" »."))+'">'+esc(r.l)+'</a>';}).join(""):"")+'</div>';
   var on=bar.querySelector(".r1 a.on");if(on&&on.scrollIntoView)try{on.scrollIntoView({block:"nearest",inline:"nearest"});}catch(e){}
   var vis=R?R.el:null;
   toutes().forEach(function(e){if(e===home)return;e.classList.toggle("nv-off",e!==vis);});
@@ -74,7 +77,7 @@ function rendre(){
 function tuiles(){
   if(!home)return;var q=norm((home.querySelector(".q")||{}).value||"").trim(),ss=dispo(),html="";
   ss.forEach(function(s){var rs=s.rs.filter(function(r){return !q||norm(s.l+" "+r.l+" "+r.d+" "+(r.el.textContent||"").slice(0,600)).indexOf(q)>=0;});
-    if(rs.length)html+='<h3>'+esc(s.l)+'</h3><div class="tl">'+rs.map(function(r){return '<a href="#/'+s.k+'/'+r.k+'"><b>'+esc(r.l)+'</b><span>'+esc(r.d)+'</span></a>';}).join("")+'</div>';});
+    if(rs.length)html+='<h3>'+esc(s.l)+'</h3><div class="tl">'+rs.map(function(r){return '<a href="#/'+s.k+'/'+r.k+'" data-aide="'+esc(r.d||r.l)+'"><b>'+esc(r.l)+'</b><span>'+esc(r.d)+'</span></a>';}).join("")+'</div>';});
   home.querySelector(".tls").innerHTML=html||'<p class="vide">Aucune rubrique ne correspond. Essayez un autre mot.</p>';
 }
 function aller(h,pousser){

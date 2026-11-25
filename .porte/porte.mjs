@@ -133,6 +133,13 @@ async function tresorier(moteur, prof) {
         while (!coupe && z && z !== nv) { const cs = getComputedStyle(z); if (/(auto|scroll|hidden)/.test(cs.overflowX)) { const w = z.getBoundingClientRect(); coupe = r.right > w.right + 1 || r.left < w.left - 1 } z = z.parentElement }
         return coupe }).map(a => a.innerText.trim().slice(0, 40)) }).catch(() => [])
     for (const t of coupes) pb.push('menu:rubrique coupée ou inaccessible « ' + t + ' »')
+    // récidive du 25/11 : chaque onglet, rubrique, bouton, lien, liste ou volet visible doit avoir son petit carré d'explication au survol
+    const rubs = await p.$$eval('.nv .r2 a', l => l.map(a => a.getAttribute('href'))).catch(() => [])
+    for (const r of (rubs.length ? rubs : [null])) {
+      if (r) { await p.click(`.nv .r2 a[href="${r}"]`, { timeout: 3000 }).catch(() => {}); await p.waitForTimeout(350) }
+      const sans = await p.evaluate(() => [...document.querySelectorAll('a[href],button,summary,select,[role=tab]')].filter(e => e.offsetParent !== null && e.getClientRects().length && !e.closest('[data-aide]') && !e.classList.contains('aide-btn')).map(e => (e.innerText || e.getAttribute('aria-label') || e.tagName).trim().replace(/\s+/g, ' ').slice(0, 40))).catch(() => [])
+      for (const t of sans.slice(0, 5)) pb.push('sans explication au survol:« ' + t + ' » (' + (r || sec) + ')')
+    }
   }
   if (!/Trésorier/.test(v.acces || '')) pb.push('tresorier:rôle non affiché')
   if (!v.treso) pb.push('tresorier:mode trésorier inactif')
