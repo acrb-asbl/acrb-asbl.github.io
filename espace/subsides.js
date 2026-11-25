@@ -84,7 +84,11 @@ function controle(d,a){var c=d.champs||{},it=[],req=REQ.concat(a&&a.conditions&&
    Ne remplit que les champs vides ; ne touche jamais un champ saisi. Demande de Karim du 25/11/2026. */
 var MOIS={janvier:1,fevrier:2,mars:3,avril:4,mai:5,juin:6,juillet:7,aout:8,septembre:9,octobre:10,novembre:11,decembre:12};
 function ymd(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2);}
-function montantAide(a){var k=a&&a.conditions||{};if(k.montant_max_eur>0)return +k.montant_max_eur;var t=String(a&&a.montant_texte||""),m=t.match(/\d{1,3}(?:[.\s ]\d{3})+|\d+/g);if(!m)return null;var v=m.map(function(x){return +x.replace(/[.\s ]/g,"");}).filter(function(x){return x>=100;});return v.length?Math.max.apply(null,v):null;}
+function montantAide(a){var k=a&&a.conditions||{};if(k.montant_max_eur>0)return +k.montant_max_eur;
+  /* les enveloppes globales (« au total », « réparti », « enveloppe ») ne sont pas un plafond par demande ; un segment « local » prime */
+  var seg=String(a&&a.montant_texte||"").replace(/\([^)]*(total|budget|zone|enveloppe|annuel)[^)]*\)/gi,"").split(";").filter(function(x){return !/au total|r[ée]partis?|enveloppe|budget global/i.test(x);}),loc=seg.filter(function(x){return /\bloca(l|ux)\b/i.test(x);});
+  var nb=function(t){return (t.match(/\d{1,3}(?:[.\s ]\d{3})+|\d+/g)||[]).map(function(x){return +x.replace(/[.\s ]/g,"");}).filter(function(x){return x>=100;});},v=nb((loc.length?loc:seg).join(" "));
+  return v.length?Math.max.apply(null,v):null;}
 function datesAide(a){/* début : le mois qui suit la décision (jury) annoncée, sinon 3 mois après l'échéance ; durée 12 mois */
   var txt=norm([a&&a.procedure,(a&&a.conditions&&a.conditions.liste||[]).join(" ")].join(" ")),best=null,re=/jury[^.;]*?\b(janvier|fevrier|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|decembre)\s+(20\d\d)/g,m;
   while((m=re.exec(txt))){var d=new Date(+m[2],MOIS[m[1]],1);if(!best||d<best)best=d;}
@@ -112,10 +116,19 @@ function preremplir(d,a,o){if(!d||!o||d.statut==="valide"||d.statut==="envoye")r
     if(vide("budget")){c.budget=[["Coordination et animation du projet",.35],["Matériel et aménagements",.35],["Communication et information des habitants et des commerçants",.2],["Frais de fonctionnement et imprévus",.1]].map(function(x){return {poste:x[0],montant:String(Math.round(tot*x[1]))};});
       var ecart=tot-c.budget.reduce(function(s,x){return s+(+x.montant);},0);c.budget[0].montant=String(+c.budget[0].montant+ecart);n++;}
     if(cof>0&&vide("cofinancement")){c.cofinancement=[{source:"Fonds propres de "+(acrb?"l’association":"l’organisation"),montant:String(cof)}];n++;}}
-  var obj=(k.liste||[]).filter(function(x){return !/d[ée]pos|jury|avant le|apr[èe]s le|\b20\d\d\b|[âa]g[ée]|ann[ée]e/i.test(x);});
-  mettre("objectifs",obj.length?obj.map(function(x){return "• "+x;}).join("\n"):a.resume);
-  mettre("resume",court+" dépose ce projet dans le cadre de « "+a.nom+" »"+(a.organisme?" ("+a.organisme+")":"")+". "+(a.resume||"")+" Le projet se déroule "+(acrb?"dans les rues de Brabant, Liedts et Gallait":"à "+lieu)+", du "+dfr(dt.debut)+" au "+dfr(dt.fin)+", pour : "+pub.charAt(0).toLowerCase()+pub.slice(1)+"."+(dem?" Montant demandé : "+eur0(dem)+".":""));
-  c.argu=c.argu||{};(a.criteres||[]).forEach(function(cr){if(!String(c.argu[cr.id]||"").trim()){c.argu[cr.id]=cr.libelle+" : "+court+", "+(c.objet?"dont l’objet est « "+String(c.objet).slice(0,180)+(String(c.objet).length>180?"…":"")+" »":"porteur du projet")+", y répond par des actions menées "+(acrb?"dans le quartier":"sur place")+" avec "+pub.charAt(0).toLowerCase()+pub.slice(1)+".";n++;}});
+  var obj=(k.liste||[]).filter(function(x){return !/d[ée]pos|jury|avant le|apr[èe]s le|\b20\d\d\b|[âa]g[ée]|ann[ée]e|r[ée]serv|[ée]ligib|autoris|r[ée]alis[ée] dans|porté par|condition/i.test(x);});
+  var phr=String(a.resume||"").split(/(?<=\.)\s/)[0],dp=phr.indexOf(" : ");
+  mettre("objectifs",obj.length?obj.map(function(x){return "• "+x;}).join("\n"):(dp>0?"• Actions prévues dans le quartier : "+phr.slice(dp+3):"• "+phr));
+  mettre("resume",court+" dépose ce projet dans le cadre de « "+a.nom+" »"+(a.organisme?" ("+a.organisme+")":"")+". "+String(a.resume||"").split(/(?<=\.)\s/).filter(function(x){return !/[ée]dition|publi[ée]e|v[ée]rifi/i.test(x);}).join(" ")+" Le projet se déroule "+(acrb?"dans les rues de Brabant, Liedts et Gallait":"à "+lieu)+", du "+dfr(dt.debut)+" au "+dfr(dt.fin)+", pour : "+pub.charAt(0).toLowerCase()+pub.slice(1)+"."+(dem?" Montant demandé : "+eur0(dem)+".":""));
+  c.argu=c.argu||{};var faits=acrb?"L’ACRB fédère les commerçants des rues de Brabant, Liedts et Gallait"+(+c.commerces>0?" ("+c.commerces+" commerces recensés)":"")+" et y mène "+String(c.activites||"des animations et des campagnes de promotion").replace(/\.$/,"").charAt(0).toLowerCase()+String(c.activites||"des animations et des campagnes de promotion").replace(/\.$/,"").slice(1):court+" ("+(c.forme||"")+") porte ce projet sur place";
+  (a.criteres||[]).forEach(function(cr){if(String(c.argu[cr.id]||"").trim())return;var l=norm(cr.libelle),t;
+    if(/redynamis|animation|promotion|accueil/.test(l))t="Il prolonge les activités de "+(acrb?"l’association":court)+" : "+String(c.activites||"animations et promotion du quartier").replace(/\.$/,"")+".";
+    else if(/\bobjectif|\bclair\b|\bbut\b/.test(l))t="L’objectif est précis : "+(c.titre||nomAide)+", "+(acrb?"dans les rues de Brabant, Liedts et Gallait":"à "+lieu)+", du "+dfr(dt.debut)+" au "+dfr(dt.fin)+(dem?", pour un soutien de "+eur0(dem):"")+".";
+    else if(/benefice|ensemble|noyau|impact/.test(l))t=acrb?"Le projet profite à tout le noyau commercial : il s’adresse aux "+(+c.commerces>0?c.commerces+" commerces recensés":"commerces")+" des rues de Brabant, Liedts et Gallait, membres ou non de l’association, ainsi qu’à leurs clients et aux habitants.":"Le projet profite à "+pub.charAt(0).toLowerCase()+pub.slice(1)+".";
+    else if(/collabor|partenai|particip/.test(l))t=acrb?"Il est porté collectivement : l’ACRB rassemble les commerçants des trois rues et coordonne le projet avec eux, dans la ligne de son objet social.":court+" mène le projet avec ses partenaires sur place.";
+    else if(/redynamis|animation|promotion|accueil/.test(l))t="Il prolonge les activités de "+(acrb?"l’association":court)+" : "+String(c.activites||"animations et promotion du quartier").replace(/\.$/,"")+".";
+    else t=faits+". Pour le critère « "+cr.libelle+" », ce projet s’adresse à : "+pub.charAt(0).toLowerCase()+pub.slice(1)+".";
+    c.argu[cr.id]=t.length<40?t+" "+faits+".":t;n++;});
   mettre("documentation",["Présentation : "+(c.nom||o.nom||"")+(c.forme?" ("+c.forme+")":"")+(c.bce?", n° d’entreprise "+c.bce:"")+". "+(c.objet||""),
     (a.pieces||[]).length?"Annexes : "+(a.pieces||[]).map(function(x){return x.libelle;}).join(" ; ")+".":"",
     a.procedure?"Procédure de l’aide : "+a.procedure:"",a.url?"Fiche officielle : "+a.url:""].filter(Boolean).join("\n\n"));
@@ -323,7 +336,7 @@ function blocs(){var a=aideDe(DOS),c=DOS.champs,V=VOC[ORG.type],L=[],tot=(c.budg
   L.push({pb:"Objet : demande de soutien — "+(a?a.nom:(DOS.titre||""))+" — projet « "+AC(c.titre)+" »"});
   L.push({p:"Madame, Monsieur,"});
   L.push({p:AC(c.nom)+(c.forme?", "+c.forme.charAt(0).toLowerCase()+c.forme.slice(1):"")+", numéro d’entreprise "+AC(c.bce)+", "+(ORG.type==="commercant"?"exploitant établi ":"dont le siège est établi ")+AC(c.adresse)+", sollicite "+(a?"l’aide « "+a.nom+" »":"votre soutien")+" pour le projet « "+AC(c.titre)+" »"+(c.debut?", mené du "+dfr(c.debut)+" au "+dfr(c.fin):"")+"."});
-  L.push({p:"Le budget total du projet s’élève à "+eur0(tot)+" ; le soutien demandé est de "+eur0(dem)+(tot>0?", soit "+Math.round(dem/tot*100)+" % du budget":"")+(cof>0?", le solde ("+eur0(cof)+") étant couvert par d’autres financements":"")+"."});
+  if(tot>0||dem>0)L.push({p:"Le budget total du projet s’élève à "+eur0(tot)+" ; le soutien demandé est de "+eur0(dem)+(tot>0?", soit "+Math.round(dem/tot*100)+" % du budget":"")+(cof>0?", le solde ("+eur0(cof)+") étant couvert par d’autres financements":"")+"."});
   L.push({p:"Vous trouverez ci-après la présentation du demandeur, la description du projet, son budget, l’argumentaire au regard des critères de l’aide et la liste des pièces jointes. Nous restons à votre disposition pour tout renseignement complémentaire ("+AC(c.email)+(c.tel?", "+c.tel:"")+")."});
   L.push({p:"Veuillez agréer, Madame, Monsieur, l’expression de nos salutations distinguées."});
   L.push({sig:[[V.sig,AC(c.representant),c.representant_qualite||""]]});
