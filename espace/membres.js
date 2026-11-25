@@ -2,7 +2,8 @@
    Membre effectif : personne physique indépendante (commerce, artisanat, profession libérale) dans la zone de l'art. 3, qui paie la cotisation annuelle (art. 7).
    Admission par le conseil, à la majorité, après demande écrite affichée 8 jours (art. 8). Démission écrite ; réputé démissionnaire
    après un rappel par recommandé resté impayé un mois (art. 9). Exclusion par l'AG aux deux tiers, après audition (art. 9 ; CSA 9:23).
-   Toute admission, démission ou exclusion est inscrite dans les huit jours (CSA, art. 9:3). Expose window.MEMBRES = { init(sb) }. */
+   Toute admission, démission ou exclusion est inscrite dans les huit jours (CSA, art. 9:3).
+   Une facture de cotisation marquée « payée » met à jour la cotisation de l'année dans le registre (déclencheur acrb_cotisation_registre). Expose window.MEMBRES = { init(sb) }. */
 (function(){
 var sb,D=null,lie=false,edit=null;
 function $(i){return document.getElementById(i);}
@@ -57,6 +58,7 @@ window.MEMBRES={init:function(_sb){sb=_sb;$("c_membres").hidden=false;
     $("mb_q").addEventListener("input",function(){if(D)rendre();});
     $("c_membres").addEventListener("click",function(e){var b=e.target.closest("[data-ed]");if(b){edit=+b.dataset.ed;form();$("mb_form").scrollIntoView({block:"center"});}});
     $("mb_csv").addEventListener("change",function(e){if(e.target.files[0])importer(e.target.files[0]);e.target.value="";});
-    $("mb_exp").addEventListener("click",function(){if(D)exporter();});}
+    $("mb_exp").addEventListener("click",function(){if(D)exporter();});
+    var rp=$("mb_rap");if(rp)rp.addEventListener("click",function(){rp.disabled=true;sb.rpc("acrb_cotisations_rapprocher").then(function(x){rp.disabled=false;if(x.error){msg("Report impossible : "+x.error.message,"bad");return;}var d=x.data;charger().then(function(){msg(d.mis_a_jour+" cotisation(s) reportée(s) au registre"+(d.payeurs_hors_registre?" ; "+d.payeurs_hors_registre+" paiement(s) d’une personne absente du registre (même adresse e-mail introuvable)":"")+".","ok");});});});}
   charger();},recharger:function(){return sb&&charger();}};
 })();

@@ -32,4 +32,4 @@ rpc("acrb_signature_info",{p_jeton:j}).then(function(info){if(!info){lead.textCo
   go.onclick=function(){go.disabled=true;msg.textContent="Envoi…";var img=sp.toDataURL("image/png");
     rpc("acrb_signer",{p_jeton:j,p_image:img,p_consentement:document.querySelector(".chk span").textContent.trim(),p_user_agent:navigator.userAgent}).then(function(r){pad.hidden=true;var d=document.getElementById("done");d.hidden=false;d.className="msg ok";d.textContent="Merci, "+info.signataire+". Votre signature est enregistrée et horodatée ; le document signé est conservé par l'association.";}).catch(function(e){msg.className="msg err";msg.textContent="Échec : "+e.message;go.disabled=false;});};
 }).catch(function(e){lead.textContent="Ce lien n'est pas valable ("+e.message+").";});})();
-</script></body></html>
+</script><script src="signaler.js?v=3" defer></script></body></html>

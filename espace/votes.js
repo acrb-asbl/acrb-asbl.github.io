@@ -1,7 +1,7 @@
 /* Votes du conseil d'administration — décision à la majorité absolue (statuts, art. 21) ou à l'unanimité, entre plusieurs offres.
    Toute la règle (qui vote, unanimité, verrouillage) est appliquée dans la base ; cette page ne fait qu'afficher et transmettre. */
 (function(){
-var sb, user, data = null, ouvert = {}, noteOk = {};
+var sb, user, data = null, ouvert = {}, noteOk = {}, RATIF = [];
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
 function eur(n){if(n==null||n==="")return "";return Number(n).toLocaleString("fr-BE",{minimumFractionDigits:2,maximumFractionDigits:2})+" €";}
 function dt(s){if(!s)return "";var d=new Date(s);return d.toLocaleDateString("fr-BE")+" à "+d.toLocaleTimeString("fr-BE",{hour:"2-digit",minute:"2-digit"});}
@@ -12,6 +12,7 @@ function etat(t,cls){var e=$("vo_state");e.textContent=t||"";e.className="soon"+
 function lienVote(id){return "https://acrb-asbl.github.io/espace/?vote="+id+"#/conseil/votes";}
 
 function charger(){
+  sb.rpc("acrb_ratifications_inscrire").then(function(y){if(y&&!y.error){RATIF=y.data||[];if(data)rendre();}},function(){});
   return sb.rpc("acrb_scrutins_liste").then(function(x){
     if(x.error){etat("Chargement impossible : "+err(x),"bad");return;}
     data=x.data;rendre();
@@ -27,6 +28,7 @@ function adopte(d){return d.mode==="majorite"?"Adoptée à la majorité absolue 
 function bilan(s){
   var n=(s.electeurs||[]).length,b=s.bulletins||[],votes=b.length;
   var maj=s.regle==="majorite",d=s.decision||{};
+  if(s.statut==="adopte"&&d.a_ratifier)return {txt:"Adopté "+(d.mode==="voix_preponderante"?"par la voix du président":"à la majorité")+" ("+d.voix+" sur "+(d.administrateurs||d.votants)+") — à ratifier au conseil",cls:"warn"};
   if(s.statut==="adopte")return {txt:d.mode==="majorite"?"Adopté à la majorité absolue ("+d.voix+" voix sur "+d.votants+")":d.mode==="voix_preponderante"?"Adopté, voix du président prépondérante ("+d.voix+" sur "+d.votants+")":"Adopté à l'unanimité ("+n+" sur "+n+")",cls:"ok"};
   if(s.statut==="annule")return {txt:"Annulé",cls:"out"};
   if(votes<n)return {txt:votes+" vote"+(votes>1?"s":"")+" sur "+n,cls:"warn"};
@@ -54,14 +56,15 @@ function carte(s,moi){
   var h='<div class="vo" id="vo_'+s.id+'"><div class="vo_h"><div><b>'+esc(s.titre)+'</b><span class="st '+bl.cls+'">'+esc(bl.txt)+'</span></div>'+
     '<span class="soon">Ouvert le '+esc(dt(s.cree_le))+(s.echeance?' · à voter avant le '+esc(new Date(s.echeance).toLocaleDateString("fr-BE")):'')+'</span></div>';
   if(s.objet)h+='<p class="vo_obj">'+esc(s.objet)+'</p>';
-  h+='<p class="soon"><b>Règle :</b> '+(s.regle==="majorite"?'majorité absolue des votants (statuts, art. 21), voix du président prépondérante en cas d\u2019égalité':'unanimité des votants')+'.</p>';
+  h+='<p class="soon"><b>Règle :</b> '+(s.regle==="majorite"?'majorité absolue des votants (statuts, art. 21), voix du président prépondérante en cas d\u2019égalité':'unanimité des votants')+'.'+(s.statut==="ouvert"?' Hors réunion, seule une décision écrite unanime de tous les administrateurs vaut décision du conseil (CSA, art. 9:9) : sinon, le résultat est ratifié à la prochaine réunion du conseil.':'')+'</p>';
   if(s.secret)h+='<p class="soon">Vote secret jusqu\u2019à la clôture : chacun voit qui a voté, pas ce qu\u2019il a choisi. Tout devient nominatif quand le vote est clos (procès-verbal).</p>';
   if(s.statut==="adopte"&&s.decision&&s.effet&&s.effet.type==="fonction"){var d=s.decision,f=s.effet;
-    h+='<div class="vo_dec"><b>Décision du conseil : '+esc(f.nom)+' devient '+esc(f.fonction_fr)+'</b> (auparavant '+esc(f.avant||'')+').<br>'+adopte(d)+', le '+esc(dt(d.le))+'.<br><button class="btn o" type="button" data-pv="'+s.id+'">Document de la décision (PDF)</button></div>';}
+    h+='<div class="vo_dec"><b>'+(d.a_ratifier?'Résultat du vote, à ratifier : ':'Décision du conseil : ')+esc(f.nom)+' devient '+esc(f.fonction_fr)+'</b> (auparavant '+esc(f.avant||'')+').<br>'+adopte(d)+', le '+esc(dt(d.le))+'.<br><button class="btn o" type="button" data-pv="'+s.id+'">Document de la décision (PDF)</button></div>';}
   else if(s.statut==="adopte"&&s.decision){var d=s.decision;
-    h+='<div class="vo_dec"><b>Décision du conseil : commande à '+esc(d.prestataire)+'</b>'+(d.objet?' — '+esc(d.objet):'')+
+    h+='<div class="vo_dec"><b>'+(d.a_ratifier?'Résultat du vote, à ratifier : ':'Décision du conseil : ')+'commande à '+esc(d.prestataire)+'</b>'+(d.objet?' — '+esc(d.objet):'')+
       (d.montant_tvac!=null?'<br>Montant : '+esc(eur(d.montant_tvac))+' TVAC':'')+(d.montant_htva!=null?' ('+esc(eur(d.montant_htva))+' HTVA)':'')+
       '<br>'+adopte(d)+', le '+esc(dt(d.le))+'.<br><button class="btn o" type="button" data-pv="'+s.id+'">Document de la décision (PDF)</button></div>';}
+  if(s.statut==="adopte"&&s.decision)h+=ratifHtml(s);
   // offres
   var offres=s.offres||[];
   h+='<div class="vo_off">';
@@ -98,6 +101,12 @@ function carte(s,moi){
   return h+'</div>';
 }
 
+function ratifHtml(s){var d=s.decision||{};
+  if(d.a_ratifier===false)return '<p class="soon" style="color:var(--green)">\u2713 '+esc(d.ratif_motif||"Unanimité de tous les administrateurs : valable sans ratification (CSA, art. 9:9).")+'</p>';
+  if(!d.a_ratifier)return '';
+  var r=RATIF.filter(function(x){return x.scrutin===s.id;})[0];
+  var ou=r&&r.numero?'Inscrit d\u2019office à l\u2019ordre du jour de <a href="#/conseil/reunions" data-aide="Ouvre les réunions : le point « Ratification du vote » figure à l\u2019ordre du jour et au procès-verbal.">'+esc(r.numero)+'</a> du '+esc(new Date(r.date_reunion).toLocaleDateString("fr-BE"))+', point « Ratification du vote V'+s.id+' ».':'Sera inscrit d\u2019office à l\u2019ordre du jour de la prochaine réunion du conseil dès qu\u2019elle est créée (Conseil \u2192 Réunions et PV).';
+  return '<div class="vo_ag" data-aide="Le vote n\u2019est pas unanime de tous les administrateurs : il doit être confirmé (ratifié) par le conseil réuni. Le point est ajouté seul à l\u2019ordre du jour et figure dans le procès-verbal."><b>À ratifier au conseil.</b> '+esc(d.ratif_motif||"")+' '+ou+'</div>';}
 function notesHtml(o,moi,peut){
   var ns=o.notes||[],mienne=ns.filter(function(n){return n.ca_id===moi;})[0];
   var autres=ns.filter(function(n){return n.ca_id!==moi;}).map(function(n){return '<div class="vo_note"><b>'+esc(n.nom)+'</b> : '+esc(n.texte).replace(/\n/g,'<br>')+'</div>';}).join('');
@@ -132,7 +141,8 @@ function clic(e){
     t.disabled=true;etat("Enregistrement du vote…");
     sb.rpc("acrb_voter",{p_scrutin:sid,p_offre:off,p_commentaire:c?c.value:null}).then(function(x){
       if(x.error){etat("Vote refusé : "+err(x),"bad");t.disabled=false;return;}
-      etat(x.data&&x.data.statut==="adopte"?(/^Approuver : /.test(x.data.prestataire)?"Unanimité atteinte : "+x.data.prestataire.replace(/^Approuver : /,"")+" (c\u2019est fait).":"Unanimité atteinte : la commande à "+x.data.prestataire+" est décidée."):"Vote enregistré. Vous pouvez le changer tant que le vote est ouvert.","ok");charger();});return;}
+      var ad=x.data&&x.data.statut==="adopte",un=ad&&x.data.mode==="unanimite",pr=ad?String(x.data.prestataire||"").replace(/^Approuver : /,""):"";
+      etat(ad?(un?"Unanimité atteinte : "+pr+".":"Majorité atteinte : "+pr+".")+" Si tous les administrateurs en fonction n\u2019ont pas choisi la même offre, le vote sera ratifié à la prochaine réunion du conseil (inscrit d\u2019office).":"Vote enregistré. Vous pouvez le changer tant que le vote est ouvert.","ok");charger();});return;}
   if(t.dataset.doc){sb.storage.from("acrb-actes").createSignedUrl(t.dataset.doc,900).then(function(r){if(r.error){etat("Document inaccessible : "+r.error.message,"bad");return;}window.open(r.data.signedUrl,"_blank","noopener");});return;}
   if(t.dataset.retirer){if(!confirm("Retirer cette offre du vote ?"))return;sb.rpc("acrb_offre_retirer",{p_offre:+t.dataset.retirer}).then(function(x){if(x.error)etat(err(x),"bad");charger();});return;}
   if(t.dataset.annuler){var m=prompt("Annuler ce vote ? Indiquez le motif :");if(m===null)return;sb.rpc("acrb_scrutin_annuler",{p_scrutin:+t.dataset.annuler,p_motif:m}).then(function(x){if(x.error)etat(err(x),"bad");charger();});return;}
@@ -154,7 +164,7 @@ function soumettreOffre(f){
 
 function imprimer(id,btn){
   var s=(data.scrutins||[]).filter(function(x){return x.id===id;})[0];if(!s||!s.decision)return;var d=s.decision,maj=d.mode&&d.mode!=='unanimite';
-  var b=[{h:"Décision du conseil d’administration"},{kv:[["Référence","V"+s.id],["Objet",s.titre+(s.objet?" — "+s.objet:"")],["Vote ouvert le",dt(s.cree_le)],["Vote clos le",dt(d.le)],["Règle",maj?"Majorité absolue des voix, voix du président prépondérante (statuts, art. 21)":"Unanimité (choix du conseil)"]]}];
+  var b=[{h:d.a_ratifier?"Vote du conseil d’administration — à ratifier":"Décision du conseil d’administration"},{kv:[["Référence","V"+s.id],["Objet",s.titre+(s.objet?" — "+s.objet:"")],["Vote ouvert le",dt(s.cree_le)],["Vote clos le",dt(d.le)],["Règle",maj?"Majorité absolue des voix, voix du président prépondérante (statuts, art. 21)":"Unanimité (choix du conseil)"]]}];
   if((s.offres||[]).length){b.push({h2:"Offres examinées"});(s.offres||[]).forEach(function(o,i){b.push({li:"Offre "+(i+1)+" : "+o.prestataire+(o.montant_tvac!=null?" — "+eur(o.montant_tvac)+" TVAC":"")+(o.montant_htva!=null?" ("+eur(o.montant_htva)+" HTVA)":"")});});}
   b.push({h2:"Décision"});
   if(s.effet&&s.effet.type==="fonction")b.push({p:"Le conseil d’administration décide, "+(maj?"à la majorité":"à l’unanimité")+", que "+s.effet.nom+" exerce désormais la fonction de "+s.effet.fonction_fr+" (auparavant "+(s.effet.avant||"")+")."});
@@ -163,6 +173,8 @@ function imprimer(id,btn){
   b.push({table:{titre:"Votants",cols:["Administrateur","Fonction","Vote exprimé le"],w:[3,2,2],rows:(s.electeurs||[]).map(function(e){var x=(s.bulletins||[]).filter(function(y){return y.ca_id===e.id;})[0];return [e.nom,e.fonction||"",x?dt(x.vote_le):""];})}});
   if((s.conflits||[]).length){b.push({h2:"Conflits d’intérêts déclarés"});b.push({pi:"Charte du conseil, point 6 : ces administrateurs se sont abstenus des débats et du vote."});s.conflits.forEach(function(c){b.push({li:c.nom+" : "+c.motif+" ("+dt(c.le)+")"});});}
   if(Math.max(+d.montant_tvac||0,+d.montant_htva||0)>12500)b.push({encadre:"La dépense dépassant 12 500 €, son engagement est soumis à l’accord de l’assemblée générale aux deux tiers des voix exprimées (statuts, art. 15)."});
+  if(d.a_ratifier)b.push({encadre:"Vote tenu hors réunion sans l’unanimité de tous les administrateurs en fonction ("+(d.voix||"?")+" voix sur "+(d.administrateurs||"?")+") : seule une décision écrite unanime vaut décision du conseil (CSA, art. 9:9). Cette décision est inscrite d’office à l’ordre du jour de la prochaine réunion du conseil d’administration pour y être ratifiée."});
+  else if(d.a_ratifier===false)b.push({pi:"Décision prise par écrit à l’unanimité de tous les administrateurs en fonction (CSA, art. 9:9)."});
   b.push({pi:"Chaque vote est enregistré avec l’adresse de connexion du votant et l’heure, dans le journal de preuve de l’association."});
   b.push({f:"Décision V"+s.id+" · vote tenu sur la plateforme de gestion de l’association."});
   var z=btn&&btn.parentNode.querySelector(".vo_pdf");if(!z&&btn){z=document.createElement("div");z.className="vo_pdf";btn.insertAdjacentElement("afterend",z);}

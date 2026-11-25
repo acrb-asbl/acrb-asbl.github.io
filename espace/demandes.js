@@ -8,7 +8,7 @@ function dt(s){if(!s)return "";var d=new Date(s);return d.toLocaleDateString("fr
 function n(v,dec){return v==null?"—":Number(v).toLocaleString("fr-BE",{minimumFractionDigits:dec||0,maximumFractionDigits:dec||0});}
 var ST={nouvelle:"Nouvelle",en_cours:"En cours",a_valider:"À valider par vous",faite:"Faite",refusee:"Refusée",conseil:"Soumise au conseil"};
 var ET={mesure:"mesuré",estime:"estimé",conventionnel:"conventionnel"};
-var CSS='#dm_btn{position:fixed;right:16px;bottom:16px;z-index:60;background:var(--brick,#b23a2b);color:#fff;border:0;padding:13px 16px;font:700 15px "Libre Franklin",Arial,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.2);cursor:pointer}'+
+var CSS='#dm_btn{position:fixed;right:62px;bottom:14px;z-index:60;background:var(--brick,#b23a2b);color:#fff;border:0;padding:13px 16px;font:700 15px "Libre Franklin",Arial,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.2);cursor:pointer}'+
 '#dm_pan{position:fixed;right:16px;bottom:16px;z-index:61;width:min(420px,calc(100vw - 32px));background:#fff;border:1px solid var(--line,#dfe3ea);border-top:4px solid var(--brick,#b23a2b);padding:16px;box-shadow:0 8px 30px rgba(0,0,0,.25)}#dm_pan[hidden]{display:none}'+
 '#dm_pan h3{margin:0 0 4px;font:800 17px "Libre Franklin",Arial,sans-serif}#dm_pan p{margin:0 0 10px;font-size:14px;color:var(--muted,#5f6675)}'+
 '#dm_pan select,#dm_pan textarea{width:100%;padding:10px;border:1px solid #c6ccd6;font:16px "Source Sans 3",sans-serif;margin-bottom:8px}#dm_pan textarea{min-height:120px}'+
@@ -16,7 +16,7 @@ var CSS='#dm_btn{position:fixed;right:16px;bottom:16px;z-index:60;background:var
 '#dm_ok{font-size:14.5px;font-weight:600;margin-top:8px}#dm_ok.ok{color:var(--green,#1f8a4c)}#dm_ok.bad{color:var(--brick,#b23a2b)}#dm_pan label.e{font-size:13px;color:var(--muted,#5f6675);display:flex;gap:6px;align-items:center;margin:0 0 8px}'+
 '.dmt{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}.dmt th,.dmt td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line,#dfe3ea);vertical-align:top}.dmt th{font:700 12px "Libre Franklin",Arial,sans-serif;text-transform:uppercase;letter-spacing:.04em;color:var(--muted,#5f6675)}'+
 '.dmt .num{text-align:right;white-space:nowrap}.dmtot{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.dmtot div{background:#f7f8fa;border:1px solid var(--line,#dfe3ea);padding:10px}.dmtot b{display:block;font:800 20px "Libre Franklin",Arial,sans-serif}.dmtot span{font-size:12.5px;color:var(--muted,#5f6675)}'+
-'#c_dem{min-width:0}.dmscroll{overflow-x:auto;max-width:100%}.dmt td{word-break:break-word}@media(max-width:700px){.dmtot{grid-template-columns:1fr}#dm_btn{right:12px;bottom:12px}}';
+'#c_dem{min-width:0}.dmscroll{overflow-x:auto;max-width:100%}.dmt td{word-break:break-word}@media(max-width:700px){.dmtot{grid-template-columns:1fr}#dm_btn{right:58px;bottom:12px;padding:11px 13px;font-size:14px}}';
 
 function ecran(){var c=window.ESPNAV&&ESPNAV.courant&&ESPNAV.courant();var a=document.querySelector(".nv .r1 a.on"),b=document.querySelector(".nv .r2 a.on");
   return "Espace privé"+(a?" › "+a.textContent.replace(/\s*\d+$/,"").trim():"")+(b?" › "+b.textContent.trim():"");}
@@ -54,6 +54,10 @@ function charger(){
       sb.rpc("acrb_modif_traiter",{p_id:+id,p_statut:document.querySelector('[data-dmst="'+id+'"]').value,p_reponse:document.querySelector('[data-dmrep="'+id+'"]').value}).then(function(y){b.disabled=false;b.textContent="Enregistrer";
         ok.className="dmok"+(y.error?" bad":"");ok.textContent=y.error?"Non enregistré : "+y.error.message:"✓ Enregistré à "+new Date().toLocaleTimeString("fr-BE",{hour:"2-digit",minute:"2-digit"});});};});
   });
+  var ET2={nouvelle:"Reçue",verification:"En vérification",non_reproduite:"Non reproduite",confirmee:"Confirmée, correction en cours",corrigee:"Corrigée et en ligne",a_valider:"Corrigée, à valider",refusee:"Écartée"};
+  if($("dm_err"))sb.rpc("acrb_erreurs_liste").then(function(x){if(x.error){$("dm_err").innerHTML='<p class="soon">'+esc(x.error.message)+'</p>';return;}var l=x.data||[];
+    $("dm_err").innerHTML=l.length?'<div class="dmscroll"><table class="dmt"><tr><th>N°</th><th>Date</th><th>Par</th><th>Page</th><th>Erreur</th><th>État</th></tr>'+l.map(function(e){
+      return '<tr><td>'+e.id+'</td><td>'+esc(dt(e.cree_le))+'</td><td>'+esc(e.qui)+'</td><td>'+esc(String(e.url||"").replace(/^https?:\/\/[^/]+/,""))+(e.largeur?'<br><span class="soon">écran '+esc(e.largeur)+' px</span>':'')+'</td><td>'+esc(e.texte).replace(/\n/g,"<br>")+'</td><td>'+esc(ET2[e.etat]||e.etat)+(e.reponse?'<br><span class="soon">'+esc(e.reponse)+'</span>':'')+(e.faute?'<br><span class="soon">Faute : '+esc(e.faute)+'</span>':'')+'</td></tr>';}).join("")+'</table></div>':'<p class="soon">Aucune erreur signalée pour l\u2019instant.</p>';});
   if(!peutCouts){$("dm_couts").innerHTML='<p class="soon">Le registre des coûts est lu par le conseil.</p>';return;}
   sb.rpc("acrb_couts_liste").then(function(x){if(x.error){$("dm_couts").innerHTML='<p class="soon">'+esc(x.error.message)+'</p>';return;}var d=x.data||{},t=d.totaux||{},l=d.lignes||[];
     $("dm_couts").innerHTML='<div class="dmtot"><div><b>'+n(t.decaisse_eur,2)+' €</b><span>Décaissé réel</span></div><div><b>'+n(t.equivalent_api_usd,2)+' $</b><span>Équivalent au tarif API (valeur de remplacement, pas une dépense)</span></div><div><b>'+n(t.heures,1)+' h</b><span>Heures bénévoles (non valorisées tant qu’aucun taux n’est voté)</span></div></div>'+

@@ -3,7 +3,10 @@
    Adresse de chaque rubrique : #/section/rubrique (lien partageable, bouton retour du navigateur).
    Le menu ne décide pas des droits : il ne montre que les rubriques que la page a déjà rendues visibles. */
 (function(){
-var C=null,grid=null,bar=null,home=null,obs=null,t=null,cur={s:"",r:""};
+var C=null,grid=null,bar=null,home=null,obs=null,t=null,cur={s:"",r:""},B={};
+/* compteurs « à traiter » posés par les modules (ex. signalements non traités) : ESPNAV.badge(idCarte, n) */
+function bd(n){return n>0?' <span class="bd" aria-label="'+n+' à traiter">'+n+'</span>':"";}
+function bdS(s){return s.rs.reduce(function(a,r){return a+(+B[r.el.id]||0);},0);}
 function $(i){return document.getElementById(i);}
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
 function norm(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");}
@@ -14,6 +17,7 @@ var CSS='.nv{position:sticky;top:0;z-index:30;background:#fff;border:1px solid v
 '.nv .r2{border-top:1px solid var(--line,#dfe3ea);background:#f7f8fa;padding:6px 8px;gap:6px}.nv .r2[hidden]{display:none}'+
 '.nv .r2 a{flex:0 0 auto;min-height:38px;display:flex;align-items:center;padding:0 12px;border:1px solid #c6ccd6;background:#fff;color:#222;text-decoration:none;font:600 14px "Source Sans 3",sans-serif;white-space:nowrap}'+
 '.nv .r2 a.on{background:var(--navy,#14233c);border-color:var(--navy,#14233c);color:#fff}'+
+'.nv .bd,.nvh .tl .bd{display:inline-block;min-width:20px;padding:0 6px;border-radius:10px;background:var(--brick,#b23a2b);color:#fff;font:700 12px/18px "Libre Franklin",Arial,sans-serif;text-align:center;margin-left:6px}.nv .r2 a.on .bd{background:#fff;color:var(--brick,#b23a2b)}'+
 '.nv-off{display:none!important}.nvh{grid-column:1/-1}.nvh[hidden]{display:none}.nvh .q{width:100%;padding:12px 14px;border:1px solid #c6ccd6;font:16px "Source Sans 3",sans-serif;margin:0 0 14px}'+
 '.nvh h3{font:800 13px "Libre Franklin",Arial,sans-serif;text-transform:uppercase;letter-spacing:.06em;color:var(--muted,#5f6675);margin:18px 0 8px}.nvh h3:first-of-type{margin-top:4px}'+
 '.nvh .tl{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}'+
@@ -58,8 +62,8 @@ function rendre(){
   var S=ss.filter(function(s){return s.k===sk;})[0];if(!S){sk="accueil";rk="";}
   var R=S?(S.rs.filter(function(r){return r.k===rk;})[0]||S.rs[0]):null;if(R)rk=R.k;
   cur={s:sk,r:rk};
-  bar.innerHTML='<div class="r1"><a href="#/accueil"'+(sk==="accueil"?' class="on" aria-current="page"':'')+' data-aide="Revient à l’accueil : toutes vos rubriques en tuiles et une recherche pour aller droit au but.">Accueil</a>'+ss.map(function(s){return '<a href="#/'+s.k+'"'+(s.k===sk?' class="on" aria-current="page"':'')+' data-aide="'+esc("Ouvre la section « "+s.l+" » : "+s.rs.map(function(r){return r.l;}).join(", ")+".")+'">'+esc(s.l)+(s.rs.length>1?' <span class="n">'+s.rs.length+'</span>':'')+'</a>';}).join("")+'</div>'+
-    '<div class="r2"'+(S&&S.rs.length>1?'':' hidden')+'>'+(S?S.rs.map(function(r){return '<a href="#/'+S.k+'/'+r.k+'"'+(r.k===rk?' class="on" aria-current="true"':'')+' data-nav-card="'+esc(r.el.id||"")+'" data-aide="'+esc(r.d||("Ouvre la rubrique « "+r.l+" »."))+'">'+esc(r.l)+'</a>';}).join(""):"")+'</div>';
+  bar.innerHTML='<div class="r1"><a href="#/accueil"'+(sk==="accueil"?' class="on" aria-current="page"':'')+' data-aide="Revient à l’accueil : toutes vos rubriques en tuiles et une recherche pour aller droit au but.">Accueil</a>'+ss.map(function(s){return '<a href="#/'+s.k+'"'+(s.k===sk?' class="on" aria-current="page"':'')+' data-aide="'+esc("Ouvre la section « "+s.l+" » : "+s.rs.map(function(r){return r.l;}).join(", ")+".")+'">'+esc(s.l)+(s.rs.length>1?' <span class="n">'+s.rs.length+'</span>':'')+bd(bdS(s))+'</a>';}).join("")+'</div>'+
+    '<div class="r2"'+(S&&S.rs.length>1?'':' hidden')+'>'+(S?S.rs.map(function(r){return '<a href="#/'+S.k+'/'+r.k+'"'+(r.k===rk?' class="on" aria-current="true"':'')+' data-nav-card="'+esc(r.el.id||"")+'" data-aide="'+esc(r.d||("Ouvre la rubrique « "+r.l+" »."))+'">'+esc(r.l)+bd(+B[r.el.id]||0)+'</a>';}).join(""):"")+'</div>';
   var on=bar.querySelector(".r1 a.on");if(on&&on.scrollIntoView)try{on.scrollIntoView({block:"nearest",inline:"nearest"});}catch(e){}
   var vis=R?R.el:null;
   toutes().forEach(function(e){if(e===home)return;e.classList.toggle("nv-off",e!==vis);});
@@ -77,7 +81,7 @@ function rendre(){
 function tuiles(){
   if(!home)return;var q=norm((home.querySelector(".q")||{}).value||"").trim(),ss=dispo(),html="";
   ss.forEach(function(s){var rs=s.rs.filter(function(r){return !q||norm(s.l+" "+r.l+" "+r.d+" "+(r.el.textContent||"").slice(0,600)).indexOf(q)>=0;});
-    if(rs.length)html+='<h3>'+esc(s.l)+'</h3><div class="tl">'+rs.map(function(r){return '<a href="#/'+s.k+'/'+r.k+'" data-aide="'+esc(r.d||r.l)+'"><b>'+esc(r.l)+'</b><span>'+esc(r.d)+'</span></a>';}).join("")+'</div>';});
+    if(rs.length)html+='<h3>'+esc(s.l)+'</h3><div class="tl">'+rs.map(function(r){return '<a href="#/'+s.k+'/'+r.k+'" data-aide="'+esc(r.d||r.l)+'"><b>'+esc(r.l)+bd(+B[r.el.id]||0)+'</b><span>'+esc(r.d)+'</span></a>';}).join("")+'</div>';});
   home.querySelector(".tls").innerHTML=html||'<p class="vide">Aucune rubrique ne correspond. Essayez un autre mot.</p>';
 }
 function aller(h,pousser){
@@ -95,5 +99,6 @@ window.ESPNAV={init:function(conf){
   window.addEventListener("hashchange",function(){if(/^#\//.test(location.hash))rendre();});
   window.addEventListener("popstate",function(){rendre();});
   rendre();
-},rendre:function(){rendre();},courant:function(){return cur;}};
+},rendre:function(){rendre();},courant:function(){return cur;},
+  badge:function(id,n){B[id]=+n||0;if(C&&grid)plus_tard();}};
 })();

@@ -47,4 +47,4 @@ sb.rpc("acrb_ca_lien_lire",{p_token:T}).then(function(x){
   document.getElementById("non").onclick=function(){document.getElementById("fin").hidden=false;document.getElementById("dfin").focus();};
   document.getElementById("ok_fin").onclick=function(){var v=document.getElementById("dfin").value;if(!v){msg.className="msg bad";msg.textContent="Indiquez la date de votre départ.";return;}rep("demission",v,this);};
 });
-})();</script></body></html>
+})();</script><script src="signaler.js?v=3" defer></script></body></html>

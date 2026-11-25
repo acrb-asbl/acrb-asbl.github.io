@@ -39,6 +39,11 @@ async function garde(ctx) {
   })
 }
 
+// faute du 25/11 (bouton « Signaler une erreur » caché sous « Demander une modification ») : un bouton fixe à l'écran doit rester visible et touchable, jamais recouvert par un autre
+const CACHES_FIXES = () => [...document.querySelectorAll('button,a[href]')].filter(e => e.getClientRects().length && getComputedStyle(e).visibility !== 'hidden').filter(e => { let z = e; while (z && z !== document.body) { if (getComputedStyle(z).position === 'fixed') return true; z = z.parentElement } return false })
+  .filter(e => { const r = e.getBoundingClientRect(); if (r.width < 2 || r.height < 2 || r.bottom < 0 || r.top > innerHeight) return false
+    return [[r.left + r.width / 2, r.top + r.height / 2], [r.left + 6, r.top + r.height / 2], [r.right - 6, r.top + r.height / 2]].filter(([x, y]) => x >= 0 && x <= innerWidth && y >= 0 && y <= innerHeight).some(([x, y]) => { const h = document.elementFromPoint(x, y); return h && !e.contains(h) && !h.contains(e) }) })
+  .map(e => (e.innerText || e.getAttribute('aria-label') || e.tagName).trim().slice(0, 40))
 async function ecran(moteur, prof, pg) {
   const ctx = await moteur.newContext({ ...prof[1], locale: 'fr-BE' }); await garde(ctx)
   const p = await ctx.newPage(); const pb = []
@@ -56,6 +61,7 @@ async function ecran(moteur, prof, pg) {
       while (a && a !== document.body) { const cs = getComputedStyle(a); if (/(auto|scroll|hidden)/.test(cs.overflowX)) { const q = a.getBoundingClientRect(); if (r.right > q.right + 2 || r.left < q.left - 2) return (e.innerText || e.getAttribute('aria-label') || '').trim().slice(0, 40) } a = a.parentElement }
       return null }).filter(Boolean),
     liens: [...new Set([...document.querySelectorAll('a[href]')].map(a => a.href.split('#')[0]))] })).catch(() => ({ texte: 0, debord: 0, liens: [] }))
+  for (const t of await p.evaluate(CACHES_FIXES).catch(() => [])) pb.push('bouton caché:« ' + t + ' » recouvert par un autre')
   if (m.texte < 40) pb.push('vide:ecran vide')
   if (m.debord > 2) pb.push('debordement:' + m.debord + ' px')
   // sur téléphone on fait défiler du doigt ; sur ordinateur, un bouton hors du cadre d'une barre qui défile est introuvable
@@ -124,6 +130,7 @@ async function tresorier(moteur, prof) {
   } catch (e) { pb.push('bouton muet:Enregistrer ma note (aucune confirmation visible à côté)') }
   v.courrier = await ouvrir('c_courrier'); v.relier = (await vis('co_form')) || await p.evaluate(() => (document.getElementById('co_cfg') || {}).open === true).catch(() => false)
   v.debord = await p.evaluate(() => document.documentElement.scrollWidth - innerWidth).catch(() => 0)
+  for (const t of await p.evaluate(CACHES_FIXES).catch(() => [])) pb.push('bouton caché:« ' + t + ' » recouvert par un autre')
   // faute du 25/11 : chaque section du menu, puis chacune de ses rubriques, doit être visible en entier et cliquable (pas coupée, pas cachée sous un défilement)
   const sections = await p.$$eval('.nv .r1 a', l => l.map(a => a.getAttribute('href'))).catch(() => [])
   for (const sec of sections) {
