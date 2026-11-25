@@ -55,12 +55,14 @@ async function ecran(moteur, prof, pg) {
   try { const r = await p.goto(BASE + '/' + pg, { waitUntil: 'load', timeout: 30000 }); st = r ? r.status() : 0; await p.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {}) } catch (e) { pb.push('ouverture:' + e.message.slice(0, 80)) }
   const ms = Date.now() - s0; await p.waitForTimeout(600)
   if (st >= 400) pb.push('http:' + st)
-  const m = await p.evaluate(() => ({ texte: document.body.innerText.trim().length, debord: document.documentElement.scrollWidth - innerWidth,
+  // faute du 25/11 : sur téléphone le navigateur élargit sa fenêtre pour englober une page trop large ; le débordement se mesure contre la largeur de l'écran
+  const LARG = prof[1].viewport.width
+  const m = await p.evaluate((W) => ({ texte: document.body.innerText.trim().length, debord: Math.max(document.documentElement.scrollWidth, innerWidth) - W,
     // bouton ou lien coupé par un conteneur qui défile ou masque (barre d'onglets) : on ne le voit pas, on ne l'atteint pas
     caches: [...document.querySelectorAll('a,button,[role=tab]')].filter(e => e.offsetParent !== null && e.getClientRects().length).map(e => { const r = e.getBoundingClientRect(); let a = e.parentElement
       while (a && a !== document.body) { const cs = getComputedStyle(a); if (/(auto|scroll|hidden)/.test(cs.overflowX)) { const q = a.getBoundingClientRect(); if (r.right > q.right + 2 || r.left < q.left - 2) return (e.innerText || e.getAttribute('aria-label') || '').trim().slice(0, 40) } a = a.parentElement }
       return null }).filter(Boolean),
-    liens: [...new Set([...document.querySelectorAll('a[href]')].map(a => a.href.split('#')[0]))] })).catch(() => ({ texte: 0, debord: 0, liens: [] }))
+    liens: [...new Set([...document.querySelectorAll('a[href]')].map(a => a.href.split('#')[0]))] }), LARG).catch(() => ({ texte: 0, debord: 0, liens: [] }))
   for (const t of await p.evaluate(CACHES_FIXES).catch(() => [])) pb.push('bouton caché:« ' + t + ' » recouvert par un autre')
   if (m.texte < 40) pb.push('vide:ecran vide')
   if (m.debord > 2) pb.push('debordement:' + m.debord + ' px')
@@ -129,7 +131,7 @@ async function tresorier(moteur, prof) {
     await p.waitForFunction(() => { const e = document.getElementById('vo_nok_1'); if (!e || !/Enregistrée/.test(e.innerText)) return false; const r = e.getBoundingClientRect(); return r.height > 0 && r.top >= 0 && r.bottom <= innerHeight }, null, { timeout: 6000 })
   } catch (e) { pb.push('bouton muet:Enregistrer ma note (aucune confirmation visible à côté)') }
   v.courrier = await ouvrir('c_courrier'); v.relier = (await vis('co_form')) || await p.evaluate(() => (document.getElementById('co_cfg') || {}).open === true).catch(() => false)
-  v.debord = await p.evaluate(() => document.documentElement.scrollWidth - innerWidth).catch(() => 0)
+  v.debord = await p.evaluate((W) => Math.max(document.documentElement.scrollWidth, innerWidth) - W, prof[1].viewport.width).catch(() => 0)
   for (const t of await p.evaluate(CACHES_FIXES).catch(() => [])) pb.push('bouton caché:« ' + t + ' » recouvert par un autre')
   // faute du 25/11 : chaque section du menu, puis chacune de ses rubriques, doit être visible en entier et cliquable (pas coupée, pas cachée sous un défilement)
   const sections = await p.$$eval('.nv .r1 a', l => l.map(a => a.getAttribute('href'))).catch(() => [])
