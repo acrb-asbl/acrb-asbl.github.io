@@ -36,6 +36,8 @@ var CSS='#sub_box,#iaf_box{min-width:0}.sb-org{display:flex;gap:6px;flex-wrap:wr
 '.sb-pc label{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line,#dfe3ea);font-size:15px;cursor:pointer}.sb-pc input{width:22px;height:22px;flex:none;margin-top:1px}.sb-msg{font-size:14px;font-weight:600;margin:6px 0;min-height:1em}.sb-msg.ok{color:var(--green,#1f8a4c)}.sb-msg.bad{color:var(--brick,#b23a2b)}'+
 '.sb-nav{display:flex;justify-content:space-between;gap:8px;margin-top:16px;border-top:1px solid var(--line,#dfe3ea);padding-top:12px}.sb-note{font-size:13.5px;color:var(--muted,#5f6675);margin:6px 0}.sb-ex{background:#fff6e5;border-left:3px solid #c98a00;padding:8px 10px;font-size:13.5px;color:#6b4a00;margin:6px 0}'+
 '.sb-t{overflow-x:auto}.sb-t table{border-collapse:collapse;width:100%;font-size:14px}.sb-t th,.sb-t td{border-bottom:1px solid var(--line,#dfe3ea);padding:7px 6px;text-align:left;vertical-align:top}.sb-t th{font-size:12px;color:var(--muted,#5f6675);text-transform:uppercase;letter-spacing:.04em}.sb-t .n{text-align:right;white-space:nowrap}'+
+'.sb-gag{border:2px solid var(--navy,#14233c);padding:14px;margin:0 0 14px;background:#f7f9fc}.sb-niv{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin:8px 0}.sb-niv button{display:grid;gap:3px;text-align:left;padding:12px;border:1px solid var(--navy,#14233c);background:#fff;cursor:pointer;font:14px "Source Sans 3",sans-serif;color:#222;min-height:56px}.sb-niv button b{font:800 16px "Libre Franklin",Arial,sans-serif;color:var(--navy,#14233c)}.sb-niv button .px{font-weight:700}.sb-niv button.on{outline:3px solid var(--navy,#14233c)}.sb-niv button:disabled{opacity:.45;cursor:not-allowed;border-color:#c9ccd3}.sb-ia button:disabled{opacity:.45;cursor:not-allowed}'+
+'.sb-opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line,#dfe3ea);background:#fff;padding:12px;margin:8px 0;cursor:pointer}.sb-opt.on{border:2px solid var(--navy,#14233c)}.sb-opt input{width:22px;height:22px;flex:none;margin-top:2px}.sb-opt>div{min-width:0;flex:1}.sb-opt .hd{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.sb-opt .pct{margin-left:auto;font:800 20px "Libre Franklin",Arial,sans-serif;color:var(--green,#1f8a4c)}.sb-opt p{margin:6px 0;font-size:14.5px}.sb-opt .arg{color:var(--green,#1f8a4c);font-size:14px;margin:3px 0}.sb-opt .rsq{color:var(--brick,#b23a2b);font-size:14px;margin:3px 0}.sb-opt summary{cursor:pointer;font-weight:700;min-height:40px;display:flex;align-items:center}.sb-opt .ch{border-top:1px dashed var(--line,#dfe3ea);padding:6px 0;font-size:14px;white-space:pre-wrap}'+
 '@media(max-width:700px){.sb-f{grid-template-columns:1fr}.sb-row{grid-template-columns:1fr}.sb-bud{grid-template-columns:1fr 96px 44px}.sb-nav .sb-b{flex:1}}';
 
 /* Vocabulaire et champs propres à chaque type d'organisation */
@@ -78,6 +80,47 @@ function controle(d,a){var c=d.champs||{},it=[],req=REQ.concat(a&&a.conditions&&
   it.push({k:"dates",ok:!!(c.debut&&c.fin&&c.debut<=c.fin),txt:"Dates du projet : début avant fin"});
   return {ok:it.every(function(x){return x.ok;}),items:it};}
 
+/* ---------- préremplissage gratuit (sans IA) : tout ce que la plateforme et la fiche de l'aide savent déjà ----------
+   Ne remplit que les champs vides ; ne touche jamais un champ saisi. Demande de Karim du 25/11/2026. */
+var MOIS={janvier:1,fevrier:2,mars:3,avril:4,mai:5,juin:6,juillet:7,aout:8,septembre:9,octobre:10,novembre:11,decembre:12};
+function ymd(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2);}
+function montantAide(a){var k=a&&a.conditions||{};if(k.montant_max_eur>0)return +k.montant_max_eur;var t=String(a&&a.montant_texte||""),m=t.match(/\d{1,3}(?:[.\s ]\d{3})+|\d+/g);if(!m)return null;var v=m.map(function(x){return +x.replace(/[.\s ]/g,"");}).filter(function(x){return x>=100;});return v.length?Math.max.apply(null,v):null;}
+function datesAide(a){/* début : le mois qui suit la décision (jury) annoncée, sinon 3 mois après l'échéance ; durée 12 mois */
+  var txt=norm([a&&a.procedure,(a&&a.conditions&&a.conditions.liste||[]).join(" ")].join(" ")),best=null,re=/jury[^.;]*?\b(janvier|fevrier|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|decembre)\s+(20\d\d)/g,m;
+  while((m=re.exec(txt))){var d=new Date(+m[2],MOIS[m[1]],1);if(!best||d<best)best=d;}
+  var ech=a&&a.echeance?new Date(String(a.echeance).slice(0,10)+"T12:00:00"):null,auj_=new Date();
+  if(!best){var b=ech&&ech>auj_?ech:auj_;best=new Date(b.getFullYear(),b.getMonth()+3,1);}
+  if(best<auj_)best=new Date(auj_.getFullYear(),auj_.getMonth()+1,1);
+  var fin=new Date(best.getFullYear()+1,best.getMonth(),0);return {debut:ymd(best),fin:ymd(fin)};}
+function preremplir(d,a,o){if(!d||!o||d.statut==="valide"||d.statut==="envoye")return 0;var c=d.champs,p=o.profil||{},n=0,acrb=!!o.acrb||(o.profil&&/ACRB/.test(o.profil.nom||""));
+  function vide(k){var v=c[k];return v==null||(Array.isArray(v)?!v.length:!String(v).trim());}
+  function mettre(k,v){if(v==null||v===""||(Array.isArray(v)&&!v.length))return;if(vide(k)){c[k]=v;n++;}}
+  if(String(c.membres)==="0"){delete c.membres;n++;}           /* registre des membres encore vide : pas de « 0 » trompeur */
+  ["nom","forme","bce","adresse","iban","email","tel","objet","activites","commerces","depuis"].forEach(function(k){mettre(k,p[k]);});
+  if(+p.membres>0)mettre("membres",String(p.membres));
+  var r=(p.representants||[])[0];if(r){mettre("representant",r.nom);mettre("representant_qualite",r.qualite);}
+  if(!a)return n;
+  var court=acrb?"L’ACRB":(c.nom||o.nom||"Le demandeur"),nomAide=String(a.nom||"").replace(/\s*\(.*\)\s*$/,"");
+  var lieu=acrb?"Rue de Brabant, place Liedts et rue Gallait (1030 Schaerbeek et 1210 Saint-Josse-ten-Noode)":(c.adresse||p.adresse||"");
+  var pub=o.type==="asbl"?(acrb?"Habitants, commerçants et clients du quartier Brabant, Liedts et Gallait":"Membres et public de l’association"):"Clients et riverains du commerce";
+  var dt=datesAide(a),dem=montantAide(a),k=a.conditions||{};
+  mettre("titre",nomAide+(acrb?" — rues de Brabant, Liedts et Gallait":" — "+(c.nom||o.nom||"")));
+  mettre("lieu",lieu);mettre("public",pub);mettre("debut",dt.debut);mettre("fin",dt.fin);
+  if(dem&&vide("montant_demande")){
+    var tot=k.taux_max_pct>0&&k.taux_max_pct<100?Math.round(dem/(k.taux_max_pct/100)):dem,cof=tot-dem;
+    mettre("montant_demande",String(dem));
+    if(vide("budget")){c.budget=[["Coordination et animation du projet",.35],["Matériel et aménagements",.35],["Communication et information des habitants et des commerçants",.2],["Frais de fonctionnement et imprévus",.1]].map(function(x){return {poste:x[0],montant:String(Math.round(tot*x[1]))};});
+      var ecart=tot-c.budget.reduce(function(s,x){return s+(+x.montant);},0);c.budget[0].montant=String(+c.budget[0].montant+ecart);n++;}
+    if(cof>0&&vide("cofinancement")){c.cofinancement=[{source:"Fonds propres de "+(acrb?"l’association":"l’organisation"),montant:String(cof)}];n++;}}
+  var obj=(k.liste||[]).filter(function(x){return !/d[ée]pos|jury|avant le|apr[èe]s le|\b20\d\d\b|[âa]g[ée]|ann[ée]e/i.test(x);});
+  mettre("objectifs",obj.length?obj.map(function(x){return "• "+x;}).join("\n"):a.resume);
+  mettre("resume",court+" dépose ce projet dans le cadre de « "+a.nom+" »"+(a.organisme?" ("+a.organisme+")":"")+". "+(a.resume||"")+" Le projet se déroule "+(acrb?"dans les rues de Brabant, Liedts et Gallait":"à "+lieu)+", du "+dfr(dt.debut)+" au "+dfr(dt.fin)+", pour : "+pub.charAt(0).toLowerCase()+pub.slice(1)+"."+(dem?" Montant demandé : "+eur0(dem)+".":""));
+  c.argu=c.argu||{};(a.criteres||[]).forEach(function(cr){if(!String(c.argu[cr.id]||"").trim()){c.argu[cr.id]=cr.libelle+" : "+court+", "+(c.objet?"dont l’objet est « "+String(c.objet).slice(0,180)+(String(c.objet).length>180?"…":"")+" »":"porteur du projet")+", y répond par des actions menées "+(acrb?"dans le quartier":"sur place")+" avec "+pub.charAt(0).toLowerCase()+pub.slice(1)+".";n++;}});
+  mettre("documentation",["Présentation : "+(c.nom||o.nom||"")+(c.forme?" ("+c.forme+")":"")+(c.bce?", n° d’entreprise "+c.bce:"")+". "+(c.objet||""),
+    (a.pieces||[]).length?"Annexes : "+(a.pieces||[]).map(function(x){return x.libelle;}).join(" ; ")+".":"",
+    a.procedure?"Procédure de l’aide : "+a.procedure:"",a.url?"Fiche officielle : "+a.url:""].filter(Boolean).join("\n\n"));
+  if(n)c.prerempli_le=new Date().toISOString();return n;}
+
 /* Pertinence d'une aide pour l'organisation : public visé, thèmes retrouvés dans son activité, échéance */
 function pertinence(a,o){if((a.publics||[]).indexOf(o.type)<0)return null;var p=o.profil||{},txt=norm([p.objet,p.activites,p.nom,(p.magasins||[]).map(function(m){return m.activite;}).join(" ")].join(" ")),s=50,th=[];
   (a.themes||[]).forEach(function(t){if(txt.indexOf(norm(t))>=0){s+=10;th.push(t);}});s=Math.min(s,80);var j=jours(a.echeance);if(j!=null&&j<0)return {s:-1,j:j,th:th};if(j!=null&&j<=45)s+=15;
@@ -111,7 +154,7 @@ function mesRequetes(){sb.rpc("acrb_ia_mes_requetes").then(function(x){var R=MES
   z.innerHTML=R.length?'<p class="sb-note">Ce mois-ci : '+eur(tm)+' pour '+R.filter(function(r){return String(r.quand).slice(0,7)===m&&r.statut==="execute";}).length+' requête(s), facturé à '+esc(ORG?ORG.nom:"votre organisation")+'.</p><div class="sb-t"><table><tr><th>Quand</th><th>Aide demandée</th><th class="n">Prix</th></tr>'+R.slice(0,20).map(function(r){var a=ACT.filter(function(q){return q[0]===r.action;})[0];return '<tr><td>'+esc(dth(r.quand))+'</td><td>'+esc(a?a[1]:r.action)+(r.statut!=="execute"?' <span class="sb-pill">'+(r.statut==="plafond"?"plafond atteint":"non abouti, non facturé")+'</span>':'')+'</td><td class="n">'+eur(r.prix_eur)+'</td></tr>';}).join("")+'</table></div>':'<p class="sb-note">Aucune pour l’instant. Chaque aide de l’IA annonce son prix avant que vous la confirmiez.</p>';});}
 
 /* ---------- dossier ---------- */
-function ouvrir(id,et){DOS=JSON.parse(JSON.stringify((D.dossiers||[]).filter(function(d){return d.id===id;})[0]||null));if(!DOS)return;ORG=orgDe(DOS.organisation_id)||ORG;DOS.champs=DOS.champs||{};DOS.pieces=DOS.pieces||{};ET=et||1;SALE=false;rendreDossier();try{BOX.scrollIntoView({block:"start"});}catch(e){}}
+function ouvrir(id,et){DOS=JSON.parse(JSON.stringify((D.dossiers||[]).filter(function(d){return d.id===id;})[0]||null));if(!DOS)return;ORG=orgDe(DOS.organisation_id)||ORG;DOS.champs=DOS.champs||{};DOS.pieces=DOS.pieces||{};ET=et||1;SALE=false;var np=preremplir(DOS,aideDe(DOS),ORG);if(np){SALE=true;enregistrer().then(function(){dire(np+" élément(s) prérempli(s) gratuitement à partir de la fiche de l’aide et de ce que la plateforme sait déjà : vérifiez-les d’un coup d’œil.");});}rendreDossier();try{BOX.scrollIntoView({block:"start"});}catch(e){}}
 function majLocal(d){DOS=JSON.parse(JSON.stringify(d));DOS.champs=DOS.champs||{};DOS.pieces=DOS.pieces||{};var i=D.dossiers.map(function(x){return x.id;}).indexOf(d.id);if(i>=0)D.dossiers[i]=d;else D.dossiers.unshift(d);}
 function enregistrer(){if(!SALE)return Promise.resolve(true);if(DOS.statut==="valide"||DOS.statut==="envoye"){SALE=false;return Promise.resolve(true);}
   SALE=false;return sb.rpc("acrb_sub_enregistrer",{p_id:DOS.id,p_champs:DOS.champs,p_pieces:DOS.pieces,p_titre:DOS.champs.titre||null}).then(function(x){if(x.error){SALE=true;dire("Non enregistré : "+err(x),1);return false;}
@@ -173,10 +216,55 @@ function budget(){var z=$("sb_bud"),c=DOS.champs;c.budget=c.budget||[];c.cofinan
 
 /* ---------- étape 3 : aide de l'IA (prix annoncé, confirmation, prix facturé) ---------- */
 function et3(Z){if(verrou()){Z.innerHTML='<p>Le dossier est validé. Rouvrez-le (étape 6) pour demander encore l’aide de l’IA.</p>';return;}
-  Z.innerHTML='<p>L’IA complète, corrige, argumente, documente ou vérifie votre dossier à partir de ce qui est déjà saisi et de la fiche de l’aide. Elle n’invente aucun chiffre : ce qui manque est marqué « À COMPLÉTER ». Vous choisissez ensuite ce que vous gardez.</p>'+
+  Z.innerHTML='<div class="sb-gag"><h3 style="margin-top:0">Dossier gagnant</h3><p>Un modèle d’IA cherche sur le web le règlement, les critères du jury et les projets retenus les années précédentes, puis propose plusieurs dossiers complets. D’autres modèles puissants les attaquent (jury, administration, concurrent) ; un arbitre corrige et les classe, du plus recommandé au moins recommandé, avec un taux de réussite estimé. Vous choisissez d’un clic : le dossier est rempli.</p><div id="sb_gag">Chargement des niveaux…</div></div>'+
+   '<h3>Retouches ponctuelles</h3><p class="sb-note">L’IA complète, corrige, argumente, documente ou vérifie à partir de ce qui est déjà saisi. Elle n’invente aucun chiffre : ce qui manque est marqué « À COMPLÉTER ».</p>'+
    '<p class="sb-note">Chaque aide est facturée à '+esc(ORG.nom)+'. Son prix s’affiche avant que vous la confirmiez ; rien n’est facturé sans votre accord ni si l’IA ne répond pas.</p>'+
    '<div class="sb-ia">'+ACT.map(function(q){return '<button type="button" data-ia="'+q[0]+'" data-aide="'+esc(q[2])+' Son prix s’affiche avant confirmation.">'+esc(q[1])+'</button>';}).join("")+'</div><div id="sb_iaz"></div>';
-  Z.querySelectorAll("[data-ia]").forEach(function(b){b.onclick=function(){devis(b.dataset.ia);};});}
+  Z.querySelectorAll("[data-ia]").forEach(function(b){b.onclick=function(){devis(b.dataset.ia);};});
+  sb.rpc("acrb_ia_solde",{p_org:ORG.id}).then(function(x){var so=x.data&&x.data.solde_eur;if(so!=null&&+so<0.05){Z.querySelectorAll("[data-ia]").forEach(function(b){b.disabled=true;b.title="Solde d’aide de l’IA épuisé ce mois-ci";});
+    $("sb_iaz").innerHTML='<p class="sb-note">Le solde d’aide de l’IA de '+esc(ORG.nom)+' est épuisé ce mois-ci : les boutons reviennent le 1er du mois. Le préremplissage gratuit, lui, reste toujours actif.</p>';}});
+  gagnant();}
+var GAGT=null;
+function gagnant(){var z=$("sb_gag");if(!z)return;clearTimeout(GAGT);
+  sb.rpc("acrb_ia_strategie_lire",{p_dossier:DOS.id}).then(function(x){var st=x.data;if(!$("sb_gag"))return;
+    if(st&&["recherche","contradiction","arbitrage"].indexOf(st.etat)>=0&&Date.now()-new Date(st.maj_le).getTime()<12*60000){gagEnCours(z,st);GAGT=setTimeout(gagnant,4000);return;}
+    if(st&&st.etat==="pret"&&st.resultat){gagOptions(z,st);return;}
+    gagNiveaux(z,st&&st.etat==="echec"?st.message:"");});}
+function gagEnCours(z,st){var E=[["recherche","Recherche sur le web (règlement, critères, lauréats)"],["contradiction","Contradiction par d’autres modèles"],["arbitrage","Arbitrage et classement des options"]],i=E.map(function(e){return e[0];}).indexOf(st.etat);
+  z.innerHTML='<ul class="sb-ck">'+E.map(function(e,k){return '<li class="'+(k<i?'ok':'')+'" style="'+(k===i?'font-weight:700':k>i?'color:var(--muted,#5f6675)':'')+'">'+esc(e[1])+(k===i?' …':'')+'</li>';}).join("")+'</ul><p class="sb-note">Compte 2 à 6 minutes. Vous pouvez quitter cette page : le résultat vous attendra ici.</p>';}
+function gagNiveaux(z,msg){z.innerHTML='Calcul des prix…';
+  enregistrer().then(function(){return appelIA({dossier_id:DOS.id,action:"strategie",mode:"devis"});}).then(function(x){var d=x.data||{};
+    if(x.error||!d.ok){z.innerHTML='<p class="sb-note">'+esc(err(x)||d.message||"Indisponible pour l’instant.")+'</p>';return;}
+    z.innerHTML=(msg?'<p class="sb-msg bad">'+esc(msg)+'</p>':'')+'<div class="sb-niv">'+d.niveaux.map(function(n){return '<button type="button" data-niv="'+n.id+'" data-max="'+n.prix_max_eur+'"'+(n.ok?'':' disabled title="Solde du mois insuffisant"')+'><b>'+esc(n.nom)+'</b><span>'+n.recherches+' recherches web · '+n.contradicteurs+' contradicteur'+(n.contradicteurs>1?'s':'')+'</span><span class="px">environ '+eur(n.estime_eur)+'</span><span>'+eur(n.prix_max_eur)+' au maximum</span></button>';}).join("")+'</div>'+
+      '<p class="sb-note">Solde d’aide de l’IA de '+esc(ORG.nom)+' ce mois-ci : '+eur(d.solde_eur)+'. Facturé au coût réel, jamais au-dessus du maximum ; rien n’est facturé si la recherche échoue dès le départ.</p>';
+    z.querySelectorAll("[data-niv]").forEach(function(b){b.onclick=function(){if(!confirmerNiv(b))return;};});});}
+function confirmerNiv(b){var z=$("sb_gag"),niv=b.dataset.niv,max=+b.dataset.max;
+  z.querySelectorAll("[data-niv]").forEach(function(x){x.classList.toggle("on",x===b);});
+  var c=$("sb_gagok");if(c)c.remove();z.insertAdjacentHTML("beforeend",'<div class="sb-devis" id="sb_gagok"><div class="px">Niveau '+esc(b.querySelector("b").textContent)+' : '+eur(max)+' au maximum</div><button class="sb-b" type="button" id="sb_gaggo">Lancer la recherche</button><button class="sb-b d" type="button" id="sb_gagno">Annuler</button></div>');
+  $("sb_gagno").onclick=function(){$("sb_gagok").remove();};
+  $("sb_gaggo").onclick=function(){this.disabled=true;this.textContent="Lancement…";
+    appelIA({dossier_id:DOS.id,action:"strategie",mode:"executer",niveau:niv,prix_max_accepte:max,champs:DOS.champs}).then(function(y){var r=y.data||{};
+      if(y.error||!r.ok){$("sb_gagok").innerHTML='<b>Rien n’est facturé.</b><div class="sb-note">'+esc(err(y)||r.message||"Le lancement a échoué.")+'</div>';return;}
+      gagnant();});};return true;}
+function gagOptions(z,st){var R=st.resultat||{},O=R.options||[],a=aideDe(DOS);
+  z.innerHTML=(R.synthese?'<p><b>'+esc(R.synthese)+'</b></p>':'')+'<p class="sb-note">Prix facturé : '+eur(st.prix_eur)+' (niveau '+esc({essentiel:"Essentiel",standard:"Standard",approfondi:"Approfondi"}[st.niveau]||st.niveau)+', '+(st.recherches||0)+' recherches web). Le taux de réussite est une estimation des modèles, pas une garantie.</p>'+
+    O.map(function(o,i){var c=o.champs||{};return '<label class="sb-opt'+(i===0?' on':'')+'"><input type="radio" name="sb_opt" value="'+i+'"'+(i===0?' checked':'')+'><div><div class="hd"><b>'+(i+1)+'. '+esc(o.titre_option||c.titre||"Option")+'</b>'+(i===0?' <span class="sb-pill ok">recommandée</span>':'')+'<span class="pct">'+Math.max(0,Math.min(100,Math.round(+o.reussite_pct||0)))+' %</span></div>'+
+      (o.pourquoi?'<p>'+esc(o.pourquoi)+'</p>':'')+'<div class="sb-note">'+esc(c.titre||"")+(c.montant_demande?' · '+eur0(num(c.montant_demande))+' demandés':'')+(c.debut?' · du '+dfr(c.debut)+' au '+dfr(c.fin):'')+'</div>'+
+      '<details><summary>Arguments, risques et dossier proposé</summary>'+(o.arguments||[]).map(function(t){return '<div class="arg">+ '+esc(t)+'</div>';}).join("")+(o.risques||[]).map(function(t){return '<div class="rsq">− '+esc(t)+'</div>';}).join("")+
+      ((o.a_fournir||[]).length?'<div class="sb-note" style="margin-top:6px">À fournir : '+esc(o.a_fournir.join(" ; "))+'</div>':'')+
+      (c.resume?'<div class="ch"><b>Résumé</b><div>'+esc(c.resume)+'</div></div>':'')+((c.budget||[]).length?'<div class="ch"><b>Budget</b><div>'+c.budget.map(function(x){return esc(x.poste)+' : '+eur0(num(x.montant));}).join("<br>")+'</div></div>':'')+'</details></div></label>';}).join("")+
+    ((R.sources||[]).length?'<details><summary>Sources ('+R.sources.length+')</summary>'+R.sources.map(function(x){return x&&x.url?'<div><a href="'+esc(x.url)+'" target="_blank" rel="noopener">'+esc(x.titre||x.fait||x.url)+'</a></div>':'';}).join("")+'</details>':'')+
+    '<button class="sb-b" type="button" id="sb_optok" data-aide="Remplit le dossier avec l’option choisie (vos données d’identité ne changent pas), puis passe au contrôle.">Choisir cette option et remplir le dossier</button><button class="sb-b d" type="button" id="sb_optre">Nouvelle recherche</button>';
+  z.querySelectorAll('input[name="sb_opt"]').forEach(function(r){r.onchange=function(){z.querySelectorAll(".sb-opt").forEach(function(l){l.classList.toggle("on",l.contains(r));});};});
+  $("sb_optre").onclick=function(){gagNiveaux(z,"");};
+  $("sb_optok").onclick=function(){var o=O[+(z.querySelector('input[name="sb_opt"]:checked')||{}).value||0],c=o.champs||{};
+    ["titre","resume","objectifs","public","lieu","debut","fin","montant_demande","documentation"].forEach(function(k){if(c[k]!=null&&String(c[k]).trim())DOS.champs[k]=String(c[k]);});
+    if(Array.isArray(c.budget)&&c.budget.length)DOS.champs.budget=c.budget.map(function(x){return {poste:String(x.poste||""),montant:String(num(x.montant)||"")};});
+    if(Array.isArray(c.cofinancement))DOS.champs.cofinancement=c.cofinancement.map(function(x){return {source:String(x.source||""),montant:String(num(x.montant)||"")};});
+    if(c.montant_demande!=null)DOS.champs.montant_demande=String(num(c.montant_demande)||"");
+    DOS.champs.argu=DOS.champs.argu||{};Object.keys(o.argu||{}).forEach(function(k){DOS.champs.argu[k]=String(o.argu[k]);});
+    DOS.champs.option_choisie={strategie:st.id,titre:o.titre_option||"",reussite_pct:o.reussite_pct};
+    SALE=true;enregistrer().then(function(ok){if(ok)aller((a&&(a.pieces||[]).length)?4:5);});};}
 function appelIA(corps){if(!sb.functions||!sb.functions.invoke)return Promise.resolve({error:{message:"Service indisponible"}});return sb.functions.invoke("acrb-ia",{body:corps}).then(function(x){if(x.error)return x;var d=x.data;if(typeof d==="string"){try{d=JSON.parse(d);}catch(e){}}return {data:d};});}
 function devis(act){var z=$("sb_iaz"),q=ACT.filter(function(x){return x[0]===act;})[0];z.innerHTML='<div class="sb-devis">Calcul du prix…</div>';
   enregistrer().then(function(){return appelIA({dossier_id:DOS.id,action:act,champs:DOS.champs,mode:"devis"});}).then(function(x){var d=x.data||{};
