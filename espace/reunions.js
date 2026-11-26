@@ -66,7 +66,7 @@ function signatures(r){var av=r.avis||[],noms=(r.presences||[]).map(function(p){
   return {noms:noms,ok:ok,ko:ko,tot:tot,complet:noms.length>0&&noms.length>=tot&&ok.length===noms.length};}
 function quorum(r,c){var t=r.type,d=r.details||{};
   if(ecrite(t)){var s=signatures(r);return {ok:s.complet,txt:s.ok.length+" approbation"+(s.ok.length>1?"s":"")+" sur "+s.tot+" "+TYPES[t].qui+(s.ko.length?", "+s.ko.length+" refus":"")+"."};}
-  if(t==="ca"){var ok=c.voix*2>c.total;return {ok:ok,txt:c.voix+" administrateur"+(c.voix>1?"s":"")+" sur "+c.total+" présent"+(c.voix>1?"s":"")+" ou représenté"+(c.voix>1?"s":"")+" : "+(ok?"la majorité est atteinte, le conseil peut délibérer (statuts, art. 21).":"la majorité des administrateurs n'est pas présente ou représentée : le conseil ne peut pas délibérer valablement (statuts, art. 21).")};}
+  if(t==="ca"){var ok=c.voix*2>c.total;var rep=(r.presences||[]).some(function(p){return p.statut==="represente";});return {ok:ok,txt:c.voix+" administrateur"+(c.voix>1?"s":"")+" sur "+c.total+" présent"+(c.voix>1?"s":"")+(rep?" ou représenté"+(c.voix>1?"s":""):"")+" : "+(ok?"la majorité est atteinte, le conseil peut délibérer (statuts, art. 21).":"la majorité des administrateurs n'est pas présente ou représentée : le conseil ne peut pas délibérer valablement (statuts, art. 21).")};}
   if(estAG(t)&&(r.presences||[]).length&&!c.voix)return {ok:false,txt:"Aucun membre effectif présent ou représenté : l'assemblée ne peut rien décider (statuts, art. 12 et 14)."};
   if(estAG(t)){var spec=(r.points||[]).some(function(p){return nat(t,p.nature).q;});
     if(!spec)return {ok:true,txt:c.voix+" membre"+(c.voix>1?"s":"")+" effectif"+(c.voix>1?"s":"")+" présent"+(c.voix>1?"s":"")+" ou représenté"+(c.voix>1?"s":"")+(c.total?" sur "+c.total:"")+". Aucun quorum n'est exigé pour les décisions ordinaires : l'assemblée délibère valablement quel que soit le nombre de membres présents (statuts, art. 14)."};
@@ -456,7 +456,7 @@ window.REUNIONS={init:function(_sb,_user){sb=_sb;user=_user;$("c_reunions").hidd
   if(!lie){lie=true;var st=document.createElement("style");st.textContent=CSS;document.head.appendChild(st);var c=$("c_reunions");
     c.addEventListener("click",clic);c.addEventListener("input",surSaisie);c.addEventListener("change",surSaisie);$("ru_new").addEventListener("submit",nouvelle);
     window.addEventListener("beforeunload",function(e){if(sale){e.preventDefault();e.returnValue="";}});}
-  charger();},recharger:function(){return charger();},donnees:function(){return D;},_t:{controles:controles,issue:issue,blocsPV:blocsPV,nat:nat,norm:norm,signatures:signatures,setD:function(d){D=d;}}};
+  charger();},recharger:function(){return charger();},donnees:function(){return D;},_t:{controles:controles,issue:issue,blocsPV:blocsPV,blocsPresences:blocsPresences,nat:nat,norm:norm,signatures:signatures,setD:function(d){D=d;}}};
 
 /* ---------- obligations et processus de gestion de l'association ---------- */
 window.OBLIGATIONS={rendre:function(){var z=$("ob_list");if(!z||!D)return;var an=new Date().getFullYear(),L=D.reunions||[],it=[],aj=auj();
