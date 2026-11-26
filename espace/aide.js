@@ -11,7 +11,7 @@
     '.aide-btn[aria-pressed=true]{background:#1d1a16;color:#fff}'+
     '.aide-btn.aide-dock{position:static;width:34px;height:34px;font-size:15px;box-shadow:none;flex:none}'+
     'body.aide-on [data-aide]{outline:2px dashed #c99a3a;outline-offset:2px;cursor:help}'+
-    '.aide-bulle{position:fixed;z-index:61;max-width:min(320px,calc(100vw - 24px));background:#1d1a16;color:#fff;border-radius:12px;padding:10px 12px;font:500 14px/1.4 "Source Sans 3","Segoe UI",Arial,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.25)}'+
+    '.aide-bulle{position:fixed;z-index:61;pointer-events:none;max-width:min(320px,calc(100vw - 24px));background:#1d1a16;color:#fff;border-radius:12px;padding:10px 12px;font:500 14px/1.4 "Source Sans 3","Segoe UI",Arial,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.25)}'+
     '.aide-bulle b{display:block;font-weight:800;margin-bottom:2px}.aide-bulle[hidden]{display:none}'+
     '.aide-sous{font-size:12.5px;color:#6f6a62;margin:4px 2px 0}';
   document.head.appendChild(st);
