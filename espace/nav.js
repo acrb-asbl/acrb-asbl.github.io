@@ -61,7 +61,8 @@ function auj(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1
 function aFaire(){var L=[],j=auj();
   try{var D=window.REUNIONS&&REUNIONS.donnees&&REUNIONS.donnees();if(D&&D.reunions){var TY={ca:"Conseil d’administration",ago:"Assemblée générale",age:"Assemblée générale extraordinaire",autre:"Réunion",ecrite_ca:"Décision écrite du conseil",ecrite_ag:"Décision écrite des membres"};
     var pro=D.reunions.filter(function(r){return (r.statut==="preparation"||r.statut==="convoquee")&&r.date_reunion>=j;}).sort(function(a,b){return a.date_reunion<b.date_reunion?-1:1;});
-    if(pro[0]){var r=pro[0];I.c_reunions={t:"Prochaine : "+dc(r.date_reunion)+(r.heure?" à "+r.heure:""),u:r.date_reunion===j};L.push({n:r.date_reunion===j?"r":"w",t:(r.titre||TY[r.type]||"Réunion")+(r.statut==="preparation"&&r.type!=="autre"?" — convocation à envoyer":""),d:r.date_reunion,h:"#/conseil/reunions"});}
+    if(pro[0]){var r=pro[0],ecr=/^ecrite/.test(r.type),quoi=ecr?(r.statut==="preparation"?" — texte à envoyer pour réponse":" — réponses attendues"):(r.statut==="preparation"&&r.type!=="autre"?" — convocation à envoyer":"");
+      I.c_reunions={t:ecr?"Réponses avant le "+dc(r.date_reunion):"Prochaine : "+dc(r.date_reunion)+(r.heure?" à "+r.heure:""),u:r.date_reunion===j};L.push({n:r.date_reunion===j?"r":"w",t:(r.titre||TY[r.type]||"Réunion")+quoi,d:r.date_reunion,h:"#/conseil/reunions"});}
     else I.c_reunions={t:"Aucune réunion prévue"};
     D.reunions.filter(function(r){return r.statut==="tenue"&&r.type!=="autre";}).forEach(function(r){L.push({n:"w",t:"Procès-verbal à signer : "+(r.titre||r.numero),d:r.date_reunion,h:"#/conseil/reunions"});});}}catch(e){}
   try{var A=window.ENREG&&ENREG.actions&&ENREG.actions();if(A){var ouv=A.filter(function(a){return a.etat==="a_faire"||a.etat==="en_cours";}),ret=ouv.filter(function(a){return a.echeance&&a.echeance<j;}),nx=ouv.filter(function(a){return a.echeance&&a.echeance>=j;}).sort(function(a,b){return a.echeance<b.echeance?-1:1;})[0];
@@ -150,6 +151,6 @@ window.ESPNAV={init:function(conf){
   badge:function(id,n){B[id]=+n||0;if(C&&grid)plus_tard();},
   info:function(id,txt,urgent){I[id]={t:txt,u:!!urgent};if(cur.s==="accueil")plus_tard();},
   aFaire:function(cle,items){T[cle]=items||[];if(cur.s==="accueil")plus_tard();},
-  prenom:function(p){PRENOM=String(p||"").split(/\s+/)[0];},
+  prenom:function(p){var x=String(p||"").split(/\s+/)[0];PRENOM=x?x.charAt(0).toUpperCase()+x.slice(1):"";},
   rafraichir:function(){if(cur.s==="accueil")tuiles();}};
 })();
