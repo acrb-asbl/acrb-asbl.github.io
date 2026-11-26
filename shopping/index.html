@@ -1230,7 +1230,10 @@ if(!I18N[l0])l0="fr";L_=l0;T=I18N[L_];applyLang();render();walk();initMap();rout
     return null;
   }
 
-  window.SCENE_SAISON = function (el, k, s, sug, per, lg) {
+  function nomCat(c) { var b = document.querySelector('#cats [data-c="' + c + '"]'); var t = b ? (b.textContent || "").replace(/\s*\d+\s*$/, "").trim() : c; t = t.toLowerCase(); return t.charAt(0).toUpperCase() + t.slice(1); }
+  function etiqueter() { var bs = document.querySelectorAll("[data-sc-cat]"); for (var i = 0; i < bs.length; i++) bs[i].textContent = nomCat(bs[i].getAttribute("data-sc-cat")); }
+  window.SCENE_SAISON = function (el, k, s, cats, per, lg) {
+    cats = (cats || []).filter(function (c) { return !document.getElementById("cats") || document.querySelector('#cats [data-c="' + c + '"]'); });
     var P = PAL[k]; if (!P || !el) return;
     var T = LB[lg] || LB.fr, p = periode(k, per), fut = p && p[1] > ymd(new Date()), c = compte(k, per, p, lg, T, (T.noms || {})[k] || ""), mots = String(s[0]).split(" "), der = mots.pop();
     el.className = "sz sc"; el.style.setProperty("--sca", P.a); el.style.setProperty("--scd", P.d);
@@ -1242,17 +1245,17 @@ if(!I18N[l0])l0="fr";L_=l0;T=I18N[L_];applyLang();render();walk();initMap();rout
       + (P.ar ? '<div class="sc-ar" lang="ar" dir="rtl">' + P.ar + "</div>" : "")
       + "<h2>" + esc(mots.join(" ")) + (mots.length ? " " : "") + "<em>" + esc(der) + "</em></h2>"
       + "<p>" + esc(s[1]) + "</p>"
-      + '<div class="sc-cta">' + (sug || []).map(function (w, i) { return '<button type="button" class="' + (i ? "" : "sc-main") + '" data-sc-q="' + esc(w) + '">' + (i ? "" : "🔎 ") + esc(w) + "</button>"; }).join("") + "</div>"
+      + '<div class="sc-cta">' + (cats || []).slice(0, 4).map(function (c, i) { return '<button type="button" class="' + (i ? "" : "sc-main") + '" data-sc-cat="' + esc(c) + '">' + esc(nomCat(c)) + "</button>"; }).join("") + "</div>"
       + (c ? '<div class="sc-count">' + esc(c.lib) + " <b>" + c.n + "</b> " + esc(c.n > 1 ? T.jours : T.jour) + (c.apres ? " " + esc(c.apres) : "") + (c.note ? " <small>(" + esc(c.note) + ")</small>" : "") + "</div>" : "")
       + "</div></div>";
+    setTimeout(etiqueter, 1200);
   };
-  // recherche de saison : remplit la recherche de l'annuaire et descend vers les résultats
+  // rayons de la saison : un toucher ouvre le rayon dans l'annuaire et y descend
   document.addEventListener("click", function (e) {
-    var b = e.target.closest && e.target.closest("[data-sc-q]"); if (!b) return;
-    var q = document.getElementById("q"); if (!q) return;
-    q.value = b.getAttribute("data-sc-q"); q.dispatchEvent(new Event("input", { bubbles: true }));
-    var f = document.getElementById("sform"); if (f) { try { f.requestSubmit(); } catch (x) { f.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true })); } }
-    var cible = document.getElementById("list") || document.getElementById("vx"); if (cible) setTimeout(function () { cible.scrollIntoView({ behavior: "smooth", block: "start" }); }, 60);
+    var b = e.target.closest && e.target.closest("[data-sc-cat]"); if (!b) return;
+    var c = document.querySelector('#cats [data-c="' + b.getAttribute("data-sc-cat") + '"]'); if (!c) return;
+    c.click();
+    var cible = document.getElementById("cats"); if (cible) setTimeout(function () { var y = cible.getBoundingClientRect().top + window.pageYOffset - 90; window.scrollTo({ top: y, behavior: "smooth" }); }, 80);
   });
 })();
 </script><script>
@@ -1273,7 +1276,7 @@ window.SAISONS_ACRB={periodes:periodes,active:active};
 function setSaison(k){if(h.getAttribute("data-saison-apercu"))k=h.getAttribute("data-saison-apercu");if(k){h.setAttribute("data-saison",k);h.style.setProperty("--szc",SZ[k].couleur);}else{h.removeAttribute("data-saison");}banner();draw();}
 var ICON={braderie:"🎪",aid:"🌙",ramadan:"🏮",fetes:"🎁",paques:"🌷",soldes:"🏷️",vacances:"☀️",rentree:"🎒"};
 var CFGS=null;function banner(){var k=h.getAttribute("data-saison"),el=document.getElementById("sz");if(!el)return;if(!k){el.innerHTML="";return;}var s=L().s[k];
-if(window.SCENE_SAISON){var lg=(typeof L_!=="undefined"&&SUG[L_])?L_:"fr";window.SCENE_SAISON(el,k,s,SUG[lg][k],periodes(CFGS),lg);return;}el.innerHTML='<div class="vx-w"><i aria-hidden="true">'+ICON[k]+'</i><div><b>'+s[0]+'</b><br><span>'+s[1]+'</span></div></div>';}
+if(window.SCENE_SAISON){var lg=(typeof L_!=="undefined"&&SUG[L_])?L_:"fr";window.SCENE_SAISON(el,k,s,SZ[k].cats,periodes(CFGS),lg);return;}el.innerHTML='<div class="vx-w"><i aria-hidden="true">'+ICON[k]+'</i><div><b>'+s[0]+'</b><br><span>'+s[1]+'</span></div></div>';}
 /* ---------- façade illustrée (déterministe : même commerce, même façade) ---------- */
 function hc(s){s=String(s);var x=2166136261;for(var i=0;i<s.length;i++){x^=s.charCodeAt(i);x=Math.imul(x,16777619);}return x>>>0;}
 var WALLS=["#d9c7ad","#c98f6b","#e8e1d3","#b9c3c9","#d6b88f","#a7745a","#efe6d6","#c4b6a2","#8f9aa3","#e2cfc0"],TRIM=["#f4efe6","#ffffff","#3d3a36","#efe3cf"];
