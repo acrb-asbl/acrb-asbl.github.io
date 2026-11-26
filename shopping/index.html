@@ -1255,7 +1255,9 @@ if(!I18N[l0])l0="fr";L_=l0;T=I18N[L_];applyLang();render();walk();initMap();rout
     var b = e.target.closest && e.target.closest("[data-sc-cat]"); if (!b) return;
     var c = document.querySelector('#cats [data-c="' + b.getAttribute("data-sc-cat") + '"]'); if (!c) return;
     c.click();
-    var cible = document.getElementById("cats"); if (cible) setTimeout(function () { var y = cible.getBoundingClientRect().top + window.pageYOffset - 90; window.scrollTo({ top: y, behavior: "smooth" }); }, 80);
+    // défilement immédiat : dans Chrome, un défilement « doux » est interrompu par le nouvel affichage de la liste
+    function aller() { var cible = document.getElementById("cats"); if (!cible) return; var y = cible.getBoundingClientRect().top + window.pageYOffset - 90; if (Math.abs(window.pageYOffset - y) > 40) window.scrollTo({ top: y, behavior: "instant" }); }
+    setTimeout(aller, 120); setTimeout(aller, 700);
   });
 })();
 </script><script>
