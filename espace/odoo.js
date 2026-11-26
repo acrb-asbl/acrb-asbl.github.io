@@ -25,6 +25,7 @@
   }
   function apercu(d, sync, source) {
     var a = d || {}, k = a.detail || {}, b = boite(); b.hidden = false;
+    if (a.incomplet) (a.problemes = a.problemes || []).unshift({ motif: "lecture incomplète (plus de 20 000 pièces ou coupure) : cet aperçu ne peut pas être appliqué" });
     var probl = (a.problemes || []).slice(0, 12).map(function (p) { return "<li>" + esc((p.ref ? p.ref + " — " : "") + (p.nom ? p.nom + " : " : "") + p.motif) + "</li>"; }).join("");
     b.innerHTML = "<h4>Aperçu de la lecture " + (source === "csv" ? "du fichier Odoo" : "d'Odoo") + " — rien n'est encore enregistré</h4>"
       + '<div class="od_k">'
@@ -32,12 +33,12 @@
       + "<div><b>" + (k.payees || 0) + "</b><span>payées</span></div>"
       + "<div><b>" + ((k.ouvertes || 0) + (k.en_retard || 0)) + "</b><span>impayées, dont " + (k.en_retard || 0) + " en retard</span></div>"
       + "<div><b>" + eur(a.reste_du) + "</b><span>reste dû sur " + eur(a.total_facture) + " facturés</span></div>"
-      + "<div><b>" + (a.relies || 0) + "</b><span>clients reliés à une fiche existante</span></div>"
-      + "<div><b>" + (a.a_creer || 0) + "</b><span>profils provisoires à créer, sans accès</span></div>"
+      + "<div><b>" + (a.relies || 0) + "</b><span>clients déjà reliés (validés avant)</span></div>"
+      + "<div><b>" + ((a.a_creer || 0) + (a.conflits || 0)) + "</b><span>profils provisoires, sans accès, dont " + (a.par_email || 0) + " de même e-mail qu'une fiche</span></div>"
       + "</div>"
       + '<p style="margin:6px 0 0;font-size:14.5px">' + (k.deja ? pl(k.deja, "pièce") + " déjà reprise" + (k.deja > 1 ? "s" : "") + " : elle" + (k.deja > 1 ? "s seront mises" : " sera mise") + " à jour, sans doublon. " : "")
       + (a.conflits ? pl(a.conflits, "client") + " avec plusieurs fiches possibles : gardé" + (a.conflits > 1 ? "s" : "") + " à part, à fusionner. " : "")
-      + (a.a_verifier ? pl(a.a_verifier, "profil") + " ressemble" + (a.a_verifier > 1 ? "nt" : "") + " à une fiche existante (même GSM ou numéro d'entreprise) : proposé" + (a.a_verifier > 1 ? "s" : "") + " à la fusion, jamais relié" + (a.a_verifier > 1 ? "s" : "") + " seul" + (a.a_verifier > 1 ? "s" : "") + ". " : "")
+      + (a.a_verifier ? pl(a.a_verifier, "profil") + " ressemble" + (a.a_verifier > 1 ? "nt" : "") + " à une fiche existante (même e-mail, GSM ou numéro d'entreprise) : vous validerez le rattachement juste après, rien n'est relié seul. " : "")
       + "Aucun profil n'ouvre d'accès ; rien n'entre au registre légal des membres.</p>"
       + (probl ? '<ul class="od_pb">' + probl + "</ul>" : "")
       + '<div class="docs" style="margin-top:10px">' + (T.treso ? '<button class="btn" type="button" id="od_go">Appliquer ces ' + (a.documents || 0) + " pièces</button>" : '<span class="soon" style="margin:0">Seul le trésorier applique l\'aperçu.</span>')
@@ -99,7 +100,9 @@
     T.sb.rpc("acrb_profils_odoo").then(function (x) {
       if (x.error) { el.innerHTML = ""; return; }
       var d = x.data || {}, D = d.demandes || [], C = d.contacts || [];
-      if (!D.length && !C.length) { el.innerHTML = ""; return; }
+      var ouv = '<div class="docs" style="margin-top:8px"><span class="soon" style="margin:0">Demande des membres (retrouver leurs factures) : ' + (d.membres_ouvert ? "ouverte" : "fermée, en attente de la mention RGPD adoptée par le conseil") + "</span>"
+        + (T.ca ? '<button class="btn o" type="button" id="od_ouv" style="margin:0;padding:7px 12px">' + (d.membres_ouvert ? "Fermer" : "Ouvrir") + " la demande des membres</button>" : "") + "</div>";
+      if (!D.length && !C.length) { el.innerHTML = ouv; lier(d); return; }
       el.innerHTML = '<b style="font:800 14px \'Libre Franklin\',Arial,sans-serif;display:block;margin-top:14px">Profils repris d\'Odoo</b>'
         + '<p style="margin:4px 0 6px;font-size:14.5px">' + pl(C.length, "profil provisoire", "profils provisoires") + " portant " + pl(d.factures_provisoires || 0, "facture") + ". Personne ne les voit tant que le rattachement n'est pas validé ici.</p>"
         + (D.length ? '<div class="calist">' + D.map(function (r) {
@@ -107,22 +110,28 @@
             + '<div class="acts"><button class="btn" type="button" data-ok="' + r.id + '">Accepter</button><button class="btn o" type="button" data-no="' + r.id + '">Refuser</button></div></div>';
         }).join("") + "</div>" : "")
         + (C.length ? '<div class="calist">' + C.map(function (c) {
-          var pr = (c.proches || []).map(function (p) { return '<button class="btn o" type="button" data-fu="' + c.id + '" data-cible="' + p.id + '">Fusionner avec « ' + esc(p.nom) + " »</button>"; }).join("");
+          var pr = (c.proches || []).map(function (p) { return '<button class="btn o" type="button" data-fu="' + c.id + '" data-cible="' + p.id + '">Relier à « ' + esc(p.nom) + " »" + (p.email_identique ? " (même e-mail)" : "") + "</button>"; }).join("");
           return '<div class="od_row"><div class="id"><b>' + esc(c.nom) + "</b><br><span class=\"soon\" style=\"margin:0\">" + esc([c.odoo_email, c.tel].filter(Boolean).join(" · ") || "sans coordonnées") + " · " + pl(c.factures, "facture") + ", " + c.ouvertes + " ouverte" + (c.ouvertes > 1 ? "s" : "") + (c.relie_le ? " · relié à " + esc(c.email) : " · en attente du membre") + "</span></div>"
             + (pr ? '<div class="acts">' + pr + "</div>" : "") + "</div>";
         }).join("") + "</div>" : "")
-        + '<p class="soon" id="od_pst" role="status"></p>';
+        + (d.par_email ? '<div class="docs" style="margin-top:8px"><button class="btn" type="button" id="od_mails" style="margin:0">' + (d.par_email > 1 ? "Relier les " + d.par_email + " profils à leur fiche de même e-mail" : "Relier ce profil à sa fiche de même e-mail") + '</button></div>' : "")
+        + ouv + '<p class="soon" id="od_pst" role="status"></p>';
+      lier(d);
       var pst = document.getElementById("od_pst");
       function fin(y) { if (y.error) pst.textContent = "Échec : " + y.error.message; else profils(); rafraichir0(); }
       el.querySelectorAll("[data-ok],[data-no]").forEach(function (b) { b.onclick = function () { b.disabled = true; T.sb.rpc("acrb_profil_odoo_decider", { p_demande: +(b.dataset.ok || b.dataset.no), p_accepter: !!b.dataset.ok }).then(fin); }; });
       el.querySelectorAll("[data-fu]").forEach(function (b) { b.onclick = function () { b.disabled = true; T.sb.rpc("acrb_odoo_fusionner", { p_provisoire: b.dataset.fu, p_cible: b.dataset.cible }).then(fin); }; });
     });
   }
+  function lier(d) {
+    var o = document.getElementById("od_ouv"); if (o) o.onclick = function () { o.disabled = true; T.sb.rpc("acrb_odoo_ouvrir", { p_ouvert: !d.membres_ouvert }).then(function () { profils(); }); };
+    var m = document.getElementById("od_mails"); if (m) m.onclick = function () { m.disabled = true; T.sb.rpc("acrb_odoo_valider_emails").then(function (y) { var p = document.getElementById("od_pst"); if (y.error && p) p.textContent = "Échec : " + y.error.message; profils(); rafraichir0(); }); };
+  }
   function rafraichir0() { try { if (window.loadFac) (window.loadFac.rendre || window.loadFac)(); } catch (e) { } }
 
   window.ODOO = {
     init: function (sb, roles, csvParse) {
-      T.sb = sb; T.treso = (roles || []).indexOf("tresorier") >= 0;
+      T.sb = sb; T.treso = (roles || []).indexOf("tresorier") >= 0; T.ca = (roles || []).indexOf("ca") >= 0 || (roles || []).indexOf("admin") >= 0;
       var b = document.getElementById("odoo_sync"); if (!b) return;
       b.textContent = "Lire Odoo (aperçu)"; b.setAttribute("data-aide", "Lit toutes les factures et tous les avoirs d'Odoo et montre ce qui changerait. Rien n'est enregistré avant « Appliquer ».");
       b.onclick = function () { lire(b); };
@@ -148,6 +157,10 @@
   window.ODOO_MEMBRE = {
     rendre: function (el, sb) {
       if (!el) return;
+      sb.rpc("acrb_odoo_ouvert").then(function (x) { if (x.data === true) dessiner(el, sb); });
+    }
+  };
+  function dessiner(el, sb) {
       el.className = "od_m";
       el.innerHTML = '<b style="font:800 15px \'Libre Franklin\',Arial,sans-serif">Vous avez reçu des factures de l\'association ?</b>'
         + '<p style="margin:4px 0 0">Demandez à retrouver vos factures ici. Le trésorier vérifie votre demande, puis relie votre profil : rien n\'est montré avant.</p>'
@@ -177,6 +190,5 @@
           el.querySelector("#od_code").hidden = true; demander(gsm, r.j.jeton);
         }).catch(function () { st.textContent = "Vérification impossible : réessayez."; });
       };
-    }
-  };
+  }
 })();
