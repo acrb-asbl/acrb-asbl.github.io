@@ -121,10 +121,10 @@ function pdf(a,rid,hold){var R=a.redaction||{},b=[];
   if(R.prochaine_etape){b.push({h2:"Prochaine étape"});b.push({p:R.prochaine_etape});}
   if((R.actions||[]).length){b.push({h2:"Plan d’action"});b.push({table:{cols:["N°","Action","Responsable","Échéance"],w:[.5,5,2,1.4],size:9,rows:R.actions.map(function(x,i){return [String(i+1),x.titre+(x.detail?" — "+x.detail:""),x.responsable||"à désigner",x.echeance?dc(x.echeance):"—"];})}});}
   b.push({pi:"Note rédigée à partir de l’enregistrement de la réunion et relue avant diffusion. Elle ne remplace pas le procès-verbal signé d’une réunion du conseil d’administration ou de l’assemblée générale."});
-  return DOCACRB.pdf(b,"Note de réunion",{reference:"Réunion "+rid,date:"Bruxelles, "+dc(auj())}).then(function(blob){hold.innerHTML="";DOCACRB.actions(hold,blob,"Note de reunion "+rid+".pdf",{});});}
+  var num=li?li.textContent.split(" — ")[0].trim():"Réunion "+rid;return DOCACRB.pdf(b,"Note de réunion "+num,{reference:num,date:"Bruxelles, "+dc(auj())}).then(function(blob){hold.innerHTML="";DOCACRB.actions(hold,blob,"Note de reunion "+num+".pdf",{});});}
 
 /* ---------------- plan d'action (toutes réunions) ---------------- */
-function chargerActions(){var z=$("pa_box");if(!z)return;return sb.rpc("acrb_actions_liste").then(function(x){if(x.error)throw x.error;ACT=x.data||[];dessinerActions();})
+function chargerActions(){var z=$("pa_box");if(!z)return;return sb.rpc("acrb_actions_liste").then(function(x){if(x.error)throw x.error;ACT=x.data||[];dessinerActions();if(window.ESPNAV&&ESPNAV.rafraichir)ESPNAV.rafraichir();})
   .catch(function(e){z.innerHTML='<p class="ru_msg bad">Lecture impossible : '+esc(err(e))+'</p>';});}
 function dessinerActions(){var z=$("pa_box");if(!z)return;var A=ACT,j=auj();
   var ouv=A.filter(function(a){return a.etat==="a_faire"||a.etat==="en_cours";}),ret=ouv.filter(function(a){return a.echeance&&a.echeance<j;}),sem=ouv.filter(function(a){return a.echeance&&a.echeance>=j&&a.echeance<=new Date(Date.now()+7*864e5).toISOString().slice(0,10);}),fa=A.filter(function(a){return a.etat==="fait";});
@@ -155,7 +155,7 @@ document.addEventListener("click",function(e){var t=e.target.closest("[data-ra]"
 document.addEventListener("change",function(e){var t=e.target;if(t.dataset&&t.dataset.ra==="fic"){var o=ouverte();if(o)deposerFichier(o.id,t.files[0]);t.value="";return;}
   if(t.dataset&&t.dataset.pk){var tr=t.closest("[data-pa]");if(tr)majAction(+tr.dataset.pa,t.dataset.pk,t.value);}});
 
-window.ENREG={init:function(_sb,_user,roles){sb=_sb;user=_user;roles=roles||[];ecrit=["admin","ca","benevole_admin","fondateur"].some(function(r){return roles.indexOf(r)>=0;});styles();
+window.ENREG={actions:function(){return ACT;},init:function(_sb,_user,roles){sb=_sb;user=_user;roles=roles||[];ecrit=["admin","ca","benevole_admin","fondateur"].some(function(r){return roles.indexOf(r)>=0;});styles();
   var c=$("c_actions");if(c){c.hidden=false;chargerActions();}
   if(lances)return;lances=true;var L=$("ru_list");if(L)new MutationObserver(function(){placer();}).observe(L,{childList:true,subtree:true});placer();}};
 })();
