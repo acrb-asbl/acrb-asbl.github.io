@@ -183,13 +183,18 @@ let essais = null
 try { const r = await fetch(SB + '/rest/v1/rpc/acrb_essais_restants', { method: 'POST', headers: { apikey: CLE, Authorization: 'Bearer ' + CLE, 'Content-Type': 'application/json' }, body: '{}' })
   essais = await r.json(); if (!r.ok) throw new Error(JSON.stringify(essais)) } catch (e) { rouges.push('base|-|essais|vérification impossible'); console.log('ROUGE données d’essai : vérification impossible ' + e.message) }
 if (essais) { const reste = Object.entries(essais).filter(([, n]) => n > 0); for (const [k, n] of reste) rouges.push('base|-|essais|' + k); console.log(`${reste.length ? 'ROUGE' : 'vert '} données d'essai restantes : ${JSON.stringify(essais)}`) }
+// contrôle des comptes (ordre du cerveau 302, B4) : SIGNAL orange, non bloquant, tant que le fondateur n'a pas décidé la recopie des comptes (B5)
+let comptes = null
+try { const r = await fetch(SB + '/rest/v1/rpc/acrb_porte_comptes', { method: 'POST', headers: { apikey: CLE, Authorization: 'Bearer ' + CLE, 'Content-Type': 'application/json' }, body: '{}' })
+  comptes = await r.json(); if (!r.ok) throw new Error(JSON.stringify(comptes)) } catch (e) { comptes = null; console.log('ORANGE comptes : vérification impossible ' + e.message) }
+if (comptes) console.log(`${comptes.acces_sans_compte > 0 ? 'ORANGE' : 'vert  '} comptes : ${comptes.comptes} compte(s), ${comptes.acces_actifs} accès actif(s), ${comptes.acces_sans_compte} accès sans compte (signal, non bloquant)`)
 if (bloquees.length) console.log('écritures bloquées par la garde : ' + [...new Set(bloquees)].join(', '))
 
 // cliquet
 const connus = fs.existsSync(DIR + '/rouges-connus.json') ? JSON.parse(fs.readFileSync(DIR + '/rouges-connus.json', 'utf8')) : []
 const nouveaux = [...new Set(rouges)].filter(r => !connus.includes(r))
 const gueris = connus.filter(r => !rouges.includes(r))
-fs.writeFileSync(OUT + '/rapport.json', JSON.stringify({ base: BASE, valable: true, secondes: Math.round((Date.now() - t0) / 1000), ecrans, rouges: [...new Set(rouges)], nouveaux, gueris, ecrituresBloquees: [...new Set(bloquees)], essais }, null, 1))
+fs.writeFileSync(OUT + '/rapport.json', JSON.stringify({ base: BASE, valable: true, secondes: Math.round((Date.now() - t0) / 1000), ecrans, rouges: [...new Set(rouges)], nouveaux, gueris, ecrituresBloquees: [...new Set(bloquees)], essais, comptes }, null, 1))
 fs.writeFileSync(OUT + '/nouveaux.txt', nouveaux.join('\n'))
 console.log(`FIN ${nouveaux.length ? 'ROUGE' : 'VERT'} : ${ecrans.length} écrans, ${rouges.length} rouge(s) dont ${nouveaux.length} nouveau(x), ${gueris.length} guéri(s), ${bloquees.length} écriture(s) bloquée(s), ${Math.round((Date.now() - t0) / 1000)} s`)
 if (nouveaux.length) console.log('NOUVEAUX ROUGES :\n' + nouveaux.join('\n'))

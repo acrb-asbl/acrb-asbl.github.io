@@ -39,6 +39,8 @@ jobs:
           node .porte/servir.mjs 8765 . >/dev/null 2>&1 &
           sleep 2
           node .porte/porte.mjs http://localhost:8765 sortie/avant
+          node .porte/retour_google.mjs http://localhost:8765
+          node .porte/code_sms.mjs http://localhost:8765 sortie/avant-sms
       - name: Publication (main avance jusqu'à ce commit)
         run: |
           git fetch origin main
@@ -51,7 +53,10 @@ jobs:
       - name: Porte APRÈS publication (site en ligne)
         id: apres
         if: steps.attente.outcome == 'success'
-        run: node .porte/porte.mjs https://acrb-asbl.github.io sortie/apres
+        run: |
+          node .porte/porte.mjs https://acrb-asbl.github.io sortie/apres
+          node .porte/retour_google.mjs https://acrb-asbl.github.io
+          node .porte/code_sms.mjs https://acrb-asbl.github.io sortie/apres-sms
         continue-on-error: true
       - name: Retour automatique au commit précédent
         if: steps.apres.outcome == 'failure'
