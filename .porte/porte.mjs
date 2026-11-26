@@ -167,12 +167,58 @@ async function tresorier(moteur, prof) {
   console.log(`${pb.length ? 'ROUGE' : 'vert '} ${prof[2].padEnd(8)} parcours du trésorier${pb.length ? ' | ' + pb.join(' ; ') : ''}`)
 }
 
+
+// récidive du 26/11 (barre d'onglets de « Mon espace commerçant » coupée sur ordinateur : « Mes coordonnées » et « Historique » hors cadre) :
+// les écrans CONNECTÉS n'étaient jamais regardés par la porte. Chaque espace connecté est ouvert avec une session simulée, chaque onglet
+// est ouvert, et les mêmes contrôles visuels s'appliquent : débordement, bouton coupé par son conteneur, bouton caché, élément écrasé.
+const ESPACE_COM = { personnes: [{ id: '00000000-0000-4000-8000-0000000000a1', nom: 'Robot Porte', prenom: 'Robot', email: 'robot-connecte@example.invalid', gsm: '+32400000000', langue: 'fr' }],
+  magasins: [{ id: '00000000-0000-4000-8000-0000000000b1', enseigne: 'Commerce de la porte', rue: 'Rue de Brabant', numero: '1', code_postal: '1030', commune: 'Schaerbeek', rubrique: 'Mode', statut: 'actif', valide: false, cree_le: '2026-11-01T10:00:00Z' }],
+  societes: [{ id: '00000000-0000-4000-8000-0000000000c1', denomination: 'Société de la porte', forme: 'SRL', bce: '0000.000.000' }], photos: [], factures: [], versions: [], journal: [], reglages: {} }
+const CONNECTES = [['espace/commercant.html', ['commercant'], { acrb_mon_espace: ESPACE_COM }], ['espace/terrain.html', ['ca', 'admin'], {}]]
+async function connecte(moteur, prof, pg, roles, rep) {
+  const ctx = await moteur.newContext({ ...prof[1], locale: 'fr-BE' }); const pb = []
+  const user = { id: '00000000-0000-4000-8000-000000000002', aud: 'authenticated', role: 'authenticated', email: 'robot-connecte@example.invalid', app_metadata: { provider: 'google' }, user_metadata: { full_name: 'Robot Porte' }, created_at: '2026-01-01T00:00:00Z' }
+  const now = Math.floor(Date.now() / 1000), sess = { access_token: 'robot.' + now, token_type: 'bearer', expires_in: 3600, expires_at: now + 3600, refresh_token: 'robot', user }
+  await ctx.addInitScript(s => { try { localStorage.setItem('sb-movoukcjirtjnqjgwndw-auth-token', s) } catch (e) {} }, JSON.stringify(sess))
+  await ctx.route(SB + '/**', r => { const u = r.request().url(), j = o => r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(o) })
+    if (/\/auth\/v1\/user/.test(u)) return j(user); if (/\/auth\/v1\/token/.test(u)) return j(sess); if (/rpc\/acrb_mes_roles/.test(u)) return j(roles)
+    const f = (u.match(/rpc\/([a-z_]+)/) || [])[1]; if (f && rep && rep[f] !== undefined) return j(rep[f])
+    if (/rpc\//.test(u) || /\/rest\/v1\//.test(u)) return j([]); return j({}) })
+  const p = await ctx.newPage()
+  p.on('pageerror', e => { if (!/maps\.googleapis|maps\/api|Could not load "util"|access control checks/i.test(e.message)) pb.push('script:' + e.message.slice(0, 120)) })
+  await p.goto(BASE + '/' + pg, { waitUntil: 'load', timeout: 30000 }).catch(e => pb.push('ouverture:' + e.message.slice(0, 80)))
+  await p.waitForTimeout(2500)
+  const W = prof[1].viewport.width
+  const regarde = async (ou) => {
+    const m = await p.evaluate((W) => ({ debord: Math.max(document.documentElement.scrollWidth, innerWidth) - W,
+      coupes: [...document.querySelectorAll('a,button,[role=tab]')].filter(e => e.offsetParent !== null && e.getClientRects().length).map(e => { const r = e.getBoundingClientRect(); let a = e.parentElement
+        while (a && a !== document.body) { const cs = getComputedStyle(a); if (/(auto|scroll|hidden)/.test(cs.overflowX) && !/(x|both)/.test(cs.scrollSnapType || '')) { const q = a.getBoundingClientRect(); if (r.right > q.right + 2 || r.left < q.left - 2) return (e.innerText || e.getAttribute('aria-label') || '').trim().slice(0, 40) } a = a.parentElement }
+        return null }).filter(Boolean),
+      ecrases: [...document.querySelectorAll('input:not([type=checkbox]):not([type=radio]):not([type=hidden]):not([type=file]),select,textarea,button,a.btn')].filter(e => e.offsetParent !== null && e.getClientRects().length).filter(e => { const r = e.getBoundingClientRect(); const t = (e.innerText || e.placeholder || '').trim()
+        return (/INPUT|SELECT|TEXTAREA/.test(e.tagName) ? (r.width < 56 || r.height < 30) : (r.width < 24 && t.length > 2)) || (!/INPUT|SELECT|TEXTAREA/.test(e.tagName) && e.scrollWidth > e.clientWidth + 3) }).map(e => (e.innerText || e.placeholder || e.name || e.tagName).trim().slice(0, 40)) }), W).catch(() => ({ debord: 0, coupes: [], ecrases: [] }))
+    if (m.debord > 2) pb.push('debordement:' + m.debord + ' px (' + ou + ')')
+    for (const t of [...new Set(m.coupes)].slice(0, 5)) pb.push('bouton coupé:« ' + t + ' » (' + ou + ')')
+    for (const t of [...new Set(m.ecrases)].slice(0, 5)) pb.push('élément écrasé:« ' + t + ' » (' + ou + ')')
+    for (const t of await p.evaluate(CACHES_FIXES).catch(() => [])) pb.push('bouton caché:« ' + t + ' » recouvert par un autre (' + ou + ')')
+  }
+  await regarde('ouverture')
+  const onglets = await p.$$eval('[role=tab],.tabs button', l => l.filter(e => e.offsetParent !== null).map((e, i) => i)).catch(() => [])
+  for (const i of onglets.slice(0, 15)) { try { await p.locator('[role=tab]:visible,.tabs button:visible').nth(i).click({ timeout: 3000 }); await p.waitForTimeout(350); await regarde('onglet ' + (i + 1)) } catch { pb.push('onglet:' + (i + 1) + ' non cliquable') } }
+  await p.screenshot({ path: `${OUT}/${prof[2]}_connecte_${pg.replace(/\//g, '_')}.png` }).catch(() => {})
+  await ctx.close()
+  const uniq = [...new Set(pb)]
+  ecrans.push({ page: 'connecte:' + pg, profil: prof[2], problemes: uniq })
+  for (const x of uniq) rouges.push(cle('connecte:' + pg, prof[2], x))
+  console.log(`${uniq.length ? 'ROUGE' : 'vert '} ${prof[2].padEnd(8)} connecté ${pg}${uniq.length ? ' | ' + uniq.join(' ; ') : ''}`)
+}
+
 const wk = await webkit.launch(), ch = await chromium.launch()
 setTimeout(() => { console.log('FIN ROUGE : la porte a dépassé 20 minutes'); process.exit(1) }, 20 * 60 * 1000).unref()
 const moteurs = { iphone13: wk, android: ch, bureau: ch }
 for (const [k, v] of Object.entries(PROFILS)) v[2] = k
 const jobs = []
-for (const k of Object.keys(PROFILS)) { for (const pg of PAGES) jobs.push(() => ecran(moteurs[k], PROFILS[k], pg)); jobs.push(() => tresorier(moteurs[k], PROFILS[k])) }
+for (const k of Object.keys(PROFILS)) { if (process.env.PORTE_SEUL === 'connecte') { for (const [pg, ro, rep] of CONNECTES) jobs.push(() => connecte(moteurs[k], PROFILS[k], pg, ro, rep)); continue }
+  for (const pg of PAGES) jobs.push(() => ecran(moteurs[k], PROFILS[k], pg)); jobs.push(() => tresorier(moteurs[k], PROFILS[k])); for (const [pg, ro, rep] of CONNECTES) jobs.push(() => connecte(moteurs[k], PROFILS[k], pg, ro, rep)) }
 // chaque écran a 2 minutes au plus : un écran qui fige devient un rouge, jamais une porte bloquée
 const delai = (f, n) => { let t; return Promise.race([f(), new Promise(r => { t = setTimeout(() => { rouges.push('delai|' + n + '|fige'); console.log('ROUGE délai dépassé ' + n); r() }, 120000) })]).finally(() => clearTimeout(t)) }
 let i = 0; await Promise.all(Array.from({ length: 4 }, async () => { while (i < jobs.length) { const k = i++; await delai(jobs[k], 'tache-' + k) } }))
