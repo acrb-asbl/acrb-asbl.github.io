@@ -817,7 +817,7 @@ err_req:"ایک لازمی خانہ (* والا) خالی ہے۔",err_photo:"ا�
         if(abs.length){var bySrc={};abs.forEach(function(c){(bySrc[c.dataset.src]=bySrc[c.dataset.src]||[]).push(c.value);});
           Object.keys(bySrc).forEach(function(src){fetch(SB+"/rest/v1/rpc/acrb_declarer_absents",{method:"POST",headers:{"apikey":KEY,"Authorization":"Bearer "+KEY,"Content-Type":"application/json"},body:JSON.stringify({p_personne_id:pid,p_ue_source:src,p_ues:bySrc[src]})}).catch(function(){});});}
         return j;})
-      .then(function(j){f.hidden=true;var d=document.getElementById("done");d.hidden=false;if(j&&j.journal_id){var r=document.createElement("p");r.className="ref";r.textContent=(T.done_ref||"Référence")+" : "+j.journal_id+" · "+j.empreinte.slice(0,12);d.appendChild(r);}window.scrollTo(0,0);})
+      .then(function(j){f.hidden=true;var d=document.getElementById("done");d.hidden=false;if(j&&j.journal_id){var r=document.createElement("p");r.className="ref";r.textContent=(T.done_ref||"Référence")+" : "+j.journal_id+" · "+j.empreinte.slice(0,12);d.appendChild(r);}if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();d.setAttribute("role","status");d.setAttribute("tabindex","-1");d.scrollIntoView({block:"center"});try{d.focus({preventScroll:true});}catch(e){}})  /* 27/11 : le message au centre de l'écran, clavier fermé (avant : retour en haut de page, message hors de vue clavier ouvert) */
       .catch(function(e){fail((e&&e.message)||T.err_generic);});
   });
 })();
