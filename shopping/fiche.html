@@ -763,18 +763,19 @@ err_req:"ایک لازمی خانہ (* والا) خالی ہے۔",err_photo:"ا�
       .then(function(r){if(!r.ok) return r.text().then(function(t){throw new Error(T.err_save+" ("+r.status+") "+t.slice(0,120));});});
   }
 
+  function pres(el,t){var o=document.getElementById("err_pres");if(!o){o=document.createElement("div");o.id="err_pres";o.setAttribute("role","alert");o.style.cssText="margin:8px 0 4px;padding:10px 12px;border:1px solid #d9a0a0;background:#fbeaea;color:#7d241a;font-size:15px;font-weight:600";}
+    o.textContent=t;var h=el.closest("label")||el;h.parentNode.insertBefore(o,h.nextSibling);el.focus({preventScroll:true});el.scrollIntoView({block:"center"});el.addEventListener("input",function z(){if(o.parentNode)o.parentNode.removeChild(o);el.removeEventListener("input",z);});}
   f.addEventListener("submit",function(ev){
     ev.preventDefault();
     msg.className="msg";
     if(document.getElementById("website_url").value) return;
     /* 23/11/2026 : une adresse e-mail fausse ou dont le domaine ne reçoit pas de courriel bloque l'envoi (avant : simple avertissement) */
     var mbad=[].slice.call(f.querySelectorAll('input[type=email]')).filter(function(x){var v=(x.value||"").trim();return v&&(!window.okMail||!okMail(v)||x.dataset.mx==="ko");})[0];
-    if(mbad){if(window.check)check(mbad);mbad.scrollIntoView({block:"center"});mbad.focus();msg.className="msg err";msg.textContent=mbad.dataset.mx==="ko"?"Cette adresse e-mail ne peut pas recevoir de courriel (domaine inconnu). Vérifiez l’orthographe.":"Adresse e-mail incomplète ou mal écrite.";return;}
+    if(mbad){if(window.check)check(mbad);var mt=mbad.dataset.mx==="ko"?"Cette adresse e-mail ne peut pas recevoir de courriel (domaine inconnu). Vérifiez l’orthographe.":"Adresse e-mail incomplète ou mal écrite.";msg.className="msg err";msg.textContent=mt;pres(mbad,mt);return;}
     var bad=f.querySelector(":invalid");
     if(bad){
       var d=bad.closest("details");if(d)d.open=true;
-      bad.focus();bad.scrollIntoView({block:"center"});
-      return fail(T.err_req);
+      fail(T.err_req);pres(bad,T.err_req);return;
     }
     btn.disabled=true;btn.textContent=T.sending;
 
