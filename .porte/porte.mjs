@@ -174,7 +174,7 @@ async function tresorier(moteur, prof) {
 const ESPACE_COM = { personnes: [{ id: '00000000-0000-4000-8000-0000000000a1', nom: 'Robot Porte', prenom: 'Robot', email: 'robot-connecte@example.invalid', gsm: '+32400000000', langue: 'fr' }],
   magasins: [{ id: '00000000-0000-4000-8000-0000000000b1', enseigne: 'Commerce de la porte', rue: 'Rue de Brabant', numero: '1', code_postal: '1030', commune: 'Schaerbeek', rubrique: 'Mode', statut: 'actif', valide: false, cree_le: '2026-11-01T10:00:00Z' }],
   societes: [{ id: '00000000-0000-4000-8000-0000000000c1', denomination: 'Société de la porte', forme: 'SRL', bce: '0000.000.000' }], photos: [], factures: [], versions: [], journal: [], reglages: {} }
-const CONNECTES = [['espace/commercant.html', ['commercant'], { acrb_mon_espace: ESPACE_COM }], ['espace/terrain.html', ['ca', 'admin'], {}]]
+const CONNECTES = [['espace/commercant.html', ['commercant'], { acrb_mon_espace: ESPACE_COM, acrb_candidature_etat: { eligibilite: { membre: false, annee: '2026', en_poste: 6, places: 9, vacants: 0, voie: 'election', prochaine_ag: { id: 1, numero: 'AG-ESSAI', date: '2027-01-21', convocation_avant: '2027-01-06' } }, candidatures: [] } }], ['espace/terrain.html', ['ca', 'admin'], {}]]
 async function connecte(moteur, prof, pg, roles, rep) {
   const ctx = await moteur.newContext({ ...prof[1], locale: 'fr-BE' }); const pb = []
   const user = { id: '00000000-0000-4000-8000-000000000002', aud: 'authenticated', role: 'authenticated', email: 'robot-connecte@example.invalid', app_metadata: { provider: 'google' }, user_metadata: { full_name: 'Robot Porte' }, created_at: '2026-01-01T00:00:00Z' }
