@@ -1,12 +1,12 @@
 /* Modes de saison de l'annuaire Shopping Brabant, vus et réglés depuis Gestion de l'ACRB (demande 19 du 23/11/2026).
    Le calendrier ci-dessous reprend celui du site (themes_annuaire.py) : Noël, soldes, Pâques et rentrée calculés chaque année,
-   Ramadan, Aïd et vacances scolaires (FWB) préprogrammés. La braderie et toute correction sont enregistrées dans le
+   Ramadan, Aïd et vacances scolaires (FWB) préprogrammés. Les journées commerçantes et toute correction sont enregistrées dans le
    réglage public « annuaire_saisons » par la fonction acrb_saisons_regler (conseil d'administration). */
 (function(){
-  var NOMS={braderie:"Braderie",aid:"Aïd",ramadan:"Ramadan",fetes:"Fêtes de fin d’année",paques:"Pâques",soldes:"Soldes",vacances:"Vacances scolaires",rentree:"Rentrée"};
-  var PRIO={braderie:1,aid:2,ramadan:3,fetes:4,paques:5,soldes:6,vacances:7,rentree:8};
-  var PER=[["ramadan","2027-02-08","2027-03-08"],["aid","2027-03-09","2027-03-12"],["aid","2027-05-16","2027-05-19"],
-    ["ramadan","2028-01-28","2028-02-25"],["aid","2028-02-26","2028-02-29"],["aid","2028-05-05","2028-05-08"],
+  var NOMS={braderie:"Journée commerçante",aid:"Aïd",avant_ramadan:"Avant le Ramadan",ramadan:"Ramadan (jours 1 à 12)",ramadan_milieu:"Ramadan (jours 13 à 22)",ramadan_fin:"Fin du Ramadan (l’Aïd approche)",fetes:"Fêtes de fin d’année",paques:"Pâques",soldes:"Soldes",vacances:"Vacances scolaires",rentree:"Rentrée"};
+  var PRIO={braderie:1,aid:2,avant_ramadan:3,ramadan:3,ramadan_milieu:3,ramadan_fin:3,fetes:4,paques:5,soldes:6,vacances:7,rentree:8};
+  var PER=[["avant_ramadan","2027-01-24","2027-02-07"],["ramadan","2027-02-08","2027-02-19"],["ramadan_milieu","2027-02-20","2027-03-01"],["ramadan_fin","2027-03-02","2027-03-08"],["aid","2027-03-09","2027-03-12"],["aid","2027-05-16","2027-05-19"],
+    ["avant_ramadan","2028-01-13","2028-01-27"],["ramadan","2028-01-28","2028-02-08"],["ramadan_milieu","2028-02-09","2028-02-18"],["ramadan_fin","2028-02-19","2028-02-25"],["aid","2028-02-26","2028-02-29"],["aid","2028-05-05","2028-05-08"],
     ["vacances","2026-10-19","2026-11-01"],["vacances","2026-12-21","2027-01-03"],["vacances","2027-02-22","2027-03-07"],
     ["vacances","2027-04-26","2027-05-09"],["vacances","2027-07-03","2027-08-29"]];
   var APERCU="https://acrb-asbl.github.io/shopping/?saison=";
@@ -24,11 +24,11 @@
   function fr(s){var p=s.split("-");return p[2]+"/"+p[1]+"/"+p[0];}
   var MOIS=["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
   function court(s){var p=s.split("-");return (+p[2])+" "+MOIS[+p[1]-1]+" "+p[0];}
-  var COUL={braderie:"#e63946",aid:"#0f766e",ramadan:"#1e3a5f",fetes:"#9b1c1c",paques:"#8a6bbf",soldes:"#111111",vacances:"#0077b6",rentree:"#e76f51"};
+  var COUL={braderie:"#e63946",aid:"#0f766e",avant_ramadan:"#7a3e1d",ramadan:"#1e3a5f",ramadan_milieu:"#26306b",ramadan_fin:"#5b2a6e",fetes:"#9b1c1c",paques:"#8a6bbf",soldes:"#111111",vacances:"#0077b6",rentree:"#e76f51"};
   var SRC={calendrier:"Calendrier officiel",calculé:"Revient chaque année",loi:"Loi belge (soldes)",association:"Ajoutée par l’association"};
-  var DETAIL={vacances:"Écoles francophones (Fédération Wallonie-Bruxelles)",ramadan:"À confirmer par l’observation de la lune ; corrigez ici si la date change",aid:"À confirmer par l’observation de la lune ; corrigez ici si la date change",soldes:"Dates légales en Belgique",paques:"Deux semaines avant Pâques jusqu’au lundi de Pâques",fetes:"Du 1er décembre au 2 janvier",rentree:"Fin août, début septembre",braderie:"À ajouter chaque année par l’association"};
+  var DETAIL={vacances:"Écoles francophones (Fédération Wallonie-Bruxelles)",avant_ramadan:"Les 15 jours avant : pâtisseries, nourriture, habits de Ramadan et de prière",ramadan:"À confirmer par l’observation de la lune ; corrigez ici si la date change",ramadan_milieu:"Soirées, iftars, restaurants ; commandes de tenues de l’Aïd",ramadan_fin:"La fête approche : tenues, robes, habits d’enfants, cadeaux",aid:"À confirmer par l’observation de la lune ; corrigez ici si la date change",soldes:"Dates légales en Belgique",paques:"Deux semaines avant Pâques jusqu’au lundi de Pâques",fetes:"Du 1er décembre au 2 janvier",rentree:"Fin août, début septembre",braderie:"À ajouter chaque année par l’association"};
   // les deux Aïd ont la même clé : on les distingue par leur place après le Ramadan
-  function nom(p,lst){if(p[0]!=="aid")return NOMS[p[0]]||p[0];var fitr=lst.some(function(r){return r[0]==="ramadan"&&r[2]<p[1]&&jours(r[2],p[1])<=3;});return fitr?"Aïd al-Fitr (fin du Ramadan)":"Aïd al-Adha (fête du sacrifice)";}
+  function nom(p,lst){if(p[0]!=="aid")return NOMS[p[0]]||p[0];var fitr=lst.some(function(r){return r[0].indexOf("ramadan")>=0&&r[2]<p[1]&&jours(r[2],p[1])<=3;});return fitr?"Aïd al-Fitr (fin du Ramadan)":"Aïd al-Adha (fête du sacrifice)";}
   function jours(a,b){return Math.round((new Date(b+"T12:00:00")-new Date(a+"T12:00:00"))/864e5);}
   function dessiner(){var box=$("sz_box");if(!box)return;var auj=ymd(new Date()),fin=ymd(add(new Date(),366)),off=cfg.desactives||[];
     var tout=toutes(),lst=tout.filter(function(p){return p[2]>=auj&&p[1]<=fin;}).sort(function(a,b){return a[1]<b[1]?-1:a[1]>b[1]?1:PRIO[a[0]]-PRIO[b[0]];});
