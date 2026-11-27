@@ -26,12 +26,20 @@ function chargerLogo(){if(logoBytes)return Promise.resolve(logoBytes);
 /* Helvetica (WinAnsi) : on remplace tout caractère qu'elle ne sait pas dessiner, au lieu de laisser le PDF échouer */
 var REMPL={" ":" "," ":" "," ":" ","​":"","⁠":"","‑":"-","‐":"-","−":"-","✓":"v","✔":"v","✗":"x","→":"->","←":"<-","≥":">=","≤":"<=","­":"","″":"\"","′":"'","ʼ":"'"};
 var WIN=new Set(Array.from("€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ").map(function(c){return c.charCodeAt(0);}));
-function propre(t){return String(t==null?"":t).replace(/\r/g,"").replace(/« /g,"«\u00a0").replace(/ »/g,"\u00a0»").replace(/ ([:;!?])/g,"\u00a0$1").replace(/./gu,function(c){if(REMPL[c]!=null)return REMPL[c];var k=c.charCodeAt(0);if(c.length>1)return "";if(k===10||(k>=32&&k<=126)||(k>=160&&k<=255)||WIN.has(k))return c;
+/* Police Unicode (Liberation Sans, mêmes dimensions qu'Helvetica) : écrit ğ, ş, ı, ł, ő… (noms turcs, polonais, etc.). Repli Helvetica si elle ne charge pas. */
+var UNI=null,POL={};
+function chargerScript(u){return new Promise(function(ok,ko){var e=document.createElement("script");e.src=u;e.onload=ok;e.onerror=ko;document.head.appendChild(e);});}
+function chargerPolices(){if(POL.p)return POL.p;var b=(AS.logo||"").replace(/img\/[^\/]*$/,"");
+  POL.p=(window.fontkit?Promise.resolve():chargerScript(b+"fontkit.umd.min.js")).then(function(){return Promise.all(["Regular","Bold","Italic"].map(function(n){return fetch(b+"polices/LiberationSans-"+n+".ttf").then(function(r){if(!r.ok)throw new Error("police");return r.arrayBuffer();});}));});
+  POL.p.catch(function(){POL.p=null;});return POL.p;}
+function propre(t){return String(t==null?"":t).replace(/\r/g,"").replace(/« /g,"«\u00a0").replace(/ »/g,"\u00a0»").replace(/ ([:;!?])/g,"\u00a0$1").replace(/./gu,function(c){if(REMPL[c]!=null)return REMPL[c];var k=c.charCodeAt(0);if(UNI&&UNI.has(c.codePointAt(0)))return c;if(c.length>1)return "";if(k===10||(k>=32&&k<=126)||(k>=160&&k<=255)||WIN.has(k))return c;
   var n=c.normalize("NFD").replace(/[̀-ͯ]/g,"");return /^[\x20-\x7e]$/.test(n)?n:"";});}
 
 async function pdf(blocs,titre,opt){opt=opt||{};var E=opt.emetteur||null,L=window.PDFLib,doc=await L.PDFDocument.create();
   doc.setTitle(propre(titre));doc.setAuthor(E?propre(E.nom):AS.abr);doc.setCreator("Plateforme de gestion de l'ACRB");doc.setProducer("ACRB");doc.setLanguage("fr-BE");
-  var F=await doc.embedFont(L.StandardFonts.Helvetica),B=await doc.embedFont(L.StandardFonts.HelveticaBold),I=await doc.embedFont(L.StandardFonts.HelveticaOblique);
+  var F,B,I;UNI=null;
+  try{var pb=await chargerPolices();doc.registerFontkit(window.fontkit);F=await doc.embedFont(pb[0],{subset:true});B=await doc.embedFont(pb[1],{subset:true});I=await doc.embedFont(pb[2],{subset:true});UNI=new Set(F.getCharacterSet());}
+  catch(e){UNI=null;F=await doc.embedFont(L.StandardFonts.Helvetica);B=await doc.embedFont(L.StandardFonts.HelveticaBold);I=await doc.embedFont(L.StandardFonts.HelveticaOblique);}
   var img=null;if(!E){try{img=await doc.embedPng(await chargerLogo());}catch(e){img=null;}}
   var W=595.28,H=841.89,M=56,HAUT=118,BAS=74,y,page,num=0;
   var c=function(a){return L.rgb(a[0],a[1],a[2]);};
