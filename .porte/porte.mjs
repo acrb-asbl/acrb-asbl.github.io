@@ -90,6 +90,20 @@ async function ecran(moteur, prof, pg) {
     if (d > 2) pb.push('debordement:' + d + ' px (#' + sid + ')')
     if (/^(acrb\/index|shopping\/(index|fiche|guide)|quartier\/|stagiaires\/)/.test(pg)) for (const t of (await p.evaluate(() => [...document.querySelectorAll('a[href],button,summary,select,input:not([type=hidden]),textarea')].filter(e => e.offsetParent !== null && e.getClientRects().length && !e.closest('[data-aide]') && !e.classList.contains('aide-btn')).map(e => (e.innerText || e.getAttribute('aria-label') || e.placeholder || e.tagName).trim().replace(/\s+/g, ' ').slice(0, 40))).catch(() => [])).slice(0, 3)) pb.push('sans explication au survol:« ' + t + ' » (#' + sid + ')')
   }
+  // ordre du cerveau 1122 (28/11, test humain) : après Entrée dans une recherche, le mot tapé reste lisible (champ ni écrasé ni recouvert)
+  // et aucun bloc hors sujet (« À la une », vitrine) ne reste au-dessus des résultats.
+  if (await p.locator('input[type=search]:visible').count().catch(() => 0)) {
+    try {
+      await p.goto(BASE + '/' + pg, { waitUntil: 'load', timeout: 20000 }); await p.waitForTimeout(500)
+      const qs = p.locator('input[type=search]:visible').first(); const w0 = (await qs.boundingBox()).width
+      await qs.click(); await qs.fill(''); await p.keyboard.type('caftan'); await p.keyboard.press('Enter'); await p.waitForTimeout(1500)
+      const r = await qs.evaluate((e, w0) => { const b = e.getBoundingClientRect(); const x = b.left + Math.min(40, b.width / 3), y = b.top + b.height / 2; const h = document.elementFromPoint(x, y)
+        return { val: e.value, larg: b.width, w0, couvert: !!h && h !== e && !e.contains(h), aide: !!(e.parentNode.querySelector('.aide-sous')),
+          horsSujet: [...document.querySelectorAll('#featured,#vitrine')].filter(x => !x.hidden && x.offsetParent !== null).map(x => x.id) } }, w0)
+      if (r.val !== 'caftan' || r.larg < Math.min(120, r.w0 * 0.6) || r.couvert || r.aide) pb.push('recherche:mot tapé illisible après Entrée (largeur ' + Math.round(r.larg) + ' px)')
+      for (const id of r.horsSujet) pb.push('recherche:bloc hors sujet visible (#' + id + ')')
+    } catch (e) { pb.push('recherche:parcours impossible ' + e.message.slice(0, 60)) }
+  }
   await p.screenshot({ path: `${OUT}/${prof[2]}_${pg.replace(/\//g, '_')}.png` }).catch(() => {})
   await ctx.close()
   const uniq = [...new Set(pb)]
