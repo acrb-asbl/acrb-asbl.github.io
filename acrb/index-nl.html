@@ -58,7 +58,7 @@ table.t{width:100%;border-collapse:collapse;font-size:15px;background:#fff}table
 .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.plan{background:#fff;border:1px solid var(--line);padding:26px;border-top:4px solid var(--navy)}.plan:first-child{border-top-color:var(--brick)}.plan h3{font:800 20px var(--display);margin:0}.plan .pr{font:800 30px/1 var(--display);color:var(--navy);margin:10px 0 12px;letter-spacing:-.02em}.plan p{margin:0;font-size:15.5px;color:#3b4150}
 ul.sv{columns:2;gap:40px;margin:14px 0 0;padding-left:20px;font-size:15.5px}ul.sv li{margin:0 0 8px;break-inside:avoid}
 .tools{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.tool{background:#fff;border:1px solid var(--line);padding:24px;display:flex;flex-direction:column}.tool h3{font:800 19px var(--display);margin:0 0 8px}.tool p{margin:0 0 18px;font-size:15.5px;flex:1}
-.contact dl{display:grid;grid-template-columns:auto 1fr;gap:10px 24px;margin:0;font-size:16px}.contact dt{font-weight:700;color:var(--navy)}.contact dd{margin:0}
+.contact dl{display:grid;grid-template-columns:auto 1fr;gap:10px 24px;margin:0;font-size:16px}.contact dt{font-weight:700;color:var(--navy)}.contact dd{margin:0;min-width:0;overflow-wrap:anywhere}.contact dt{min-width:0;overflow-wrap:anywhere;hyphens:auto}.cols>*{min-width:0}
 footer{background:var(--navy-d);color:#aeb8c8;font-size:13.5px;padding:34px 0}footer .wrap{display:grid;gap:10px}footer a{color:#fff}
 @media(max-width:1100px){header.main .wrap{flex-wrap:wrap;padding-top:10px;padding-bottom:10px}nav.m{order:3;width:100%;justify-content:flex-start;margin-left:0}}
 @media(max-width:900px){header.main .btn.b{display:none}.hero .wrap,.cols,.cta{grid-template-columns:1fr}.kpis .wrap{grid-template-columns:repeat(3,1fr)}.kpi:nth-child(3n){border-right:0}.kpi{border-bottom:1px solid var(--line)}.grid3,.grid4,.plans,.tools,.goals{grid-template-columns:1fr 1fr}.inst div{grid-template-columns:1fr;gap:6px}nav.m{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;gap:0;padding-bottom:2px}nav.m::-webkit-scrollbar{display:none}nav.m a{white-space:nowrap;flex:0 0 auto;padding:9px 10px}[id]{scroll-margin-top:120px}ul.sv{columns:1}}
@@ -244,4 +244,155 @@ document.getElementById("ca_list").innerHTML=rows.map(function(r){var f=L.lang==
 function go(){var h=(location.hash||"").slice(1),pg=P.indexOf(h)>=0?h:"home";document.querySelectorAll("[data-page]").forEach(function(e){e.classList.toggle("off",e.dataset.page!==pg);});document.querySelectorAll("nav.m a").forEach(function(a){a.classList.toggle("on",a.dataset.p===pg);});window.scrollTo(0,0);}
 window.addEventListener("hashchange",go);go();})();</script>
 <footer><div class="wrap"><span>ACRB vzw — Vereniging van Handelaars van de Brabantstraat. Cijfers: hub.brussels, perspective.brussels en ULB-IGEAT (2017); BISA en BelgiStat (2024-2026); NMBS (2025); strategisch plan 2026-2030 van ACRB (oktober 2026).</span><span>© ACRB asbl · <a href="../shopping/">Shopping Brabant</a> · <a href="../quartier/">Quartier Nord</a> · <a href="index.html">Français</a></span></div></footer>
-<script src="signaler.js?v=3" defer></script></body></html>
+<script>/* Aide des portails publics (demande 18, 28/11/2026) : chaque lien, bouton, volet et champ du site reçoit une explication
+   en langage simple, en français ou en néerlandais selon la page, puis aide.js (le même que Gestion) l'affiche au survol,
+   au toucher en mode aide et sous chaque champ. Rien n'est écrasé : une explication déjà posée à la main reste. */
+(function(){
+  var NL=/^nl/i.test(document.documentElement.lang||"");
+  var T=NL?{
+    sec:"Gaat naar het onderdeel « %s » op deze pagina.",ext:"Opent « %s ».",mail:"Schrijft een e-mail naar %s.",tel:"Belt %s.",lang:"Toont deze pagina in het Frans.",
+    shop:"Opent Shopping Brabant: de gids van alle winkels in de straat, met kaart en wandeling.",espace:"Opent het beheer van ACRB (bestuur, leden, handelaars). Aanmelden met uw Google-account.",
+    plan:"Opent het strategisch plan 2026-2030 van de vereniging.",fiche:"Opent het formulier van de handelaarsfiche: uw winkel in de gids, in een paar minuten.",
+    sum:"Klapt open of dicht: %s.",champ:"In te vullen: %s.",mailin:"Uw e-mailadres, bijvoorbeeld naam@voorbeeld.be.",telin:"Uw telefoonnummer, bijvoorbeeld 0470 12 34 56.",
+    nombre:"Een getal, bijvoorbeeld 45.",choix:"Kies in de lijst: %s.",coche:"Vink aan wat u interesseert; meerdere keuzes mogelijk.",accord:"Verplicht: uw akkoord om de data en de voorstellen van de vereniging te ontvangen. U kunt zich altijd uitschrijven.",
+    envoi:"Verstuurt het formulier. Een bevestiging verschijnt meteen op het scherm.",haut:"Gaat terug naar het begin van de pagina.",quartier:"Opent Quartier Nord: het nieuws van de buurt en de inschrijving van de bewoners.",stag:"Opent de pagina voor stagiairs en vrijwilligers van de vereniging.",guide:"Opent de buurtgids: nuttige adressen, politie, gemeenten, parkeren.",fb:"Opent de Facebookpagina van de straat in een nieuw tabblad.",choix0:"Kies wat bij u past.",modele:"In te vullen volgens dit voorbeeld: %s.",
+    demande:"Opent een kort formulier: uw vraag gaat rechtstreeks naar het bestuur van de vereniging.",
+    D:{adhesion:"Opent een kort formulier om lid te worden van de vereniging; het bestuur antwoordt u.",administration:"Voor een administratie, kabinet of instelling: opent een kort formulier naar het bestuur.",
+       benevolat:"Opent een kort formulier om vrijwilliger te worden bij de vereniging.",contact:"Opent een kort formulier om de vereniging te schrijven.",
+       implantation:"Opent een kort formulier om u in de straat te vestigen (pand, buurt, contacten).",investissement:"Opent een kort formulier voor een investeringsproject in de buurt.",
+       partenariat:"Opent een kort formulier om een partnerschap voor te stellen.",presse:"Opent een kort formulier voor de pers (interview, cijfers, foto's).",
+       projet:"Opent een kort formulier om een project of oplossing voor de buurt voor te stellen.",stage:"Opent een kort formulier voor een stage bij de vereniging."}
+  }:{
+    sec:"Va à la partie « %s » de cette page.",ext:"Ouvre « %s ».",mail:"Écrit un courriel à %s.",tel:"Appelle le %s.",lang:"Affiche cette page en néerlandais.",
+    shop:"Ouvre Shopping Brabant : l'annuaire de tous les commerces de la rue, avec carte et balade.",espace:"Ouvre la Gestion de l'ACRB (conseil, membres, commerçants). Connexion avec votre compte Google.",
+    plan:"Ouvre le plan stratégique 2026-2030 de l'association.",fiche:"Ouvre le formulaire de la fiche commerçant : votre commerce dans l'annuaire, en quelques minutes.",
+    sum:"Déplie ou replie : %s.",champ:"À remplir : %s.",mailin:"Votre adresse e-mail, par exemple nom@exemple.be.",telin:"Votre numéro de téléphone, par exemple 0470 12 34 56.",
+    nombre:"Un nombre, par exemple 45.",choix:"Choisissez dans la liste : %s.",coche:"Cochez ce qui vous intéresse ; plusieurs choix possibles.",accord:"Obligatoire : votre accord pour recevoir les dates et les propositions de l'association. Désinscription possible à tout moment.",
+    envoi:"Envoie le formulaire. Une confirmation s'affiche tout de suite à l'écran.",haut:"Revient en haut de la page.",quartier:"Ouvre Quartier Nord : les nouvelles du quartier et l'inscription des riverains.",stag:"Ouvre la page des stagiaires et des bénévoles de l'association.",guide:"Ouvre le guide du quartier : adresses utiles, police, communes, parking.",fb:"Ouvre la page Facebook de la rue dans un nouvel onglet.",choix0:"Choisissez ce qui vous correspond.",modele:"À remplir sur ce modèle : %s.",demande:"Ouvre un court formulaire : votre demande arrive directement au conseil de l'association.",
+    D:{adhesion:"Ouvre un court formulaire pour adhérer à l'association ; le conseil vous répond.",administration:"Pour une administration, un cabinet ou un organisme : ouvre un court formulaire adressé au conseil.",
+       benevolat:"Ouvre un court formulaire pour devenir bénévole à l'association.",contact:"Ouvre un court formulaire pour écrire à l'association.",
+       implantation:"Ouvre un court formulaire pour s'installer dans la rue (local, quartier, contacts).",investissement:"Ouvre un court formulaire pour un projet d'investissement dans le quartier.",
+       partenariat:"Ouvre un court formulaire pour proposer un partenariat.",presse:"Ouvre un court formulaire pour la presse (interview, chiffres, photos).",
+       projet:"Ouvre un court formulaire pour proposer un projet ou une solution pour le quartier.",stage:"Ouvre un court formulaire pour un stage à l'association."}
+  };
+  function f(m,x){return m.replace("%s",String(x||"").replace(/\s+/g," ").replace(/\s*→\s*$/,"").trim().slice(0,70));}
+  function lib(e){var t=e.getAttribute("aria-label")||e.getAttribute("placeholder");if(t)return t;if(e.id){var l=document.querySelector('label[for="'+e.id+'"]');if(l)return l.textContent;}var p=e.closest("label");return p?p.textContent:(e.name||"");}
+  function expliquer(e){
+    if(e.closest("[data-aide]")||e.classList.contains("aide-btn"))return null;
+    var tg=e.tagName,h=e.getAttribute("href")||"",tx=(e.innerText||e.textContent||"").trim();
+    if(e.dataset.demande)return T.D[e.dataset.demande]||T.demande;
+    if(tg==="SUMMARY")return f(T.sum,tx);
+    if(tg==="A"){
+      if(/^mailto:/i.test(h))return f(T.mail,h.slice(7).split("?")[0]);
+      if(/^tel:/i.test(h))return f(T.tel,h.slice(4));
+      if(e.hreflang||/index(-nl)?\.html$/.test(h)&&/^(Nederlands|Français)$/i.test(tx))return T.lang;
+      if(/espace\//.test(h))return T.espace;
+      if(/fiche\.html/.test(h))return T.fiche;
+      if(/plan|\.pdf/i.test(h)&&/plan/i.test(tx))return T.plan;
+      if(/shopping\/?(index\.html)?$|shopping\/$/.test(h)||/^\.\.\/shopping\/?$/.test(h))return T.shop;
+      if(h==="#"||h==="#top"||e.closest("header")&&/ACRB/.test(tx)&&/^#/.test(h))return T.haut;
+      if(!/^#/.test(h)&&/(^|\/)quartier\/(index\.html)?$/.test(h))return T.quartier;if(!/^#/.test(h)&&/(^|\/)stagiaires\/(index\.html)?$/.test(h))return T.stag;if(/guide\.html/.test(h))return T.guide;if(/facebook\.com/i.test(h))return T.fb;
+      if(/^#/.test(h))return f(T.sec,tx||h.slice(1));
+      return f(T.ext,tx||h);}
+    if(tg==="SELECT"){var lb=String(lib(e)||"").trim();return lb?f(T.choix,lb):T.choix0;}
+    if(tg==="BUTTON"||(tg==="INPUT"&&/submit|button/.test(e.type)))return e.type==="submit"||e.closest("form")?T.envoi:f(T.ext,tx);
+    if(tg==="INPUT"||tg==="TEXTAREA"){
+      if(e.type==="checkbox")return /consent|accord/i.test(e.id+e.name)?T.accord:T.coche;
+      if(e.type==="email")return T.mailin;if(e.type==="tel")return T.telin;
+      if(e.inputMode==="numeric"||e.type==="number")return T.nombre;
+      var ph=e.getAttribute("placeholder")||"";if(/\d/.test(ph)&&!e.getAttribute("aria-label"))return f(T.modele,ph);
+      return f(T.champ,lib(e));}
+    return null;}
+  function poser(r){(r||document).querySelectorAll('a[href],button,summary,select,input:not([type=hidden]),textarea,[role=tab]').forEach(function(e){var a=expliquer(e);if(a)e.setAttribute("data-aide",a);});}
+  window.AIDE_PORTAIL={poser:poser};
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",function(){poser();});else poser();
+  // Les éléments ajoutés plus tard (formulaire de demande, carte de confirmation) reçoivent aussi leur explication.
+  try{new MutationObserver(function(m){m.forEach(function(x){x.addedNodes.forEach(function(n){if(n.nodeType===1)poser(n.parentNode||n);});});}).observe(document.body||document.documentElement,{childList:true,subtree:true});}catch(e){}
+})();
+
+/* Aide intégrée ACRB (demande 18) : discrète, commune à tous les écrans.
+   - Tout élément porteur de data-aide="…" a une explication en langage simple.
+   - Un petit bouton « ? » en bas à droite active le mode aide : chaque élément expliqué est souligné,
+     et un toucher montre son explication au lieu d'agir. Un second toucher sur « ? » referme le mode aide.
+   - Sur ordinateur, survoler un élément expliqué (0,3 s) montre aussi l'explication.
+   - Les champs de saisie montrent leur explication sous le champ dès qu'on y entre. */
+(function(){
+  if(window.AIDE)return;
+  // 28/11 : libellés en néerlandais sur les pages en néerlandais (site de l'association, demande 18)
+  var NL=/^nl/i.test(document.documentElement.lang||""),TX=NL?{t:"Hulp: waarvoor dient elke knop",q:"Hulp verlaten",a:"Hulp",m:"<b>Hulpmodus</b><div>Tik op een onderstreept element om te weten waarvoor het dient. Tik opnieuw op « ? » om verder te gaan.</div>"}:{t:"Aide : à quoi sert chaque bouton",q:"Quitter l'aide",a:"Aide",m:"<b>Mode aide</b><div>Touchez n'importe quel élément souligné pour savoir à quoi il sert. Touchez à nouveau « ? » pour reprendre.</div>"};
+  var on=false,bulle,btn,st=document.createElement("style");
+  st.textContent='.aide-btn{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:60;width:38px;height:38px;border-radius:50%;border:1px solid rgba(0,0,0,.12);background:#fff;color:#1d1a16;font:800 17px/1 "Libre Franklin",Arial,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.12);cursor:pointer}'+
+    '.aide-btn[aria-pressed=true]{background:#1d1a16;color:#fff}'+
+    '.aide-btn.aide-dock{position:static;width:34px;height:34px;font-size:15px;box-shadow:none;flex:none}'+
+    'body.aide-on [data-aide]{outline:2px dashed #c99a3a;outline-offset:2px;cursor:help}'+
+    '.aide-bulle{position:fixed;z-index:61;pointer-events:none;max-width:min(320px,calc(100vw - 24px));background:#1d1a16;color:#fff;border-radius:12px;padding:10px 12px;font:500 14px/1.4 "Source Sans 3","Segoe UI",Arial,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.25)}'+
+    '.aide-bulle b{display:block;font-weight:800;margin-bottom:2px}.aide-bulle[hidden]{display:none}'+
+    '.aide-sous{font-size:12.5px;color:#6f6a62;margin:4px 2px 0}';
+  document.head.appendChild(st);
+  function titre(el){var t=el.getAttribute("aria-label")||el.getAttribute("placeholder")||(el.textContent||"").trim();return t.length>60?t.slice(0,57)+"…":t;}
+  function montrer(el){var r=el.getBoundingClientRect();bulle.innerHTML="";var b=document.createElement("b");b.textContent=titre(el);var p=document.createElement("div");p.textContent=el.getAttribute("data-aide");if(b.textContent)bulle.appendChild(b);bulle.appendChild(p);bulle.hidden=false;
+    var w=bulle.offsetWidth,h=bulle.offsetHeight,x=Math.min(Math.max(12,r.left),innerWidth-w-12),y=r.bottom+8;if(y+h>innerHeight-60)y=Math.max(12,r.top-h-8);bulle.style.left=x+"px";bulle.style.top=y+"px";}
+  function cacher(){if(bulle)bulle.hidden=true;}
+  function basculer(v){on=v;document.body.classList.toggle("aide-on",on);btn.setAttribute("aria-pressed",on?"true":"false");btn.title=on?TX.q:TX.t;if(!on)cacher();
+    try{localStorage.setItem("acrb_aide_vue","1");}catch(e){}}
+  function init(){
+    if(!document.body)return document.addEventListener("DOMContentLoaded",init);
+    bulle=document.createElement("div");bulle.className="aide-bulle";bulle.hidden=true;bulle.setAttribute("role","tooltip");document.body.appendChild(bulle);
+    btn=document.createElement("button");btn.className="aide-btn";btn.type="button";btn.textContent="?";btn.setAttribute("aria-pressed","false");btn.setAttribute("aria-label",TX.a);btn.title=TX.t;
+    btn.onclick=function(e){e.stopPropagation();basculer(!on);if(on){bulle.innerHTML=TX.m;bulle.hidden=false;var r=btn.getBoundingClientRect();bulle.style.left=Math.max(12,Math.min(r.right-bulle.offsetWidth,innerWidth-bulle.offsetWidth-12))+"px";bulle.style.top=(r.top>innerHeight/2?r.top-bulle.offsetHeight-8:r.bottom+8)+"px";}};
+    var place=document.getElementById("aide-place");
+    if(place){btn.classList.add("aide-dock");place.appendChild(btn);}else document.body.appendChild(btn);
+    document.addEventListener("click",function(e){if(!on)return;var el=e.target.closest&&e.target.closest("[data-aide]");if(e.target===btn)return;e.preventDefault();e.stopPropagation();if(el)montrer(el);else cacher();},true);
+    var tm;document.addEventListener("mouseover",function(e){var el=e.target.closest&&e.target.closest("[data-aide]");clearTimeout(tm);if(!el||on){return;}tm=setTimeout(function(){montrer(el);},300);});
+    document.addEventListener("mouseout",function(e){clearTimeout(tm);if(!on)cacher();});
+    document.addEventListener("focusin",function(e){var el=e.target;if(!el.matches||!el.matches("input[data-aide],textarea[data-aide],select[data-aide]"))return;var n=el.nextElementSibling;if(n&&n.classList&&n.classList.contains("aide-sous"))return;var d=document.createElement("div");d.className="aide-sous";d.textContent=el.getAttribute("data-aide");el.insertAdjacentElement("afterend",d);});
+    /* retrait différé : sinon la page remonte entre l’appui et le relâchement, et le toucher tombe à côté du bouton visé */
+    document.addEventListener("focusout",function(e){var n=e.target.nextElementSibling;if(n&&n.classList&&n.classList.contains("aide-sous"))setTimeout(function(){if(n.parentNode&&document.activeElement!==e.target)n.remove();},300);});
+    window.addEventListener("scroll",function(){if(!on)cacher();},{passive:true});
+    /* un « title » devient une explication du petit carré (même apparence partout, aussi au toucher en mode aide) */
+    function titres(r){(r.querySelectorAll?r:document).querySelectorAll("[title]:not([data-aide])").forEach(function(e){if(e===btn||/^(IFRAME|HTML|svg)$/i.test(e.tagName))return;var t=(e.getAttribute("title")||"").trim();if(t.length<4)return;e.setAttribute("data-aide",t);e.removeAttribute("title");});}
+    /* Demande de Karim (répétée, récidive du 25/11) : TOUT bouton, onglet, lien, liste ou volet a son petit carré.
+       Les explications écrites à la main (data-aide) priment ; sinon une explication précise est tirée du libellé et de la rubrique. */
+    var SPEC={"se deconnecter":"Ferme votre session sur cet appareil. Il faudra vous reconnecter (bouton Google) pour revenir.",
+      "acrb, l'association":"Ouvre le site public de l’association (ce que voient les visiteurs).","shopping brabant":"Ouvre l’annuaire public des commerces du quartier, tel que les clients le voient.",
+      "exporter le registre (csv)":"Télécharge le registre des membres en fichier tableur (CSV), à ouvrir dans Excel ou Google Sheets.",
+      "facturer en une fois":"Émet d’un coup la facture de cotisation à tous les commerçants de la liste choisie. Réservé au trésorier.",
+      "rappeler tous les retardataires":"Prépare un rappel pour chaque cotisation impayée après son échéance. Réservé au trésorier.",
+      "enregistrer la connexion":"Enregistre les identifiants du logiciel de facturation relié (Odoo), pour synchroniser les factures.",
+      "synchroniser maintenant":"Récupère tout de suite les factures et paiements du logiciel de facturation relié.",
+      "ouvrir le mode terrain":"Ouvre l’outil de terrain : valider commerce par commerce les enseignes, rubriques et statuts.",
+      "mode terrain":"Ouvre l’outil de terrain : valider commerce par commerce les enseignes, rubriques et statuts.",
+      "ouvrir mon espace commercant":"Ouvre votre espace commerçant : votre fiche, vos photos, vos horaires et vos avis.",
+      "nouvelle fiche":"Crée une nouvelle fiche dans le guide du quartier (adresse utile, numéro, service).",
+      "ouvrir l'acces":"Donne l’accès à cette adresse Google avec le rôle choisi. Il se retire en un clic et reste tracé.",
+      "enregistrer les reglages":"Enregistre les réglages de l’association. Chaque modification est tracée.",
+      "relier":"Relie le compte postal de l’association pour envoyer de vrais courriers par la poste.",
+      "ouvrir le vote":"Ouvre un nouveau vote du conseil avec la règle choisie ; chaque administrateur pourra voter.",
+      "ajouter a l'acte en preparation":"Ajoute cette décision à l’acte en cours de préparation (dépôt au greffe, publication au Moniteur)."};
+    var VERBES=[[/^enregistrer/,"Enregistre vos changements. Une confirmation s’affiche à côté du bouton."],[/^ajouter/,"Ajoute ce que vous venez de saisir à la liste."],[/^creer|^nouveau|^nouvelle/,"Crée un nouvel élément avec ce que vous avez saisi."],
+      [/^rechercher|^chercher/,"Lance la recherche avec le mot tapé."],[/^exporter|^telecharger/,"Télécharge le fichier sur votre appareil."],[/^imprimer/,"Ouvre l’impression du document."],[/^partager/,"Ouvre le partage (WhatsApp, courriel…) de votre téléphone."],
+      [/^retirer|^supprimer|^effacer/,"Retire cet élément. L’action est tracée."],[/^valider|^confirmer|^approuver/,"Valide cet élément. L’action est tracée à votre nom."],[/^refuser|^rejeter/,"Refuse cet élément ; vous pourrez en donner la raison."],
+      [/^envoyer|^emettre/,"Envoie ou émet le document préparé."],[/^annuler|^fermer/,"Ferme sans rien changer."],[/^modifier|^editer|^corriger/,"Ouvre cet élément pour le modifier."],[/^ouvrir|^voir|^apercu/,"Ouvre le détail."],
+      [/^synchroniser|^actualiser|^rafraichir/,"Met à jour les informations tout de suite."],[/^copier/,"Copie dans le presse-papiers, prêt à coller."],[/^suivant/,"Passe à l’étape suivante."],[/^precedent|^retour/,"Revient à l’étape précédente."],
+      [/^importer/,"Importe un fichier depuis votre appareil."],[/^voter/,"Enregistre votre voix pour ce vote."],[/^generer|^preparer|^rediger/,"Prépare le document à partir des informations déjà saisies."]];
+    function nrm(t){return (t||"").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[’]/g,"'").toLowerCase().replace(/\s+\d+$/,"").trim();}
+    function rub(e){var c=e.closest(".c,section,.card");var h=c&&c.querySelector("h2,h3");return h?h.textContent.split(" — ")[0].trim():"";}
+    function expliquer(e){if(e===btn||e.hasAttribute("data-aide")||e.closest(".aide-bulle"))return;
+      var t=(e.innerText||e.getAttribute("aria-label")||"").trim().replace(/\s+/g," "),n=nrm(t),r=rub(e),x="";
+      var sk=SPEC[n]?n:Object.keys(SPEC).filter(function(k){return k.length>6&&(n.slice(-k.length)===k||n.replace(/[^a-z0-9 ]/g,"")===k.replace(/[^a-z0-9 ]/g,""));})[0];if(sk)x=SPEC[sk];
+      else if(e.tagName==="SUMMARY")x="Déplie ou replie : "+t.replace(/\s*\(?\d+\)?$/,"")+".";
+      else if(e.tagName==="SELECT"){var l=e.getAttribute("aria-label")||"";if(!l&&e.labels&&e.labels[0]){var k=e.labels[0].cloneNode(true);k.querySelectorAll("select,option,input").forEach(function(z){z.remove();});l=k.textContent.replace(/\s+/g," ").trim();}if(!l&&e.options&&e.options[0])l="actuellement « "+e.options[e.selectedIndex<0?0:e.selectedIndex].text+" »";x="Choisissez dans la liste"+(l?" : "+l.trim():"")+(r?" (« "+r+" »)":"")+".";}
+      else if(e.tagName==="A"&&e.href&&e.host&&e.host!==location.host)x="Ouvre "+e.host.replace(/^www\./,"")+" dans un nouvel onglet.";
+      else if(e.tagName==="A"&&e.href)x="Ouvre "+(t?"« "+t.replace(/\s*→$/,"")+" »":"cette page")+(r?", depuis la rubrique « "+r+" »":"")+".";
+      else{for(var i=0;i<VERBES.length;i++)if(VERBES[i][0].test(n)){x=VERBES[i][1];break;}
+        if(x&&r)x="« "+t+" » ("+r+") : "+x.charAt(0).toLowerCase()+x.slice(1);
+        if(!x&&t)x="« "+t+" »"+(r?" dans « "+r+" »":"")+" : agit tout de suite ; le résultat s’affiche à côté.";}
+      if(x)e.setAttribute("data-aide",x);}
+    var tA;function tout(){clearTimeout(tA);tA=setTimeout(function(){document.querySelectorAll("a[href],button,summary,select,[role=tab]").forEach(expliquer);},150);}
+    tout();
+    titres(document);try{new MutationObserver(function(ms){ms.forEach(function(m){m.addedNodes.forEach(function(n){if(n.nodeType===1){if(n.hasAttribute&&n.hasAttribute("title"))titres(n.parentNode||document);titres(n);}});if(m.type==="attributes"&&m.target.hasAttribute&&m.target.hasAttribute("title"))titres(m.target.parentNode||document);});tout();}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:["title"]});}catch(e){}
+  }
+  window.AIDE={basculer:basculer,montrer:montrer};
+  init();
+})();
+</script><script src="signaler.js?v=3" defer></script></body></html>

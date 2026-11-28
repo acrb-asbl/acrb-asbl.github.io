@@ -80,6 +80,14 @@ async function ecran(moteur, prof, pg) {
     if (pb.length > avant) pb.push('clic:« ' + info.t + ' »')
     if (p.url().split('#')[0] !== u0.split('#')[0]) { await p.goto(u0, { waitUntil: 'load', timeout: 20000 }).catch(() => {}); await p.waitForTimeout(400) }
   }
+  // 28/11 (récidive NL #contact : 36 px de débordement invisible au premier onglet) : chaque section affichée à part (data-page) est mesurée
+  // une à une ; sur le site de l'association, chaque élément visible doit avoir son explication (demande 18).
+  for (const sid of await p.$$eval('[data-page][id]', l => l.map(x => x.id)).catch(() => [])) {
+    await p.evaluate(h => { location.hash = h }, '#' + sid).catch(() => {}); await p.waitForTimeout(250)
+    const d = await p.evaluate(W => Math.max(document.documentElement.scrollWidth, innerWidth) - W, LARG).catch(() => 0)
+    if (d > 2) pb.push('debordement:' + d + ' px (#' + sid + ')')
+    if (/^acrb\/index/.test(pg)) for (const t of (await p.evaluate(() => [...document.querySelectorAll('a[href],button,summary,select,input:not([type=hidden]),textarea')].filter(e => e.offsetParent !== null && e.getClientRects().length && !e.closest('[data-aide]') && !e.classList.contains('aide-btn')).map(e => (e.innerText || e.getAttribute('aria-label') || e.placeholder || e.tagName).trim().replace(/\s+/g, ' ').slice(0, 40))).catch(() => [])).slice(0, 3)) pb.push('sans explication au survol:« ' + t + ' » (#' + sid + ')')
+  }
   await p.screenshot({ path: `${OUT}/${prof[2]}_${pg.replace(/\//g, '_')}.png` }).catch(() => {})
   await ctx.close()
   const uniq = [...new Set(pb)]
