@@ -10,6 +10,7 @@
   function jeton(){try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(/^sb-.*-auth-token$/.test(k)){var t=JSON.parse(localStorage.getItem(k));if(t&&t.access_token&&(!t.expires_at||t.expires_at*1000>Date.now()))return t;}}}catch(e){}return null;}
   function ecran(){var a=document.querySelector(".nv .r1 a.on"),b=document.querySelector(".nv .r2 a.on");return a?(a.textContent.replace(/\s*\d+$/,"").trim()+(b?" › "+b.textContent.trim():"")):"";}
   var CSS='#sg_btn{position:fixed;left:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:59;display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:7px 12px;border:1px solid rgba(0,0,0,.15);border-radius:999px;background:#fff;color:#1d1a16;font:700 13px/1.1 "Libre Franklin","Segoe UI",Arial,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.15);cursor:pointer;white-space:nowrap}'+
+    '@media(max-width:720px){#sg_btn{width:44px;height:44px;min-height:44px;padding:0;justify-content:center;font-size:18px;box-shadow:0 2px 8px rgba(0,0,0,.18)}#sg_btn .sg_t{display:none}}'+
     '#sg_btn:hover{background:#fff6e5}#sg_btn[hidden],#sg_pan[hidden]{display:none}'+
     '#sg_pan{position:fixed;left:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:62;width:min(400px,calc(100vw - 24px));max-height:calc(100vh - 24px);overflow:auto;background:#fff;border:1px solid #ddd;border-top:4px solid #c99a3a;border-radius:10px;padding:14px;box-shadow:0 10px 32px rgba(0,0,0,.25);font:15px/1.4 "Source Sans 3","Segoe UI",Arial,sans-serif;color:#1d1a16;box-sizing:border-box}'+
     '#sg_pan h3{margin:0 0 4px;font:800 17px "Libre Franklin","Segoe UI",Arial,sans-serif}#sg_pan p{margin:0 0 10px;font-size:14px;color:#5f5a52}'+
@@ -39,7 +40,7 @@
   function T(i){return PAN[lg()][i];}
   function traduire(){var q=function(x){return document.querySelector(x);};q("#sg_pan h3").textContent=T(0);q("#sg_pan p").textContent=T(1);$("sg_txt").placeholder=T(2);if($("sg_contact"))$("sg_contact").placeholder=T(3);$("sg_go").textContent=T(4);$("sg_x").textContent=T(5);$("sg_pan").setAttribute("aria-label",T(0));var A=AID[lg()]||AID.fr;$("sg_txt").setAttribute("data-aide",A[0]);if($("sg_contact"))$("sg_contact").setAttribute("data-aide",A[1]);$("sg_go").setAttribute("data-aide",A[2]);$("sg_x").setAttribute("data-aide",A[3]);}
   function lg(){var l=(document.documentElement.lang||"fr").slice(0,2).toLowerCase();return TX[l]?l:"fr";}
-  function libeller(){var b=$("sg_btn");if(!b)return;var t=TX[lg()];if(b.textContent!==t[0])b.textContent=t[0];if(b.getAttribute("data-aide")!==t[1])b.setAttribute("data-aide",t[1]);}
+  function libeller(){var b=$("sg_btn");if(!b)return;var t=TX[lg()];var mot=t[0].replace(/^\u26a0\s*/,"");if(b.getAttribute("aria-label")!==mot){b.innerHTML='<span aria-hidden="true">\u26a0</span><span class="sg_t"> '+mot+"</span>";b.setAttribute("aria-label",mot);}if(b.getAttribute("data-aide")!==t[1])b.setAttribute("data-aide",t[1]);}
   // Ne jamais recouvrir un autre bouton fixe (Demander une modification, aide « ? »…) : on se place au-dessus.
   var tic=0;
   function placer(){var b=$("sg_btn");if(!b||b.hidden)return;b.style.bottom="";

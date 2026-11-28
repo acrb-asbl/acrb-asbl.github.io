@@ -136,7 +136,7 @@ h1 em{font-style:normal;font-weight:700;color:var(--accent)}
 .toggle{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-top:8px}.toggle input{accent-color:var(--fg);width:18px;height:18px;flex:none;margin:0}
 .count{font:600 13px var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:14px 0 2px}
 h3.street{font:700 30px/1 var(--display);text-transform:uppercase;margin:28px 0 12px;display:flex;align-items:baseline;gap:10px}
-h3.street small{font:600 12px var(--display);color:var(--muted);letter-spacing:.1em}
+h3.street small{font:600 12px var(--display);color:var(--muted);letter-spacing:.1em}.toggle input[type=checkbox]{width:32px;height:32px;flex:0 0 32px;accent-color:var(--fg)}.street{flex-wrap:wrap;row-gap:4px}@media(max-width:720px){.street{display:block}.street small{display:block;margin-top:6px}}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}@media(max-width:560px){.grid{grid-template-columns:1fr}}
 .card{display:grid;grid-template-columns:64px 1fr;gap:12px;background:var(--card);border:1px solid var(--line);padding:12px;text-decoration:none;color:inherit;min-width:0;transition:.12s}
 .card:hover{border-color:var(--fg)}
@@ -475,7 +475,7 @@ html[data-saison] .sz.sc{display:block}
       <div class="box cta"><h5 data-t="a_member"></h5><p data-t="a_member_text"></p><div class="actions"><a class="btn w" href="fiche.html" data-t="complete_btn"></a></div></div>
     </div>
   </div></section>
-  <footer class="wrap"><span data-t="foot1"></span><span><span data-t="foot2"></span> · <a href="../quartier/" style="color:inherit" data-t="foot_qn"></a></span></footer>
+  <footer class="wrap"><span data-t="foot1"></span><span><span data-t="foot2"></span> · <a href="../quartier/" style="color:inherit;display:inline-block;padding:8px 0" data-t="foot_qn"></a></span></footer>
 </div>
 
 <div class="wrap" id="v-fiche" hidden></div>
@@ -1714,4 +1714,4 @@ fetch(SB+"/rest/v1/acrb_reglages?select=valeur&cle=eq.sponsoring",{headers:{"api
   paint();}).catch(function(){});
 })();
 </script><script>(function(){var a=document.documentElement.getAttribute("data-apercu"),z=document.documentElement.getAttribute("data-saison-apercu");if(!a&&!z)return;var N={"classique": "Actuelle", "marche": "Grand marché", "rue": "La rue en vitrine", "magazine": "Découverte", "explorer": "Mur d'images"};
-var d=document.createElement("div");d.className="apercu";d.innerHTML='Aperçu'+(a?' de la présentation <b>« '+N[a]+' »</b>':'')+(z?' · mode de saison <b>'+z+'</b>':'')+', soumis au conseil. <a href="'+location.pathname+'">Revenir au site</a>';document.body.insertBefore(d,document.body.firstChild);})();</script><script src="signaler.js?v=3" defer></script></body></html>
+var d=document.createElement("div");d.className="apercu";d.innerHTML='Aperçu'+(a?' de la présentation <b>« '+N[a]+' »</b>':'')+(z?' · mode de saison <b>'+z+'</b>':'')+', soumis au conseil. <a href="'+location.pathname+'">Revenir au site</a>';document.body.insertBefore(d,document.body.firstChild);})();</script><script src="signaler.js?v=4" defer></script></body></html>

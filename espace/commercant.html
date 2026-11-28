@@ -283,4 +283,4 @@ sb.auth.onAuthStateChange(function(ev){if(ev==="SIGNED_IN"||ev==="INITIAL_SESSIO
       .then(function(r){return r.ok?r.json():[];}).then(function(r){var v=r&&r[0]&&r[0].valeur;if(v&&typeof v==="object"){if(v.email)CFG.email=v.email;CFG.whatsapp=v.whatsapp||null;rafraichir();}}).catch(function(){});}catch(e){}}
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
 })();
-</script><script src="signaler.js?v=3" defer></script></body></html>
+</script><script src="signaler.js?v=4" defer></script></body></html>

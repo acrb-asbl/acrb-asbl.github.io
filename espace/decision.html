@@ -33,4 +33,4 @@ rpc("acrb_avis_lire",{p_jeton:t}).then(function(d){var ca=d.type==="ecrite_ca";
     .catch(function(e){m.className="msg err";m.textContent="Non enregistré : "+e.message;oui.disabled=non.disabled=!lu.checked;});}
   oui.onclick=function(){rep("approuve");};non.onclick=function(){rep("refuse");};
 }).catch(function(e){lead.textContent=e.message;});})();
-</script><script src="signaler.js?v=3" defer></script></body></html>
+</script><script src="signaler.js?v=4" defer></script></body></html>
